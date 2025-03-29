@@ -1,5 +1,5 @@
 {
-  "name": "webapp",
+  "name": "@plants-progect/webapp",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,6 +11,10 @@
     "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'"
   },
   "dependencies": {
+    "@plants-progect/backend": "workspace:*",
+    "@tanstack/react-query": "^5.70.0",
+    "@trpc/client": "^11.0.1",
+    "@trpc/react-query": "^11.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
