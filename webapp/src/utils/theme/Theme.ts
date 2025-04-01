@@ -1,5 +1,8 @@
 import { createTheme } from '@mui/material'
+import { alpha } from '@mui/material'
 import { green, orange, purple, yellow } from '@mui/material/colors'
+
+const violetBase = '#7F00FF'
 
 export const theme = (currentTheme: 'dark' | 'light') =>
   createTheme({
@@ -11,7 +14,7 @@ export const theme = (currentTheme: 'dark' | 'light') =>
         main: currentTheme === 'dark' ? green[500] : yellow[500],
       },
       background: {
-        default: currentTheme === 'dark' ? '#000' : '#fff',
+        default: currentTheme === 'dark' ? alpha(violetBase, 0.9) : alpha(violetBase, 0.3),
       },
     },
     components: {
