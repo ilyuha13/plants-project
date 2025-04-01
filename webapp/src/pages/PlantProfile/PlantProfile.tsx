@@ -2,6 +2,7 @@ import { Container } from '@mui/material'
 import { FC } from 'react'
 import { useParams } from 'react-router-dom'
 import { Header } from '../../components/Header/Header'
+import { TplantProfileRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 type TPlantProfile = {
@@ -11,7 +12,7 @@ type TPlantProfile = {
 
 export const PlantProfile: FC<TPlantProfile> = ({ changeCurrentTheme, currentTheme }) => {
   const { data } = trpc.getPlants.useQuery()
-  const { plantId } = useParams()
+  const { plantId } = useParams() as TplantProfileRouteParams
   return (
     <div>
       <Header currentTheme={currentTheme} changeCurrentTheme={changeCurrentTheme}></Header>
