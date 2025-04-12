@@ -1,0 +1,26 @@
+@import '../../styles/mixins';
+@import '../../styles/vars';
+
+.genus {
+  font-size: 30px;
+}
+
+.tytle {
+  @include h1;
+}
+
+.container {
+  padding-top: 50px;
+  width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 30px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.baner {
+  background-color: rgb(173, 213, 213);
+  height: 300px;
+}

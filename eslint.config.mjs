@@ -43,7 +43,6 @@ export default eslintTs.config(
 
   {
     rules: {
-      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/strict-boolean-expressions': 'off',
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',

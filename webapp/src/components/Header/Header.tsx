@@ -1,27 +1,23 @@
-import { Box, Button } from '@mui/material'
-import { FC } from 'react'
-import styles from './Header.module.scss'
+import { Box } from '@mui/material'
+import { Link } from 'react-router-dom'
+import { getPlantsListRoute } from '../../lib/routes'
+import { BurgerMenu } from '../BurgerMenu/BurgerMenu'
+import { Logo } from '../Logo/Logo'
+import { Navigation } from '../Navigation/Navigation'
+import { Toolbar } from '../Toolbar/Toolbar'
+import s from './Header.module.scss'
 
-type THeader = {
-  changeCurrentTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
-  currentTheme: 'light' | 'dark'
-}
-
-export const Header: FC<THeader> = ({ changeCurrentTheme, currentTheme }) => {
+export const Header = () => {
   return (
-    <Box className={styles.header} sx={{ bgcolor: 'background.default' }}>
-      <Button variant="outlined">test</Button>
-      <Button variant="contained" color="secondary">
-        test 2
-      </Button>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          changeCurrentTheme(currentTheme === 'light' ? 'dark' : 'light')
-        }}
-      >
-        theme
-      </Button>
+    <Box className={s.header} sx={{ bgcolor: 'primary.main' }}>
+      <Link className={s.burgerLink} to={getPlantsListRoute()}>
+        <BurgerMenu />
+      </Link>
+      <Link className={s.logoLink} to={getPlantsListRoute()}>
+        <Logo />
+      </Link>
+      <Navigation />
+      <Toolbar />
     </Box>
   )
 }

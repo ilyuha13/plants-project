@@ -1,15 +1,8 @@
-import { FC } from 'react'
-import { Link } from 'react-router-dom'
-import { Header } from '../../components/Header/Header'
-import { getPlantProfileRoute } from '../../lib/routes'
+import { PlantCard } from '../../components/plantCard/plantCard'
 import { trpc } from '../../lib/trpc'
+import s from './plantsList.module.scss'
 
-type TPlantsList = {
-  changeCurrentTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
-  currentTheme: 'light' | 'dark'
-}
-
-export const PlantsList: FC<TPlantsList> = ({ changeCurrentTheme, currentTheme }) => {
+export const PlantsList = () => {
   const { data, error, isError, isFetching, isLoading } = trpc.getPlants.useQuery()
 
   if (isLoading || isFetching) {
@@ -22,17 +15,19 @@ export const PlantsList: FC<TPlantsList> = ({ changeCurrentTheme, currentTheme }
 
   return (
     <div>
-      <Header currentTheme={currentTheme} changeCurrentTheme={changeCurrentTheme} />
-      <h1>plants</h1>
-
-      {data?.plants.map((plant) => (
-        <div key={plant.plantId}>
-          <h1>
-            <Link to={getPlantProfileRoute({ plantId: plant.plantId })}>{plant.genus}</Link>
-          </h1>
-          <p>{plant.species}</p>
-        </div>
-      ))}
+      <div className={s.baner}>
+        <h1 className={s.tytle}>plants</h1>
+      </div>
+      <div className={s.container}>
+        {data?.plants.map((plant) => (
+          <PlantCard
+            genus={plant.genus}
+            spesies={plant.species}
+            description={plant.description}
+            plantId={plant.plantId}
+          />
+        ))}
+      </div>
     </div>
   )
 }

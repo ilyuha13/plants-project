@@ -1,25 +1,29 @@
 import { Container } from '@mui/material'
-import { FC } from 'react'
 import { useParams } from 'react-router-dom'
-import { Header } from '../../components/Header/Header'
 import { TplantProfileRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
-type TPlantProfile = {
-  changeCurrentTheme: React.Dispatch<React.SetStateAction<'light' | 'dark'>>
-  currentTheme: 'light' | 'dark'
-}
-
-export const PlantProfile: FC<TPlantProfile> = ({ changeCurrentTheme, currentTheme }) => {
-  const { data } = trpc.getPlants.useQuery()
+export const PlantProfile = () => {
   const { plantId } = useParams() as TplantProfileRouteParams
+  const { data, error, isError, isFetching, isLoading } = trpc.getPlant.useQuery({ plantId })
+
+  if (isLoading || isFetching) {
+    return <span>loading...</span>
+  }
+
+  if (isError) {
+    return <span>error: {error.message}</span>
+  }
+
+  if (!data?.plant) {
+    return <span>plant not found</span>
+  }
   return (
     <div>
-      <Header currentTheme={currentTheme} changeCurrentTheme={changeCurrentTheme}></Header>
       <Container maxWidth="sm" sx={{ bgcolor: 'background.default' }}>
-        <h1>{data?.plants.find((obj) => obj.plantId === plantId)?.genus}</h1>
-        <h2>{data?.plants.find((obj) => obj.plantId === plantId)?.species}</h2>
-        <p>{data?.plants.find((obj) => obj.plantId === plantId)?.description}</p>
+        <h1>{data.plant.genus}</h1>
+        <h2>{data.plant.species}</h2>
+        <p>{data.plant.description}</p>
       </Container>
     </div>
   )

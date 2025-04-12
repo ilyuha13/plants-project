@@ -1,0 +1,14 @@
+@import '../../styles/mixins';
+@import '../../styles/vars';
+
+.link {
+}
+
+.card {
+  padding: 20px 30px;
+  border: 2px solid $defaultTextColor;
+}
+
+.genus {
+  text-decoration: none;
+}

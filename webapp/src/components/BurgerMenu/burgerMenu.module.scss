@@ -1,0 +1,42 @@
+@import '../../styles/mixins';
+@import '../../styles/vars';
+
+$width: 40px;
+$hight: 3px;
+$margin: 12px;
+
+.container {
+  display: none;
+  @include media($breakpoint) {
+    display: flex;
+  }
+  justify-content: center;
+  align-items: center;
+}
+
+.burger {
+  display: none;
+  @include media($breakpoint) {
+    display: inline-block;
+  }
+}
+
+.line1 {
+  width: $width;
+  height: $hight;
+  background-color: $defaultTextColor;
+  margin-bottom: $margin;
+}
+
+.line2 {
+  width: $width;
+  height: $hight;
+  background-color: $defaultTextColor;
+  margin-bottom: $margin;
+}
+
+.line3 {
+  width: $width;
+  height: $hight;
+  background-color: $defaultTextColor;
+}
