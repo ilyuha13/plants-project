@@ -3,6 +3,7 @@ import { alpha } from '@mui/material'
 import { grey, orange, yellow } from '@mui/material/colors'
 
 const violetBase = '#7F00FF'
+const white = '#fff'
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -17,7 +18,9 @@ declare module '@mui/material/styles' {
 export const theme = (currentTheme: 'dark' | 'light') =>
   createTheme({
     palette: {
-      custom: {},
+      custom: {
+        main: currentTheme === 'light' ? alpha(white, 0.5) : alpha(orange[500], 0.5),
+      },
       primary: {
         main: currentTheme === 'light' ? '#fff' : orange[500],
       },

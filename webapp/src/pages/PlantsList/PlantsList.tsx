@@ -4,7 +4,6 @@ import s from './plantsList.module.scss'
 
 export const PlantsList = () => {
   const { data, error, isError, isFetching, isLoading } = trpc.getPlants.useQuery()
-
   if (isLoading || isFetching) {
     return <span>loading...</span>
   }
@@ -21,10 +20,14 @@ export const PlantsList = () => {
       <div className={s.container}>
         {data?.plants.map((plant) => (
           <PlantCard
+            key={plant.plantId}
             genus={plant.genus}
-            spesies={plant.species}
+            species={plant.species}
             description={plant.description}
             plantId={plant.plantId}
+            createdAt={plant.createdAt}
+            categoryId={plant.categoryId}
+            imageSrc={plant.imageSrc}
           />
         ))}
       </div>

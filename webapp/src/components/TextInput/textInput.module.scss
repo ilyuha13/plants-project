@@ -1,0 +1,37 @@
+@import '../../styles/mixins';
+@import '../../styles/vars';
+
+.container {
+  &.disabled {
+    opacity: 0.5;
+  }
+
+  .label {
+    @include label($black);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .input {
+    display: block;
+    border: 1px solid $black;
+    border-radius: $borderRadiusSmall;
+    background-color: $white;
+    outline: none;
+    width: 150px;
+    max-width: 200px;
+
+    &:focus {
+      border-color: $blue;
+    }
+
+    &.invalid {
+      border-color: $red;
+    }
+  }
+}
+
+.error {
+  @include label($red);
+  margin-top: 7px;
+}

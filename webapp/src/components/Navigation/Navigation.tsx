@@ -15,8 +15,9 @@ export const Navigation = () => {
       </Link>
 
       <Button variant="outlined" color="secondary">
-        test 2
+        button
       </Button>
+
       <Button
         color="secondary"
         variant="outlined"
@@ -26,9 +27,12 @@ export const Navigation = () => {
       >
         theme
       </Button>
-      <Button variant="outlined" color="secondary">
-        test 2
-      </Button>
+      <Link to={routes.getAddCategoriesRoute()}>
+        <Button variant="outlined" color="secondary">
+          add categories
+        </Button>
+      </Link>
+
       <Button variant="outlined" color="secondary">
         test 2
       </Button>

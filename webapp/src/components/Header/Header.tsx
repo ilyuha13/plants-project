@@ -9,7 +9,7 @@ import s from './Header.module.scss'
 
 export const Header = () => {
   return (
-    <Box className={s.header} sx={{ bgcolor: 'primary.main' }}>
+    <Box className={s.header} sx={{ bgcolor: 'custom.main' }}>
       <Link className={s.burgerLink} to={getPlantsListRoute()}>
         <BurgerMenu />
       </Link>

@@ -10,3 +10,11 @@ export type TplantProfileRouteParams = typeof plantProfileRouteParams
 export const getPlantProfileRoute = ({ plantId }: TplantProfileRouteParams) => `/plantProfile/${plantId}`
 
 export const getAddPlantPageRoute = () => '/plants/add'
+
+export const getSignUpRoute = () => '/singUp'
+
+export const getSignInRoute = () => '/signIn'
+
+export const getSignOutRout = () => '/signOut'
+
+export const getAddCategoriesRoute = () => '/addCategories'

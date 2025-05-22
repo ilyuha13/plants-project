@@ -4,9 +4,13 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import * as routes from './lib/routes'
 import { TrpcProvider } from './lib/trpc'
+import { AddCategory } from './pages/AddCategory/AddCategory'
 import { AddPlantPage } from './pages/AddPlantPage/AddPlantPage'
 import { PlantProfile } from './pages/PlantProfile/PlantProfile'
 import { PlantsList } from './pages/PlantsList/PlantsList'
+import { SignUpPage } from './pages/SignUp/SignUpPage'
+import { SignInPage } from './pages/signInPage/SignInPage'
+import { SignOutPage } from './pages/signOutPage/SignOutPage'
 import { useAppStore } from './store/AppStoreProvider'
 import { theme } from './utils/theme/Theme'
 import './styles/global.scss'
@@ -18,10 +22,14 @@ export const App = observer(() => {
       <ThemeProvider theme={theme(themeState.curentTheme)}>
         <BrowserRouter>
           <Routes>
+            <Route path={routes.getSignOutRout()} element={<SignOutPage />} />
             <Route element={<Layout />}>
               <Route path={routes.getPlantsListRoute()} element={<PlantsList />} />
               <Route path={routes.getAddPlantPageRoute()} element={<AddPlantPage />} />
               <Route path={routes.getPlantProfileRoute({ plantId: ':plantId' })} element={<PlantProfile />} />
+              <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
+              <Route path={routes.getSignInRoute()} element={<SignInPage />} />
+              <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -1,10 +1,14 @@
-
-import type { TrpcRouter } from '@plants-progect/backend/src/trpc'
+import type { TrpcRouter } from '@plants-project/backend/src/router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
-
+import { inferRouterOutputs } from '@trpc/server'
+import Cookies from 'js-cookie'
+import superjson from 'superjson'
+import { env } from './env'
 export const trpc = createTRPCReact<TrpcRouter>()
+
+export type RouterOutput = inferRouterOutputs<TrpcRouter>
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,17 +20,24 @@ const queryClient = new QueryClient({
 })
 
 // const trpcClient = trpc.createClient({
-//     links: [
-//         httpBatchLink({
-//             url: 'http//localhost:3000/trpc',
-//         }),
-//     ],
+//   links: [
+//     httpBatchLink({
+//       url: 'http://localhost:3000/trpc',
+//     }),
+//   ],
 // })
 
 const trpcClient = createTRPCClient<TrpcRouter>({
   links: [
     httpBatchLink({
-      url: 'http://localhost:3000/trpc',
+      transformer: superjson,
+      url: env.VITE_BACKEND_TRPC_URL,
+      headers: () => {
+        const token = Cookies.get('token')
+        return {
+          ...(token && { authorization: `Bearer ${token}` }),
+        }
+      },
     }),
   ],
 })
