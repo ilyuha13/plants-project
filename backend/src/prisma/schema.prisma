@@ -19,7 +19,7 @@ model Plant {
     genus String
     species String
     description String
-    imageSrc String
+    imageUrl String
     createdAt DateTime @default(now())
     categoryId String
     category Category @relation(fields: [categoryId], references: [id])

@@ -9,7 +9,7 @@ export const getPlantsTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
       description: true,
       createdAt: true,
       categoryId: true,
-      imageSrc: true,
+      imageUrl: true,
     },
     orderBy: {
       createdAt: 'desc',

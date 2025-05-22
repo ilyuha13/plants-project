@@ -27,7 +27,7 @@ export const PlantsList = () => {
             plantId={plant.plantId}
             createdAt={plant.createdAt}
             categoryId={plant.categoryId}
-            imageSrc={plant.imageSrc}
+            imageUrl={plant.imageUrl}
           />
         ))}
       </div>
