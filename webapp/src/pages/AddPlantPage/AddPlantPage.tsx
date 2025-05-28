@@ -16,7 +16,6 @@ export const AddPlantPage = () => {
   //const queryClient = useQueryClient()
   const [successMassageVisible, setSuccesMesageVisible] = useState(false)
   const [submittingError, setSubmittingError] = useState<null | string>(null)
-  const [choosingСategory, setChoosingCategory] = useState(false)
   const [createCategory, setCreateCategory] = useState(false)
   const addPlant = trpc.addPlant.useMutation()
   const { data, isLoading, isError, isFetching, error } = trpc.getCategories.useQuery()
@@ -50,9 +49,6 @@ export const AddPlantPage = () => {
     },
   })
 
-  const onChoosingCategoryButtonClick = () => {
-    setChoosingCategory(true)
-  }
   const onCreateCategoryButtonClick = () => {
     setCreateCategory(true)
   }
@@ -66,16 +62,6 @@ export const AddPlantPage = () => {
     <div className={css.container}>
       {isLoading || (isFetching && <span>loading...</span>)}
       <h1 className={css.formTitle}> Добавим растение </h1>
-      {!choosingСategory && (
-        <Button type="button" variant="outlined" color="secondary" onClick={onChoosingCategoryButtonClick}>
-          выбрать категорию
-        </Button>
-      )}
-      {!createCategory && (
-        <Button type="button" variant="outlined" color="secondary" onClick={onCreateCategoryButtonClick}>
-          создать категорию
-        </Button>
-      )}
       {createCategory && <AddCategory />}
       <form
         className={css.form}
@@ -84,9 +70,10 @@ export const AddPlantPage = () => {
           formik.handleSubmit()
         }}
       >
-        {categories && choosingСategory && (
-          <SelectInput name="categoryId" lable="категория" formik={formik} items={categories} />
-        )}
+        <SelectInput name="categoryId" lable="выбрать категорию" formik={formik} items={categories} />
+        <Button type="button" variant="outlined" color="secondary" onClick={onCreateCategoryButtonClick}>
+          создать категорию
+        </Button>
         <TextInput name="genus" lable="род" formik={formik} />
         <TextInput name="species" lable="вид" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />

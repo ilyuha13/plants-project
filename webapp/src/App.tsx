@@ -6,6 +6,7 @@ import * as routes from './lib/routes'
 import { TrpcProvider } from './lib/trpc'
 import { AddCategory } from './pages/AddCategory/AddCategory'
 import { AddPlantPage } from './pages/AddPlantPage/AddPlantPage'
+import { EditPlantPage } from './pages/EditPlantPage/EditPlantPage'
 import { PlantProfile } from './pages/PlantProfile/PlantProfile'
 import { PlantsList } from './pages/PlantsList/PlantsList'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
@@ -30,6 +31,7 @@ export const App = observer(() => {
               <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
               <Route path={routes.getSignInRoute()} element={<SignInPage />} />
               <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} />
+              <Route path={routes.getEditPlantRoute({ plantId: ':plantId' })} element={<EditPlantPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

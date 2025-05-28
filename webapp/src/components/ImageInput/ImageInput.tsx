@@ -14,6 +14,8 @@ export const ImageInput = ({
 }) => {
   const error = formik.errors[name] as string | undefined
   const reader = new FileReader()
+  const touched = formik.touched[name]
+  const invalid = !!touched && !!error
   //const [imageUrl, setImageUrl] = useState('')
   return (
     <Button className={css.button} component="label" variant="outlined" color="secondary">
@@ -29,12 +31,18 @@ export const ImageInput = ({
             }
           }
         }}
+        onFocus={() => {
+          formik.setFieldTouched(name, false)
+        }}
+        onBlur={() => {
+          formik.setFieldTouched(name)
+        }}
         className={css.hidenInput}
         type="file"
       />
       {/* {imageUrl && <img src={} alt="image" />} */}
       upload image
-      {error && <Alert color="red" message={error} />}
+      {invalid && <Alert color="red" message={error} />}
     </Button>
   )
 }

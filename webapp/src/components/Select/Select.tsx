@@ -10,7 +10,7 @@ export const SelectInput = ({
   name,
   lable,
 }: {
-  items: { name: string; id: string; description: string }[]
+  items?: { name: string; id: string; description: string }[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: FormikProps<any>
   name: string
@@ -30,11 +30,12 @@ export const SelectInput = ({
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          {items.map((item, index) => (
-            <MenuItem key={index} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
+          {items &&
+            items.map((item, index) => (
+              <MenuItem key={index} value={item.id}>
+                {item.name}
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
     </div>

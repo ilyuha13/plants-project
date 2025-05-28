@@ -5,5 +5,5 @@ export const zAddPlantTrpcInput = z.object({
   species: z.string().min(1, 'введите хотя-бы один символ'),
   description: z.string().min(1, 'введите хотя-бы один символ'),
   categoryId: z.string().min(1, 'введите хотя-бы один символ'),
-  imageSrc: z.string().min(1, 'введите хотя-бы один символ'),
+  imageSrc: z.string(),
 })
