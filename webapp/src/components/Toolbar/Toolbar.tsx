@@ -1,22 +1,22 @@
 import { Button } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { useMe } from '../../lib/ctx'
 import { getSignInRoute, getSignOutRout, getSignUpRoute } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
 import s from './toolbar.module.scss'
 
 export const Toolbar = () => {
-  const { data, isError, isFetching, isLoading } = trpc.getMe.useQuery()
+  const me = useMe()
 
   return (
     <div className={s.container}>
-      {isLoading || isFetching || isError || !data ? null : data.me ? (
+      {me ? (
         <>
           <Button className={s.searchButton} variant="outlined" color="secondary">
             search
           </Button>
           <Link to={getSignOutRout()}>
             <Button className={s.searchButton} variant="outlined" color="secondary">
-              log out ({data.me.nick})
+              log out ({me.nick})
             </Button>
           </Link>
         </>

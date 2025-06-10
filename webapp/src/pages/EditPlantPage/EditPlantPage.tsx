@@ -7,6 +7,7 @@ import { Button } from '../../components/Button/Button'
 import { ImageInput } from '../../components/ImageInput/ImageInput'
 import { SelectInput } from '../../components/Select/Select'
 import { TextInput } from '../../components/TextInput/TextInput'
+import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
 import { useForm } from '../../lib/form'
 import { getPlantProfileRoute, TeditPlantParams } from '../../lib/routes'
@@ -96,24 +97,19 @@ export const EditPlantPage = () => {
   const getPlantResult = trpc.getPlant.useQuery({
     plantId,
   })
-  const geteMeResult = trpc.getMe.useQuery()
+  const me = useMe()
   const getCategoriesResult = trpc.getCategories.useQuery()
 
   if (
     getPlantResult.isLoading ||
-    geteMeResult.isLoading ||
     getCategoriesResult.isLoading ||
     getPlantResult.isFetching ||
-    geteMeResult.isFetching ||
     getCategoriesResult.isFetching
   ) {
     return <span>loading...</span>
   }
   if (getPlantResult.isError) {
     return <span>error: {getPlantResult.error.message}</span>
-  }
-  if (geteMeResult.isError) {
-    return <span>error: {geteMeResult.error.message}</span>
   }
   if (getCategoriesResult.isError) {
     return <span>error: {getCategoriesResult.error.message}</span>
@@ -124,7 +120,7 @@ export const EditPlantPage = () => {
   const plant = getPlantResult.data.plant
   const categories = getCategoriesResult.data?.categories
 
-  if (!geteMeResult.data?.me) {
+  if (!me) {
     return <span>you are not authorized</span>
   }
   return <EditPlantComopnent categories={categories} plant={plant} />
