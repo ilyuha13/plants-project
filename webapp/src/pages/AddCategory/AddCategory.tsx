@@ -1,41 +1,24 @@
-import { Button } from '@mui/material'
 import { zAddCategoriesTrpcInput } from '@plants-project/backend/src/router/addCategories/input'
-import { useFormik } from 'formik'
-import { withZodSchema } from 'formik-validator-zod'
-import { useState } from 'react'
 import { Alert } from '../../components/Alert/Alert'
+import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
+import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 import css from './addCategory.module.scss'
 
 export const AddCategory = () => {
   const trpcUtils = trpc.useUtils()
-  const [successMassageVisible, setSuccesMesageVisible] = useState(false)
-  const [submittingError, setSubmittingError] = useState<null | string>(null)
   const addCategories = trpc.addCategories.useMutation()
-  const formik = useFormik({
+  const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
       name: '',
       description: '',
     },
-    validate: withZodSchema(zAddCategoriesTrpcInput),
+    validationSchema: zAddCategoriesTrpcInput,
+    resetOnSuccess: true,
     onSubmit: async (values) => {
-      try {
-        await addCategories.mutateAsync(values)
-        formik.resetForm()
-        trpcUtils.getCategories.invalidate()
-        setSuccesMesageVisible(true)
-        setTimeout(() => {
-          setSuccesMesageVisible(false)
-        }, 3000)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        setSubmittingError(error.message)
-
-        setTimeout(() => {
-          setSubmittingError(null)
-        }, 3000)
-      }
+      await addCategories.mutateAsync(values)
+      trpcUtils.getCategories.invalidate()
     },
   })
 
@@ -43,19 +26,14 @@ export const AddCategory = () => {
     <div className={css.container}>
       <form
         className={css.form}
-        onSubmit={(e) => {
-          e.preventDefault()
+        onSubmit={() => {
           formik.handleSubmit()
         }}
       >
         <TextInput name="name" lable="наименование категории" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />
-        {!formik.isValid && !!formik.submitCount && <Alert message="проверьте поля" color="red" />}
-        {successMassageVisible && <Alert message="успешно" color="green" />}
-        {!!submittingError && <Alert message={submittingError} color="red" />}
-        <Button disabled={formik.isSubmitting} type="submit" variant="outlined" color="secondary">
-          {formik.isSubmitting ? 'wait...' : 'add Categorie'}
-        </Button>
+        <Button {...buttonProps}>создать категорию</Button>
+        <Alert {...alertProps} />
       </form>
     </div>
   )

@@ -16,6 +16,8 @@ export const SelectInput = ({
   name: string
   lable: string
 }) => {
+  // const [createCategory, setCreateCategory] = useState(false)
+
   const value = formik.values[name]
 
   const handleChange = (event: SelectChangeEvent) => {

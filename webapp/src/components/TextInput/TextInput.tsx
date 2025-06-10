@@ -1,6 +1,5 @@
-import cn from 'classnames'
+import TextField from '@mui/material/TextField'
 import { FormikProps } from 'formik'
-import s from './textInput.module.scss'
 type TTextInput = {
   lable: string
   name: string
@@ -9,35 +8,25 @@ type TTextInput = {
   type?: 'text' | 'password'
 }
 
-export const TextInput = ({ type = 'text', ...p }: TTextInput) => {
-  const value = p.formik.values[p.name]
-  const error = p.formik.errors[p.name] as string | undefined
-  const touched = p.formik.touched[p.name]
-  const disabled = p.formik.isSubmitting
+export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) => {
+  const value = formik.values[name]
+  const error = formik.errors[name] as string | undefined
+  const touched = formik.touched[name]
+  const disabled = formik.isSubmitting
   const invalid = !!touched && !!error
   return (
-    <div className={cn({ [s.container]: true, [s.disabled]: disabled })}>
-      <label className={s.label} htmlFor={p.name}>
-        {p.lable}
-      </label>
-      <input
-        type={type}
-        onChange={(e) => {
-          p.formik.setFieldValue(p.name, e.target.value)
-        }}
-        onBlur={() => {
-          p.formik.setFieldTouched(p.name)
-        }}
-        onFocus={() => {
-          p.formik.setFieldTouched(p.name, false)
-        }}
-        value={value}
-        name={p.name}
-        id={p.name}
-        disabled={disabled}
-        className={cn({ [s.input]: true, [s.invalid]: invalid })}
-      />
-      {invalid && <div className={s.error}>{error}</div>}
-    </div>
+    <TextField
+      variant="standard"
+      error={invalid}
+      disabled={disabled}
+      label={lable}
+      type={type}
+      id={name}
+      name={name}
+      value={value}
+      onChange={formik.handleChange}
+      onBlur={formik.handleBlur}
+      color="secondary"
+    />
   )
 }

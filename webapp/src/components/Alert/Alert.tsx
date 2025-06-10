@@ -1,8 +1,14 @@
-import cn from 'classnames'
-import s from './alert.module.scss'
+import MuiAlert from '@mui/material/Alert'
 
-export const Alert = ({ message, color }: { message: string; color: 'red' | 'green' }) => {
+export type AlertProps = { children: React.ReactNode; hidden?: boolean; type: 'success' | 'info' | 'warning' | 'error' }
+
+export const Alert = ({ hidden, children, type }: AlertProps) => {
+  if (hidden) {
+    return null
+  }
   return (
-    <div className={cn({ [s.alert]: true, [s.red]: color === 'red', [s.green]: color === 'green' })}>{message}</div>
+    <MuiAlert variant="filled" severity={type}>
+      {children}
+    </MuiAlert>
   )
 }
