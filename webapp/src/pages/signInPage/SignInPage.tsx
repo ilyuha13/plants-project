@@ -13,7 +13,11 @@ export const SignInPage = () => {
   const navigate = useNavigate()
   const trpcUtils = trpc.useUtils()
   const signIn = trpc.signIn.useMutation()
-  const { formik, buttonProps, alertProps } = useForm({
+  const {
+    formik,
+    buttonProps,
+    alertOptions: { hidden: alertHidden, ...alertProps },
+  } = useForm({
     initialValues: {
       nick: '',
       password: '',
@@ -34,7 +38,7 @@ export const SignInPage = () => {
         <TextInput name="nick" lable="Nick" formik={formik} />
         <TextInput name="password" lable="Password" formik={formik} type="password" />
         <Button {...buttonProps}>Sign In</Button>
-        <Alert {...alertProps} />
+        {!alertHidden && <Alert {...alertProps} />}
       </form>
     </div>
   )

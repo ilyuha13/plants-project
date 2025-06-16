@@ -14,7 +14,11 @@ export const SignUpPage = () => {
   const trpcUtils = trpc.useUtils()
   const navigate = useNavigate()
   const signUp = trpc.signUp.useMutation()
-  const { formik, buttonProps, alertProps } = useForm({
+  const {
+    formik,
+    buttonProps,
+    alertOptions: { hidden: alertHidden, ...alertProps },
+  } = useForm({
     initialValues: {
       nick: '',
       password: '',
@@ -49,7 +53,7 @@ export const SignUpPage = () => {
         <TextInput name="password" lable="Password" formik={formik} type="password" />
         <TextInput name="passwordAgain" lable="Password again" formik={formik} type="password" />
         <Button {...buttonProps}>создать пользователя</Button>
-        <Alert {...alertProps} />
+        {!alertHidden && <Alert {...alertProps} />}
       </form>
       {/* <PlantCard
         key={plant.plantId}

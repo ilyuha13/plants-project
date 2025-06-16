@@ -1,3 +1,4 @@
+import { Card, CardMedia } from '@mui/material'
 import { TrpcRouterOutput } from '@plants-project/backend/src/router'
 import { zUpdatePlantTrpcInput } from '@plants-project/backend/src/router/updatePlant/input'
 import { useState } from 'react'
@@ -10,7 +11,7 @@ import { TextInput } from '../../components/TextInput/TextInput'
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
 import { useForm } from '../../lib/form'
-import { getPlantProfileRoute, TeditPlantParams } from '../../lib/routes'
+import { getPlantProfileRoute, TEditPlantParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 import { AddCategory } from '../AddCategory/AddCategory'
 import css from './editPlantPage.module.scss'
@@ -25,7 +26,11 @@ const EditPlantComopnent = ({
   const navigate = useNavigate()
   const [createCategory, setCreateCategory] = useState(false)
   const updatePlant = trpc.updatePlant.useMutation()
-  const { formik, buttonProps, alertProps } = useForm({
+  const {
+    formik,
+    buttonProps,
+    alertOptions: { hidden: alertHidden, ...alertProps },
+  } = useForm({
     initialValues: {
       genus: plant.genus,
       species: plant.species,
@@ -73,26 +78,25 @@ const EditPlantComopnent = ({
         <TextInput name="species" lable="вид" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />
         <ImageInput name="imageSrc" formik={formik} />
-        {formik.values.imageSrc && <img src={formik.values.imageSrc}></img>}
-        {!formik.values.imageSrc && plant.imageUrl && (
-          <img src={`${env.VITE_BACKEND_URL}/${plant.imageUrl.replace('public/', '')}`} alt="img" />
-        )}
         <Button {...buttonProps}>обновить</Button>
-        <Alert {...alertProps} />
+        {alertHidden && <Alert {...alertProps} />}
       </form>
-      {/* <PlantCard
-        key={plant.plantId}
-        genus={plant.genus}
-        species={plant.species}
-        description={plant.description}
-        plantId={plant.plantId}
-      /> */}
+      <Card sx={{ maxWidth: 345, marginTop: '20px' }}>
+        <CardMedia
+          sx={{ height: 180 }}
+          image={
+            formik.values.imageSrc
+              ? formik.values.imageSrc
+              : plant.imageUrl && `${env.VITE_BACKEND_URL}/${plant.imageUrl.replace('public/', '')}`
+          }
+        />
+      </Card>
     </div>
   )
 }
 
 export const EditPlantPage = () => {
-  const { plantId } = useParams() as TeditPlantParams
+  const { plantId } = useParams() as TEditPlantParams
 
   const getPlantResult = trpc.getPlant.useQuery({
     plantId,

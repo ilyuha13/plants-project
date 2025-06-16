@@ -1,3 +1,4 @@
+import { Card, CardMedia } from '@mui/material'
 import { zAddPlantTrpcInput } from '@plants-project/backend/src/router/addPlant/input'
 import { useState } from 'react'
 import { Alert } from '../../components/Alert/Alert'
@@ -5,7 +6,7 @@ import { Button } from '../../components/Button/Button'
 import { ImageInput } from '../../components/ImageInput/ImageInput'
 import { SelectInput } from '../../components/Select/Select'
 import { TextInput } from '../../components/TextInput/TextInput'
-//import { PlantCard } from '../../components/plantCard/plantCard'
+import { env } from '../../lib/env'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 import { AddCategory } from '../AddCategory/AddCategory'
@@ -16,7 +17,11 @@ export const AddPlantPage = () => {
   const addPlant = trpc.addPlant.useMutation()
   const { data, isLoading, isError, isFetching, error } = trpc.getCategories.useQuery()
 
-  const { formik, buttonProps, alertProps } = useForm({
+  const {
+    formik,
+    buttonProps,
+    alertOptions: { hidden: alertHidden, ...alertProps },
+  } = useForm({
     initialValues: {
       genus: '',
       species: '',
@@ -28,8 +33,9 @@ export const AddPlantPage = () => {
     onSubmit: async (values) => {
       await addPlant.mutateAsync(values)
     },
-    resetOnSuccess: true,
     successMessage: 'растение добавленно',
+    showValidationAlert: true,
+    resetOnSuccess: true,
   })
 
   const onCreateCategoryButtonClick = () => {
@@ -48,7 +54,8 @@ export const AddPlantPage = () => {
       {createCategory && <AddCategory />}
       <form
         className={css.form}
-        onSubmit={() => {
+        onSubmit={(e) => {
+          e.preventDefault()
           formik.handleSubmit()
         }}
       >
@@ -60,10 +67,16 @@ export const AddPlantPage = () => {
         <TextInput name="species" lable="вид" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />
         <ImageInput name="imageSrc" formik={formik} />
-        <Alert {...alertProps} />
+        {!alertHidden && <Alert {...alertProps} />}
         <Button {...buttonProps}>Добавить</Button>
       </form>
-      {formik.values.imageSrc && <img src={formik.values.imageSrc}></img>}
+
+      <Card sx={{ maxWidth: 345, marginTop: '20px' }}>
+        <CardMedia
+          sx={{ height: 180 }}
+          image={formik.values.imageSrc ? formik.values.imageSrc : `${env.VITE_BACKEND_URL}/images/logo.jpg`}
+        />
+      </Card>
       {/* <PlantCard
         key={plant.plantId}
         genus={plant.genus}

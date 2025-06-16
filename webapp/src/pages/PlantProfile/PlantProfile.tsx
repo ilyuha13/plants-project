@@ -1,7 +1,18 @@
 import { Container } from '@mui/material'
+//import { UseTRPCQueryResult } from '@trpc/react-query/shared'
 import { useParams } from 'react-router-dom'
 import { TplantProfileRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
+//import { TrpcRouterOutput } from '@plants-project/backend/src/router'
+
+// const whithPageWrapper = <TQueryResult extends UseTRPCQueryResult>({ Component, useQuery }: { Component: React.FC; useQuery: TQueryResult }) => {
+//   const queryResult = useQuery()
+//   return () => (
+//     <Container maxWidth="sm" sx={{ bgcolor: 'background.default' }}>
+//       <Component />
+//     </Container>
+//   )
+// }
 
 export const PlantProfile = () => {
   const { plantId } = useParams() as TplantProfileRouteParams

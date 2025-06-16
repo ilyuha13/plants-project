@@ -9,7 +9,11 @@ import css from './addCategory.module.scss'
 export const AddCategory = () => {
   const trpcUtils = trpc.useUtils()
   const addCategories = trpc.addCategories.useMutation()
-  const { formik, buttonProps, alertProps } = useForm({
+  const {
+    formik,
+    buttonProps,
+    alertOptions: { hidden: alertHidden, ...alertProps },
+  } = useForm({
     initialValues: {
       name: '',
       description: '',
@@ -33,7 +37,7 @@ export const AddCategory = () => {
         <TextInput name="name" lable="наименование категории" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />
         <Button {...buttonProps}>создать категорию</Button>
-        <Alert {...alertProps} />
+        {!alertHidden && <Alert {...alertProps} />}
       </form>
     </div>
   )

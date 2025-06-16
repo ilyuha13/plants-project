@@ -45,7 +45,7 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
     },
   })
 
-  const alertProps = useMemo<AlertProps>(() => {
+  const alertOptions = useMemo<AlertProps & { hidden: boolean }>(() => {
     if (submittingError) {
       return {
         hidden: false,
@@ -83,7 +83,7 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
 
   return {
     formik,
-    alertProps,
+    alertOptions,
     buttonProps,
   }
 }

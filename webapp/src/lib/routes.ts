@@ -9,8 +9,8 @@ export type TplantProfileRouteParams = typeof plantProfileRouteParams
 export const getPlantProfileRoute = ({ plantId }: TplantProfileRouteParams) => `/plantProfile/${plantId}`
 
 export const editPlantParams = getRouteParams({ plantId: true })
-export type TeditPlantParams = typeof editPlantParams
-export const getEditPlantRoute = ({ plantId }: TeditPlantParams) => `/plants/${plantId}/edit`
+export type TEditPlantParams = typeof editPlantParams
+export const getEditPlantRoute = ({ plantId }: TEditPlantParams) => `/plants/${plantId}/edit`
 
 export const getAddPlantPageRoute = () => '/plants/add'
 
