@@ -19,6 +19,7 @@
     "@mui/material": "^7.0.1",
     "@plants-project/backend": "workspace:*",
     "@tanstack/react-query": "^5.70.0",
+    "@toolpad/core": "^0.16.0",
     "@trpc/client": "^11.0.1",
     "@trpc/react-query": "^11.0.1",
     "@trpc/server": "^11.0.1",

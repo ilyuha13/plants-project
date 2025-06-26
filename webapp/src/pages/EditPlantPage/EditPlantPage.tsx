@@ -79,7 +79,7 @@ const EditPlantComopnent = ({
         <TextInput name="description" lable="описание" formik={formik} />
         <ImageInput name="imageSrc" formik={formik} />
         <Button {...buttonProps}>обновить</Button>
-        {alertHidden && <Alert {...alertProps} />}
+        {!alertHidden && <Alert {...alertProps} />}
       </form>
       <Card sx={{ maxWidth: 345, marginTop: '20px' }}>
         <CardMedia

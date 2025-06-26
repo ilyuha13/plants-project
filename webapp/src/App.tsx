@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@mui/material'
+import { DialogsProvider } from '@toolpad/core/useDialogs'
 import { observer } from 'mobx-react-lite'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
@@ -23,20 +24,22 @@ export const App = observer(() => {
     <TrpcProvider>
       <AppContextProvider>
         <ThemeProvider theme={theme(themeState.curentTheme)}>
-          <BrowserRouter>
-            <Routes>
-              <Route path={routes.getSignOutRout()} element={<SignOutPage />} />
-              <Route element={<Layout />}>
-                <Route path={routes.getPlantsListRoute()} element={<PlantsList />} />
-                <Route path={routes.getAddPlantPageRoute()} element={<AddPlantPage />} />
-                <Route path={routes.getPlantProfileRoute({ plantId: ':plantId' })} element={<PlantProfile />} />
-                <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
-                <Route path={routes.getSignInRoute()} element={<SignInPage />} />
-                <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} />
-                <Route path={routes.getEditPlantRoute({ plantId: ':plantId' })} element={<EditPlantPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+          <DialogsProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path={routes.getSignOutRout()} element={<SignOutPage />} />
+                <Route element={<Layout />}>
+                  <Route path={routes.getPlantsListRoute()} element={<PlantsList />} />
+                  <Route path={routes.getAddPlantPageRoute()} element={<AddPlantPage />} />
+                  <Route path={routes.getPlantProfileRoute({ plantId: ':plantId' })} element={<PlantProfile />} />
+                  <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
+                  <Route path={routes.getSignInRoute()} element={<SignInPage />} />
+                  <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} />
+                  <Route path={routes.getEditPlantRoute({ plantId: ':plantId' })} element={<EditPlantPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </DialogsProvider>
         </ThemeProvider>
       </AppContextProvider>
     </TrpcProvider>

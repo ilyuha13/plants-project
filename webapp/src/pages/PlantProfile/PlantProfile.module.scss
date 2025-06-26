@@ -1,0 +1,10 @@
+@import '../../styles/mixins';
+@import '../../styles/vars';
+
+.container {
+  @include container;
+}
+
+.image {
+  width: 100%;
+}

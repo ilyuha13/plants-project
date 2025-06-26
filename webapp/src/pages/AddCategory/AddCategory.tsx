@@ -20,6 +20,7 @@ export const AddCategory = () => {
     },
     validationSchema: zAddCategoriesTrpcInput,
     resetOnSuccess: true,
+    successMessage: 'категория добавлена',
     onSubmit: async (values) => {
       await addCategories.mutateAsync(values)
       trpcUtils.getCategories.invalidate()
@@ -30,7 +31,9 @@ export const AddCategory = () => {
     <div className={css.container}>
       <form
         className={css.form}
-        onSubmit={() => {
+        onSubmit={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
           formik.handleSubmit()
         }}
       >
