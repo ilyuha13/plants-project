@@ -1,6 +1,17 @@
-import { env } from '../../lib/env'
-import s from './logo.module.scss'
+import { Typography } from '@mui/material'
 
-export const Logo = () => {
-  return <img className={s.logo} src={`${env.VITE_BACKEND_URL}/images/logo.jpg`} alt="logo" />
+export const Logo = ({ color }: { color: string }) => {
+  return (
+    <Typography
+      variant="h4"
+      sx={{
+        color: { color },
+        fontFamily: 'monospace',
+        fontWeight: 800,
+        letterSpacing: '.3rem',
+      }}
+    >
+      GF
+    </Typography>
+  )
 }

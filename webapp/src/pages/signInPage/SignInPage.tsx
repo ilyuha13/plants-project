@@ -7,7 +7,6 @@ import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
 import { getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
-import css from './signInPage.module.scss'
 
 export const SignInPage = () => {
   const navigate = useNavigate()
@@ -32,9 +31,9 @@ export const SignInPage = () => {
   })
 
   return (
-    <div className={css.container}>
-      <form className={css.form} onSubmit={formik.handleSubmit}>
-        <h1 className={css.formTitle}> Авторизация </h1>
+    <div>
+      <form onSubmit={formik.handleSubmit}>
+        <h1> Авторизация </h1>
         <TextInput name="nick" lable="Nick" formik={formik} />
         <TextInput name="password" lable="Password" formik={formik} type="password" />
         <Button {...buttonProps}>Sign In</Button>

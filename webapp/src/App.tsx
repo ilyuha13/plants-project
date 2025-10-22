@@ -1,47 +1,33 @@
-import { ThemeProvider } from '@mui/material'
-import { DialogsProvider } from '@toolpad/core/useDialogs'
-import { observer } from 'mobx-react-lite'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Layout } from './components/layout/Layout'
-import { AppContextProvider } from './lib/ctx'
+import { Outlet, Route, Routes } from 'react-router-dom'
+import { Footer } from './components/Footer/Footer'
+import { Header } from './components/Header/Header'
+import { Layout } from './layout/Layout'
 import * as routes from './lib/routes'
-import { TrpcProvider } from './lib/trpc'
-import { AddCategory } from './pages/AddCategory/AddCategory'
-import { AddPlantPage } from './pages/AddPlantPage/AddPlantPage'
-import { EditPlantPage } from './pages/EditPlantPage/EditPlantPage'
-import { PlantProfile } from './pages/PlantProfile/PlantProfile'
+//import { AddCategory } from './pages/AddCategory/AddCategory'
+//import { AddPlantPage } from './pages/AddPlantInstancePage/AddPlantInstancePage'
+//import { EditPlantPage } from './pages/EditPlantPage/EditPlantPage'
+//import { PlantProfile } from './pages/PlantProfile/PlantProfile'
 import { PlantsList } from './pages/PlantsList/PlantsList'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
 import { SignInPage } from './pages/signInPage/SignInPage'
 import { SignOutPage } from './pages/signOutPage/SignOutPage'
-import { useAppStore } from './store/AppStoreProvider'
-import { theme } from './utils/theme/Theme'
-import './styles/global.scss'
+// eslint-disable-next-line import/order
+import { AddSpeciesPage } from './pages/AddSpeciesPage/AddSpeciesPage'
 
-export const App = observer(() => {
-  const themeState = useAppStore()
+export const App = () => {
   return (
-    <TrpcProvider>
-      <AppContextProvider>
-        <ThemeProvider theme={theme(themeState.curentTheme)}>
-          <DialogsProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path={routes.getSignOutRout()} element={<SignOutPage />} />
-                <Route element={<Layout />}>
-                  <Route path={routes.getPlantsListRoute()} element={<PlantsList />} />
-                  <Route path={routes.getAddPlantPageRoute()} element={<AddPlantPage />} />
-                  <Route path={routes.getPlantProfileRoute({ plantId: ':plantId' })} element={<PlantProfile />} />
-                  <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
-                  <Route path={routes.getSignInRoute()} element={<SignInPage />} />
-                  <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} />
-                  <Route path={routes.getEditPlantRoute({ plantId: ':plantId' })} element={<EditPlantPage />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </DialogsProvider>
-        </ThemeProvider>
-      </AppContextProvider>
-    </TrpcProvider>
+    <Routes>
+      <Route path={routes.getSignOutRout()} element={<SignOutPage />} />
+      <Route element={<Layout header={<Header />} mainContent={<Outlet />} footer={<Footer />} />}>
+        <Route path={routes.getPlantsListRoute()} element={<PlantsList />} />
+        {/* <Route path={routes.getAddPlantPageRoute()} element={<AddPlantPage />} /> */}
+        {/* <Route path={routes.getPlantProfileRoute({ plantId: ':plantId' })} element={<PlantProfile />} /> */}
+        <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
+        <Route path={routes.getSignInRoute()} element={<SignInPage />} />
+        {/* <Route path={routes.getAddCategoriesRoute()} element={<AddCategory />} /> */}
+        {/* <Route path={routes.getEditPlantRoute({ plantId: ':plantId' })} element={<EditPlantPage />} /> */}
+        <Route path={routes.getAddSpeciesPageRoute()} element={<AddSpeciesPage />} />
+      </Route>
+    </Routes>
   )
-})
+}

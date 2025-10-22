@@ -1,9 +1,13 @@
 import { z } from 'zod'
 
 export const zAddPlantTrpcInput = z.object({
-  genus: z.string().min(1, 'введите хотя-бы один символ'),
-  species: z.string().min(1, 'введите хотя-бы один символ'),
-  description: z.string().min(1, 'введите хотя-бы один символ'),
-  categoryId: z.string().min(1, 'введите хотя-бы один символ'),
-  imageSrc: z.string(),
+  description: z.string(),
+  price: z.number().min(0),
+  varietyId: z.string().min(1),
+  images: z
+    .object({
+      src: z.string(),
+      name: z.string(),
+    })
+    .array(),
 })

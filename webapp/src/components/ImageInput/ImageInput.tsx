@@ -2,15 +2,18 @@ import { Button } from '@mui/material'
 import { FormikProps } from 'formik'
 //import { useState } from 'react'
 import { Alert } from '../Alert/Alert'
-import css from './imageInput.module.scss'
 
 export const ImageInput = ({
   name,
   formik,
+  shouldLoadImage,
+  afterLoadImage,
 }: {
   name: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: FormikProps<any>
+  shouldLoadImage?: (imageName: string) => boolean
+  afterLoadImage?: () => void
 }) => {
   const error = formik.errors[name] as string | undefined
   const reader = new FileReader()
@@ -18,15 +21,23 @@ export const ImageInput = ({
   const invalid = !!touched && !!error
   //const [imageUrl, setImageUrl] = useState('')
   return (
-    <Button className={css.button} component="label" variant="outlined" color="secondary">
+    <Button component="label" variant="outlined" color="secondary">
       <input
         onChange={(e) => {
           if (e.target.files) {
             const imgFile = e.target.files[0]
+            if (shouldLoadImage && !shouldLoadImage(imgFile.name)) {
+              return
+            }
+
             reader.readAsDataURL(imgFile)
             reader.onload = () => {
               const readerResult = reader.result
-              formik.setFieldValue(name, readerResult)
+
+              formik.setFieldValue(name, { src: readerResult, name: imgFile.name })
+
+              afterLoadImage?.()
+
               // setImageUrl(readerResult as string)
             }
           }
@@ -37,12 +48,11 @@ export const ImageInput = ({
         onBlur={() => {
           formik.setFieldTouched(name)
         }}
-        className={css.hidenInput}
         type="file"
       />
       {/* {imageUrl && <img src={} alt="image" />} */}
       upload image
-      {invalid && <Alert color="red" message={error} />}
+      {invalid && <Alert type="error" children={error} />}
     </Button>
   )
 }

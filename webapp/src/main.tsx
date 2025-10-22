@@ -1,12 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App.tsx'
-import { AppStoreProvider } from './store/AppStoreProvider.tsx'
+import { Providers } from './Providers.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppStoreProvider>
+    <Providers>
       <App />
-    </AppStoreProvider>
+    </Providers>
   </StrictMode>,
 )

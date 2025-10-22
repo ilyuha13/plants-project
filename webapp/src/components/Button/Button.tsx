@@ -7,9 +7,11 @@ export type ButtonProps = {
   type: 'submit' | 'button' | 'reset'
 }
 
+const sx = { width: 100 }
+
 export const Button = ({ children, loading, type, onClick }: ButtonProps) => {
   return (
-    <MuiButton disabled={loading} onClick={onClick} type={type} variant="outlined" color="secondary">
+    <MuiButton sx={sx} disabled={loading} onClick={onClick} type={type} variant="outlined" color="secondary">
       {loading ? 'подождем...' : children}
     </MuiButton>
   )

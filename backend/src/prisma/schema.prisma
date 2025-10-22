@@ -12,23 +12,42 @@ model User {
     nick String @unique
     password String
     createdAt DateTime @default(now())
+    role Role @default(USER)
+}
+
+enum Role {
+    ADMIN
+    USER
+}
+
+model Species {
+    speciesId String @id @default(uuid())
+    name String
+    description String
+    imagesUrl String[]
+    varieties Variety[]
+}
+
+model Variety {
+    varietyId String @id @default(uuid())
+    species Species @relation(fields: [speciesId], references: [speciesId])
+    speciesId String
+    name String
+    description String
+    lifeForm String
+    variegation String
+    imagesUrl String[]
+    plants Plant[]
+    
+    
 }
 
 model Plant {
     plantId String @unique @id @default(uuid())
-    genus String
-    species String
+    variety Variety @relation(fields: [varietyId], references: [varietyId])
+    varietyId String
     description String
-    imageUrl String
+    imagesUrl String[]   
+    price Int
     createdAt DateTime @default(now())
-    categoryId String
-    category Category @relation(fields: [categoryId], references: [id])
-}
-
-model Category {
-    id String @id @default(uuid())
-    name String
-    description String
-
-    plants Plant[]
 }

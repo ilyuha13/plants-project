@@ -1,10 +1,7 @@
-import { Grid } from '@mui/material'
-import { PlantCard } from '../../components/plantCard/plantCard'
 import { trpc } from '../../lib/trpc'
-import s from './plantsList.module.scss'
 
 export const PlantsList = () => {
-  const { data, error, isError, isFetching, isLoading } = trpc.getPlants.useQuery()
+  const { error, isError, isFetching, isLoading } = trpc.getPlants.useQuery()
   if (isLoading || isFetching) {
     return <span>loading...</span>
   }
@@ -15,8 +12,9 @@ export const PlantsList = () => {
 
   return (
     <div>
-      <div className={s.baner}>
-        <h1 className={s.tytle}>plants</h1>
+      привет
+      {/* <div>
+        <h1>plants</h1>
       </div>
       <Grid
         sx={{
@@ -28,22 +26,20 @@ export const PlantsList = () => {
         container
         spacing={2}
       >
-        {/* <div className={s.container}> */}
         {data?.plants.map((plant) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={plant.plantId}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={plant.plantInstanceId}>
             <PlantCard
-              key={plant.plantId}
-              genus={plant.genus}
+              key={plant.plantInstanceId}
               species={plant.species}
               description={plant.description}
-              plantId={plant.plantId}
+              plantInstanceId={plant.plantInstanceId}
+              price={plant.price}
               createdAt={plant.createdAt}
-              categoryId={plant.categoryId}
-              imageUrl={plant.imageUrl}
+              imagesUrl={plant.imagesUrl}
             />
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
       {/* </div> */}
     </div>
   )

@@ -14,7 +14,6 @@ import { useForm } from '../../lib/form'
 import { getPlantProfileRoute, TEditPlantParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 import { AddCategory } from '../AddCategory/AddCategory'
-import css from './editPlantPage.module.scss'
 
 const EditPlantComopnent = ({
   plant,
@@ -32,7 +31,7 @@ const EditPlantComopnent = ({
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      genus: plant.genus,
+      species: plant.species,
       species: plant.species,
       description: plant.description,
       imageSrc: '',
@@ -65,16 +64,16 @@ const EditPlantComopnent = ({
   }
 
   return (
-    <div className={css.container}>
+    <div>
       {!createCategory && (
         <Button type="button" onClick={onCreateCategoryButtonClick}>
           создать категорию
         </Button>
       )}
       {createCategory && <AddCategory />}
-      <form className={css.form} onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <SelectInput name="categoryId" lable="категория" formik={formik} items={categories} />
-        <TextInput name="genus" lable="род" formik={formik} />
+        <TextInput name="species" lable="род" formik={formik} />
         <TextInput name="species" lable="вид" formik={formik} />
         <TextInput name="description" lable="описание" formik={formik} />
         <ImageInput name="imageSrc" formik={formik} />

@@ -11,12 +11,23 @@ void (async () => {
   try {
     ctx = createAppContext()
     const expressApp = express()
+    expressApp.use((req, res, next) => {
+      // eslint-disable-next-line no-console
+      console.log(`${req.method} ${req.url}`) // Log the HTTP method and URL
+      next()
+    })
     expressApp.use(cors())
     expressApp.use(express.static('public'))
 
     expressApp.get('/ping', (req, res) => {
       res.send('pong')
     })
+
+    expressApp.post('/test', (req, res) => {
+      const data = req.body
+      res.json({ message: 'Data received', data })
+    })
+
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
 

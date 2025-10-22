@@ -14,8 +14,11 @@
     "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.0.1",
     "@plants-project/backend": "workspace:*",
     "@tanstack/react-query": "^5.70.0",
@@ -34,6 +37,7 @@
     "mobx-react-lite": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.1.0",
+    "react-image-crop": "^11.0.10",
     "react-router-dom": "^7.4.1",
     "reset-css": "^5.0.2",
     "sass": "^1.86.1",

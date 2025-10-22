@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { env } from '../../lib/env'
 import { TplantProfileRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
-import css from './PlantProfile.module.scss'
 //import { TrpcRouterOutput } from '@plants-project/backend/src/router'
 
 // const whithPageWrapper = <TQueryResult extends UseTRPCQueryResult>({ Component, useQuery }: { Component: React.FC; useQuery: TQueryResult }) => {
@@ -43,7 +42,7 @@ export const PlantProfile = () => {
                 </Grid>
                 <Grid size={8}>
                   <Box sx={{ backgroundColor: 'blue' }}>
-                    <img className={css.image} src={imageUrl} alt="image" />
+                    <img src={imageUrl} alt="image" />
                   </Box>
                 </Grid>
                 <Grid size={12}>

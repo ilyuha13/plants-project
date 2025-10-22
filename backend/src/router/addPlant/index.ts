@@ -3,24 +3,18 @@ import { saveImageBybase64ToFile } from '../../utils/saveImafeByBase64ToFile'
 import { zAddPlantTrpcInput } from './input'
 
 export const addPlantTrpcRoute = trpc.procedure.input(zAddPlantTrpcInput).mutation(async ({ ctx, input }) => {
-  const exPlant = await ctx.prisma.plant.findMany({
-    where: {
-      genus: input.genus,
-      species: input.species,
-    },
-  })
-  if (exPlant.length > 0) {
-    throw Error('такое уже есть')
-  }
-  const { imageSrc, ...restInput } = input
+  const { images, ...restInput } = input
+  const imagesSrc = images.map((image) => image.src)
 
   try {
-    const imageUrl = await saveImageBybase64ToFile(imageSrc)
-    if (!imageUrl) {
-      throw new Error('Не удалось сохранить изображение')
+    const imagesUrl: string[] = []
+
+    for (const imageSrc of imagesSrc) {
+      imagesUrl.push(await saveImageBybase64ToFile(imageSrc))
     }
+
     await ctx.prisma.plant.create({
-      data: { ...restInput, imageUrl },
+      data: { ...restInput, imagesUrl },
     })
     return true
   } catch (error: unknown) {

@@ -21,3 +21,5 @@ export const getSignInRoute = () => '/signIn'
 export const getSignOutRout = () => '/signOut'
 
 export const getAddCategoriesRoute = () => '/addCategories'
+
+export const getAddSpeciesPageRoute = () => '/addSpecies'

@@ -12,6 +12,22 @@ export const getPlantTrpcRoute = trpc.procedure
       where: {
         plantId: input.plantId,
       },
+      select: {
+        plantId: true,
+        description: true,
+        createdAt: true,
+        price: true,
+        imagesUrl: true,
+        variety: {
+          select: {
+            name: true,
+            description: true,
+            lifeForm: true,
+            variegation: true,
+            imagesUrl: true,
+          },
+        },
+      },
     })
 
     if (!plant) {

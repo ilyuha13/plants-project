@@ -8,7 +8,6 @@ import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
 import { getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
-import css from './signUp.module.scss'
 
 export const SignUpPage = () => {
   const trpcUtils = trpc.useUtils()
@@ -46,9 +45,9 @@ export const SignUpPage = () => {
   })
 
   return (
-    <div className={css.container}>
-      <form className={css.form} onSubmit={formik.handleSubmit}>
-        <h1 className={css.formTitle}> Регистрация </h1>
+    <div>
+      <form onSubmit={formik.handleSubmit}>
+        <h1> Регистрация </h1>
         <TextInput name="nick" lable="Nick" formik={formik} />
         <TextInput name="password" lable="Password" formik={formik} type="password" />
         <TextInput name="passwordAgain" lable="Password again" formik={formik} type="password" />
@@ -57,7 +56,7 @@ export const SignUpPage = () => {
       </form>
       {/* <PlantCard
         key={plant.plantId}
-        genus={plant.genus}
+        species={plant.species}
         species={plant.species}
         description={plant.description}
         plantId={plant.plantId}
