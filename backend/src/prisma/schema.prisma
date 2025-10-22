@@ -20,34 +20,12 @@ enum Role {
     USER
 }
 
-model Species {
-    speciesId String @id @default(uuid())
-    name String
-    description String
-    imagesUrl String[]
-    varieties Variety[]
-}
-
-model Variety {
-    varietyId String @id @default(uuid())
-    species Species @relation(fields: [speciesId], references: [speciesId])
-    speciesId String
-    name String
-    description String
-    lifeForm String
-    variegation String
-    imagesUrl String[]
-    plants Plant[]
-    
-    
-}
-
 model Plant {
     plantId String @unique @id @default(uuid())
-    variety Variety @relation(fields: [varietyId], references: [varietyId])
-    varietyId String
+    variety String
+    genus String
     description String
-    imagesUrl String[]   
+    imagesUrl String[] 
     price Int
     createdAt DateTime @default(now())
 }

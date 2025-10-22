@@ -1,5 +1,5 @@
 import { Box, ImageList, ImageListItem, Paper, Typography } from '@mui/material'
-import { zAddPlantInstanceTrpcInput } from '@plants-project/backend/src/router/addPlantInstance/input'
+import { zAddPlantTrpcInput } from '@plants-project/backend/src/router/addPlant/input'
 import { useEffect, useState } from 'react'
 import { SpeciesSelector } from '../../components/SpeciesSelector/SpeciesSelector'
 import { env } from '../../lib/env'
@@ -7,7 +7,7 @@ import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 
 export const AddPlantPage = () => {
-  const addPlant = trpc.addPlantInstance.useMutation()
+  const addPlant = trpc.addPlant.useMutation()
   const [species, setSpecies] = useState<{
     description: string
     imagesUrl: string[]
@@ -31,7 +31,7 @@ export const AddPlantPage = () => {
       price: 0,
       speciesId: '',
     },
-    validationSchema: zAddPlantInstanceTrpcInput,
+    validationSchema: zAddPlantTrpcInput,
     onSubmit: async (values) => {
       await addPlant.mutateAsync(values)
     },

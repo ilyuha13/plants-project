@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
 export const zAddPlantTrpcInput = z.object({
+  variety: z.string(),
+  genus: z.string().min(1),
   description: z.string(),
-  price: z.number().min(0),
-  varietyId: z.string().min(1),
   images: z
     .object({
       src: z.string(),
       name: z.string(),
     })
     .array(),
+  price: z.number().min(1),
 })

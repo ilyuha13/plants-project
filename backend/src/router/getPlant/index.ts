@@ -14,19 +14,12 @@ export const getPlantTrpcRoute = trpc.procedure
       },
       select: {
         plantId: true,
+        variety: true,
+        genus: true,
         description: true,
         createdAt: true,
         price: true,
         imagesUrl: true,
-        variety: {
-          select: {
-            name: true,
-            description: true,
-            lifeForm: true,
-            variegation: true,
-            imagesUrl: true,
-          },
-        },
       },
     })
 
