@@ -1,11 +1,12 @@
+import { Box, Paper, Stack, Typography } from '@mui/material'
 import { zSignInTrpcInput } from '@plants-project/backend/src/router/signIn/input'
 import Cookies from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
-import { getPlantsListRoute } from '../../lib/routes'
+import { getPlantsListRoute, getSignUpRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const SignInPage = () => {
@@ -31,14 +32,19 @@ export const SignInPage = () => {
   })
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
-        <h1> Авторизация </h1>
-        <TextInput name="nick" lable="Nick" formik={formik} />
-        <TextInput name="password" lable="Password" formik={formik} type="password" />
-        <Button {...buttonProps}>Sign In</Button>
-        {!alertHidden && <Alert {...alertProps} />}
-      </form>
-    </div>
+    <Box>
+      <Paper elevation={3}>
+        <Stack spacing={2} sx={{ p: 2 }}>
+          <Stack component="form" onSubmit={formik.handleSubmit} spacing={2}>
+            <Typography variant="h2">Авторизация</Typography>
+            <TextInput name="nick" lable="Nick" formik={formik} />
+            <TextInput name="password" lable="Password" formik={formik} type="password" />
+            <Button {...buttonProps}>войти</Button>
+            {!alertHidden && <Alert {...alertProps} />}
+          </Stack>
+          <Link to={getSignUpRoute()}>зарегистрироваться</Link>
+        </Stack>
+      </Paper>
+    </Box>
   )
 }

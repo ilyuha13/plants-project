@@ -1,3 +1,4 @@
+import { Box, Paper, Stack, Typography } from '@mui/material'
 import { zSignUpTrpcInput } from '@plants-project/backend/src/router/signUp/input'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
@@ -45,22 +46,17 @@ export const SignUpPage = () => {
   })
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
-        <h1> Регистрация </h1>
-        <TextInput name="nick" lable="Nick" formik={formik} />
-        <TextInput name="password" lable="Password" formik={formik} type="password" />
-        <TextInput name="passwordAgain" lable="Password again" formik={formik} type="password" />
-        <Button {...buttonProps}>создать пользователя</Button>
-        {!alertHidden && <Alert {...alertProps} />}
-      </form>
-      {/* <PlantCard
-        key={plant.plantId}
-        species={plant.species}
-        species={plant.species}
-        description={plant.description}
-        plantId={plant.plantId}
-      /> */}
-    </div>
+    <Box>
+      <Paper elevation={3}>
+        <Stack component="form" onSubmit={formik.handleSubmit} spacing={2} sx={{ p: 2 }}>
+          <Typography variant="h2">Регистрация</Typography>
+          <TextInput name="nick" lable="Nick" formik={formik} />
+          <TextInput name="password" lable="Password" formik={formik} type="password" />
+          <TextInput name="passwordAgain" lable="Password again" formik={formik} type="password" />
+          <Button {...buttonProps}>создать пользователя</Button>
+          {!alertHidden && <Alert {...alertProps} />}
+        </Stack>
+      </Paper>
+    </Box>
   )
 }

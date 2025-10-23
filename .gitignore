@@ -1,1 +1,8 @@
 node_modules
+
+# User uploaded images
+backend/public/images/*.png
+backend/public/images/*.jpg
+backend/public/images/*.jpeg
+backend/public/images/*.svg
+backend/public/images/*.webp

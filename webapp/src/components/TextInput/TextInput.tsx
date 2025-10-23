@@ -5,7 +5,7 @@ type TTextInput = {
   name: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: FormikProps<any>
-  type?: 'text' | 'password'
+  type?: 'text' | 'password' | 'number'
 }
 
 export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) => {
@@ -16,7 +16,7 @@ export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) =>
   const invalid = !!touched && !!error
   return (
     <TextField
-      variant="standard"
+      sx={{ width: 500 }}
       error={invalid}
       disabled={disabled}
       label={lable}

@@ -4,11 +4,6 @@ export const zAddPlantTrpcInput = z.object({
   variety: z.string(),
   genus: z.string().min(1),
   description: z.string(),
-  images: z
-    .object({
-      src: z.string(),
-      name: z.string(),
-    })
-    .array(),
+  images: z.string().array(),
   price: z.number().min(1),
 })

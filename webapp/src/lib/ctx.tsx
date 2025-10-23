@@ -12,6 +12,7 @@ const AppReactContext = createContext<AppContext>({
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, error, isLoading, isFetching, isError } = trpc.getMe.useQuery()
+
   return (
     <AppReactContext.Provider
       value={{
