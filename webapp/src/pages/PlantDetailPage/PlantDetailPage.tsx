@@ -1,6 +1,6 @@
-import { Box, Button, Grid, ImageList, ImageListItem, Paper, Stack, Typography } from '@mui/material'
-import { useState } from 'react'
+import { Box, Button, Grid, Paper, Stack, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Galery } from '../../components/Galery/Galery'
 import { env } from '../../lib/env'
 import { trpc } from '../../lib/trpc'
 
@@ -11,7 +11,6 @@ type PlantDetailParams = {
 export const PlantDetailPage = () => {
   const { plantId } = useParams<PlantDetailParams>()
   const navigate = useNavigate()
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   // Fetch plant data
   const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId! }, { enabled: !!plantId })
@@ -75,76 +74,7 @@ export const PlantDetailPage = () => {
       >
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* LEFT COLUMN - Галерея фото */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Stack>
-              {/* Главное изображение */}
-              {imageUrls.length > 0 && (
-                <Box
-                  component="img"
-                  src={imageUrls[selectedImageIndex]}
-                  alt={`${plant.variety} - фото ${selectedImageIndex + 1}`}
-                  sx={{
-                    width: '100%',
-                    height: { xs: '300px', sm: '400px', md: '500px' },
-                    borderRadius: 1, // 1 * 8px = 8px (соответствует theme.shape.borderRadius)
-                    objectFit: 'cover',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s',
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                    },
-                  }}
-                  onClick={() => {
-                    // TODO: Открывать в полноэкранном режиме
-                  }}
-                />
-              )}
-
-              {/* Миниатюры */}
-              {imageUrls.length > 1 && (
-                <ImageList
-                  cols={4}
-                  gap={8}
-                  sx={{
-                    p: 2,
-                    margin: 0,
-                    overflow: 'hidden',
-                  }}
-                >
-                  {imageUrls.map((url, index) => (
-                    <ImageListItem
-                      key={url}
-                      sx={{
-                        cursor: 'pointer',
-                        opacity: selectedImageIndex === index ? 1 : 0.6,
-                        border: selectedImageIndex === index ? 2 : 0,
-                        borderColor: 'primary.main',
-                        borderRadius: 1,
-                        overflow: 'hidden',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          opacity: 1,
-                          transform: 'scale(1.05)',
-                        },
-                      }}
-                      onClick={() => setSelectedImageIndex(index)}
-                    >
-                      <img
-                        src={url}
-                        alt={`${plant.variety} - миниатюра ${index + 1}`}
-                        loading="lazy"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    </ImageListItem>
-                  ))}
-                </ImageList>
-              )}
-            </Stack>
-          </Grid>
+          <Galery imageUrls={imageUrls} alt={plant.variety} />
 
           {/* RIGHT COLUMN - Контент */}
           <Grid size={{ xs: 12, md: 6 }}>
