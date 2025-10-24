@@ -106,6 +106,7 @@ export const PlantDetailPage = () => {
                   cols={4}
                   gap={8}
                   sx={{
+                    p: 2,
                     margin: 0,
                     overflow: 'hidden',
                   }}
@@ -147,18 +148,18 @@ export const PlantDetailPage = () => {
 
           {/* RIGHT COLUMN - Контент */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Stack spacing={3}>
-              {/* Сорт */}
+            <Stack spacing={3} sx={{ height: '100%' }}>
+              {/* Вид (genus) */}
               <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
-                  {plant.variety}
+                <Typography variant="h6" color="text.secondary">
+                  {plant.genus}
                 </Typography>
               </Box>
 
-              {/* Вид */}
+              {/* Сорт (variety) */}
               <Box>
-                <Typography variant="h5" color="text.secondary">
-                  {plant.genus}
+                <Typography variant="h4" component="h1" gutterBottom>
+                  {plant.variety}
                 </Typography>
               </Box>
 
@@ -168,44 +169,37 @@ export const PlantDetailPage = () => {
                   {plant.description}
                 </Typography>
               </Box>
+              <Box flex="1"></Box>
 
-              {/* Цена - стилизованная */}
+              {/* Цена и кнопка связи - внутри карточки, смещены вправо */}
               <Paper
-                elevation={0}
                 sx={{
-                  backgroundColor: 'primary.main',
-                  color: 'primary.contrastText',
-                  padding: 3,
-                  textAlign: 'center',
+                  padding: 2,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: 2,
                   marginTop: 'auto',
-                  // borderRadius наследуется из theme.shape.borderRadius автоматически
+                  width: { xs: '100%', sm: 'auto' },
                 }}
               >
-                <Typography variant="h3" component="div" fontWeight="bold">
+                <Typography variant="h5" component="div" fontWeight="bold">
                   {plant.price} ₽
                 </Typography>
+                <Button component="a" href={telegramLink} target="_blank" rel="noopener noreferrer">
+                  Связаться в Telegram
+                </Button>
               </Paper>
             </Stack>
           </Grid>
         </Grid>
       </Paper>
 
-      {/* Кнопки под Paper */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ marginTop: 3 }}>
-        <Button onClick={() => navigate(-1)} sx={{ flex: { xs: 1, sm: 1 } }}>
-          ← Назад к каталогу
-        </Button>
-
-        <Button
-          component="a"
-          href={telegramLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ flex: { xs: 1, sm: 1 } }}
-        >
-          Связаться в Telegram
-        </Button>
-      </Stack>
+      {/* Кнопка назад под Paper */}
+      <Button onClick={() => navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
+        ← Назад к каталогу
+      </Button>
     </Box>
   )
 }
