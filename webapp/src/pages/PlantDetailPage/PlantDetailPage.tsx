@@ -68,7 +68,6 @@ export const PlantDetailPage = () => {
     >
       {/* Main Card - почти на весь экран */}
       <Paper
-        elevation={3}
         sx={{
           padding: { xs: 2, sm: 3, md: 4 },
           minHeight: '70vh',
@@ -77,7 +76,7 @@ export const PlantDetailPage = () => {
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* LEFT COLUMN - Галерея фото */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Stack spacing={2}>
+            <Stack>
               {/* Главное изображение */}
               {imageUrls.length > 0 && (
                 <Box
@@ -87,7 +86,7 @@ export const PlantDetailPage = () => {
                   sx={{
                     width: '100%',
                     height: { xs: '300px', sm: '400px', md: '500px' },
-                    borderRadius: 2,
+                    borderRadius: 1, // 1 * 8px = 8px (соответствует theme.shape.borderRadius)
                     objectFit: 'cover',
                     cursor: 'pointer',
                     transition: 'transform 0.2s',
@@ -171,33 +170,33 @@ export const PlantDetailPage = () => {
               </Box>
 
               {/* Цена - стилизованная */}
-              <Box
+              <Paper
+                elevation={0}
                 sx={{
                   backgroundColor: 'primary.main',
                   color: 'primary.contrastText',
                   padding: 3,
-                  borderRadius: 2,
                   textAlign: 'center',
                   marginTop: 'auto',
+                  // borderRadius наследуется из theme.shape.borderRadius автоматически
                 }}
               >
                 <Typography variant="h3" component="div" fontWeight="bold">
                   {plant.price} ₽
                 </Typography>
-              </Box>
+              </Paper>
             </Stack>
           </Grid>
         </Grid>
       </Paper>
 
       {/* Кнопки под Paper */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ marginTop: 3 }}>
-        <Button size="large" onClick={() => navigate(-1)} sx={{ flex: { xs: 1, sm: 1 } }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ marginTop: 3 }}>
+        <Button onClick={() => navigate(-1)} sx={{ flex: { xs: 1, sm: 1 } }}>
           ← Назад к каталогу
         </Button>
 
         <Button
-          size="large"
           component="a"
           href={telegramLink}
           target="_blank"

@@ -47,8 +47,8 @@ export const SignUpPage = () => {
 
   return (
     <Box>
-      <Paper elevation={3}>
-        <Stack component="form" onSubmit={formik.handleSubmit} spacing={2} sx={{ p: 2 }}>
+      <Paper>
+        <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
           <Typography variant="h2">Регистрация</Typography>
           <TextInput name="nick" lable="Nick" formik={formik} />
           <TextInput name="password" lable="Password" formik={formik} type="password" />

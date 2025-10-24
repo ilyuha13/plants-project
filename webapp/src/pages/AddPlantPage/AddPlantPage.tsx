@@ -33,8 +33,8 @@ export const AddPlantPage = () => {
 
   return (
     <Box>
-      <Paper elevation={3}>
-        <Stack component="form" onSubmit={formik.handleSubmit} spacing={2} sx={{ p: 2 }}>
+      <Paper>
+        <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
           <Typography variant="h2">Добавить растение</Typography>
           <TextInput name="variety" lable="сорт" formik={formik} />
           <TextInput name="genus" lable="вид" formik={formik} />
