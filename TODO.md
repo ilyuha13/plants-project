@@ -518,6 +518,27 @@ const telegramLink = `https://t.me/${botUsername}?start=plant_${plantId}`
 - [ ] Кнопка "Каталог" → главная страница
 - [ ] Сделать Logo кликабельным (переход на главную)
 - [ ] Базовый поиск (опционально)
+- [ ] **TODO из кода:** Position sticky + opacity для Header (Header.tsx:13)
+
+### TODO из кода (обнаружены при аудите)
+- [ ] **AddPlantPage:** Исправить price default value (0 → пустая строка)
+  - Файл: `webapp/src/pages/AddPlantPage/AddPlantPage.tsx:24`
+  - Проблема: Нужно удалять 0 перед вводом
+  - Решение: Либо price: '', либо placeholder без default value
+
+- [ ] **SignIn/SignUp:** Ограничить инпуты (maxLength/валидация)
+  - Файлы: `SignInPage.tsx:35`, `SignUpPage.tsx:49`
+  - Добавить maxLength для nick, password
+
+- [ ] **PlantDetailPage:** Переместить telegramUsername в .env
+  - Файл: `PlantDetailPage.tsx:53`
+  - Сейчас: hardcoded 'your_bot_username'
+  - Нужно: `VITE_TELEGRAM_BOT_USERNAME` в .env
+
+- [ ] **Galery:** Fullscreen preview при клике на изображение
+  - Файл: `Galery.tsx:26`
+  - Использовать Dialog или модальное окно
+  - Добавить навигацию между фото (prev/next)
 
 ### Улучшения PlantCard (Приоритет: СРЕДНИЙ)
 - [ ] Форматирование цены: `{plant.price} ₽`
