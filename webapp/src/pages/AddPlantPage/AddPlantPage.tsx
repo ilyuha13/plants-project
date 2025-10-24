@@ -20,7 +20,7 @@ export const AddPlantPage = () => {
       genus: '',
       description: '',
       images: [],
-      price: 0,
+      price: '', // Пустая строка вместо 0 для лучшего UX
     },
     validationSchema: zAddPlantTrpcInput,
     onSubmit: async (values) => {
