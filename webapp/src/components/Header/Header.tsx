@@ -10,6 +10,7 @@ export const Header = () => {
   const isAdmin: boolean = me?.role === 'ADMIN'
 
   return (
+    //{TODO: positon sticki, copacity}
     <Box>
       <AppBar position="sticky" sx={{ bgcolor: 'transparent', backdropFilter: 'blur(10px)' }}>
         <Toolbar>

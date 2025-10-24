@@ -32,6 +32,7 @@ export const SignInPage = () => {
   })
 
   return (
+    //{TODO: ограничить инпуты}
     <Box>
       <Paper>
         <Stack sx={{ p: 2 }}>

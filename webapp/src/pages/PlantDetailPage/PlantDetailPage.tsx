@@ -74,7 +74,9 @@ export const PlantDetailPage = () => {
       >
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* LEFT COLUMN - Галерея фото */}
-          <Galery imageUrls={imageUrls} alt={plant.variety} />
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Galery imageUrls={imageUrls} alt={plant.variety} />
+          </Grid>
 
           {/* RIGHT COLUMN - Контент */}
           <Grid size={{ xs: 12, md: 6 }}>

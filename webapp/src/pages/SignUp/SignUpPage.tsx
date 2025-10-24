@@ -46,6 +46,7 @@ export const SignUpPage = () => {
   })
 
   return (
+    //{TODO: ограничить инпуты}
     <Box>
       <Paper>
         <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>

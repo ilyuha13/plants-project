@@ -16,7 +16,6 @@ export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) =>
   const invalid = !!touched && !!error
   return (
     <TextField
-      sx={{ width: 500 }}
       error={invalid}
       disabled={disabled}
       label={lable}
