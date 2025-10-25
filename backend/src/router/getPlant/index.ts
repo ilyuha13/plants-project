@@ -14,6 +14,7 @@ export const getPlantTrpcRoute = trpc.procedure
       },
       select: {
         plantId: true,
+        inventoryNumber: true,
         variety: true,
         genus: true,
         description: true,
