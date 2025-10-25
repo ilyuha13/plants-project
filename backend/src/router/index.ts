@@ -2,6 +2,7 @@ import { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
 import { trpc } from '../lib/trpc'
 // @index('./**/index.ts', f => `import { ${f.path.split('/').slice(0, -1).pop()}TrpcRoute } from '${f.path.split('/').slice(0, -1).join('/')}'`)
 import { addPlantTrpcRoute } from './addPlant'
+import { deletePlantTrpcRoute } from './deletePlant'
 import { getMeTrpcRoute } from './getMe'
 import { getPlantTrpcRoute } from './getPlant'
 import { getPlantsTrpcRoute } from './getPlants'
@@ -12,6 +13,7 @@ import { signUpTrpcRoute } from './signUp'
 export const trpcRouter = trpc.router({
   // @index('./**/index.ts', f => `${f.path.split('/').slice(0, -1).pop()}: ${f.path.split('/').slice(0, -1).pop()}TrpcRoute,`)
   addPlant: addPlantTrpcRoute,
+  deletePlant: deletePlantTrpcRoute,
   getMe: getMeTrpcRoute,
   getPlant: getPlantTrpcRoute,
   getPlants: getPlantsTrpcRoute,

@@ -1,14 +1,14 @@
 import TextField from '@mui/material/TextField'
 import { FormikProps } from 'formik'
 type TTextInput = {
-  lable: string
+  label: string
   name: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: FormikProps<any>
   type?: 'text' | 'password' | 'number'
 }
 
-export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) => {
+export const TextInput = ({ type = 'text', formik, label, name }: TTextInput) => {
   const value = formik.values[name]
   const error = formik.errors[name] as string | undefined
   const touched = formik.touched[name]
@@ -18,7 +18,7 @@ export const TextInput = ({ type = 'text', formik, lable, name }: TTextInput) =>
     <TextField
       error={invalid}
       disabled={disabled}
-      label={lable}
+      label={label}
       type={type}
       id={name}
       name={name}

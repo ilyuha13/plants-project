@@ -51,9 +51,9 @@ export const SignUpPage = () => {
       <Paper>
         <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
           <Typography variant="h2">Регистрация</Typography>
-          <TextInput name="nick" lable="Nick" formik={formik} />
-          <TextInput name="password" lable="Password" formik={formik} type="password" />
-          <TextInput name="passwordAgain" lable="Password again" formik={formik} type="password" />
+          <TextInput name="nick" label="Nick" formik={formik} />
+          <TextInput name="password" label="Password" formik={formik} type="password" />
+          <TextInput name="passwordAgain" label="Password again" formik={formik} type="password" />
           <Button {...buttonProps}>создать пользователя</Button>
           {!alertHidden && <Alert {...alertProps} />}
         </Stack>

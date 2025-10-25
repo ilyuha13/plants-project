@@ -38,8 +38,8 @@ export const SignInPage = () => {
         <Stack sx={{ p: 2 }}>
           <Stack component="form" onSubmit={formik.handleSubmit}>
             <Typography variant="h2">Авторизация</Typography>
-            <TextInput name="nick" lable="Nick" formik={formik} />
-            <TextInput name="password" lable="Password" formik={formik} type="password" />
+            <TextInput name="nick" label="Nick" formik={formik} />
+            <TextInput name="password" label="Password" formik={formik} type="password" />
             <Button {...buttonProps}>войти</Button>
             {!alertHidden && <Alert {...alertProps} />}
           </Stack>

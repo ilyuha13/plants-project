@@ -44,10 +44,10 @@ export const AddPlantPage = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
               <Typography variant="h2">Добавить растение</Typography>
-              <TextInput name="variety" lable="сорт" formik={formik} />
-              <TextInput name="genus" lable="вид" formik={formik} />
-              <TextInput name="description" lable="описание" formik={formik} />
-              <TextInput type="number" name="price" lable="цена" formik={formik} />
+              <TextInput name="variety" label="сорт" formik={formik} />
+              <TextInput name="genus" label="вид" formik={formik} />
+              <TextInput name="description" label="описание" formik={formik} />
+              <TextInput type="number" name="price" label="цена" formik={formik} />
               <ImagesInput name="images" formik={formik} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
