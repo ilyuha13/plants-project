@@ -22,6 +22,7 @@ enum Role {
 
 model Plant {
     plantId String @unique @id @default(uuid())
+    inventoryNumber String? @unique
     variety String
     genus String
     description String

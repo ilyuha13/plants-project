@@ -112,6 +112,18 @@ export const PlantDetailPage = () => {
           {/* RIGHT COLUMN - Контент */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={3} sx={{ height: '100%' }}>
+              {/* Инвентарный номер (только для админов) */}
+              {me?.role === 'ADMIN' && plant.inventoryNumber && (
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Инвентарный номер
+                  </Typography>
+                  <Typography variant="body2" fontWeight="medium">
+                    #{plant.inventoryNumber}
+                  </Typography>
+                </Box>
+              )}
+
               {/* Вид (genus) */}
               <Box>
                 <Typography variant="h6" color="text.secondary">
