@@ -4,12 +4,13 @@ export type ButtonProps = {
   children: React.ReactNode
   loading?: boolean
   onClick?: React.MouseEventHandler<HTMLButtonElement>
-  type: 'submit' | 'button' | 'reset'
+  type?: 'submit' | 'button' | 'reset'
+  variant?: 'text' | 'outlined'
 }
 
-export const Button = ({ children, loading, type, onClick }: ButtonProps) => {
+export const Button = ({ variant, children, loading, type, onClick }: ButtonProps) => {
   return (
-    <MuiButton sx={{ width: 100 }} disabled={loading} onClick={onClick} type={type} variant="outlined">
+    <MuiButton variant={variant} disabled={loading} onClick={onClick} type={type}>
       {loading ? 'подождем...' : children}
     </MuiButton>
   )

@@ -33,7 +33,7 @@ export const SignUpPage = () => {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Password must be the same',
-            path: ['passwprdAgain'],
+            path: ['passwordAgain'],
           })
         }
       }),
@@ -46,10 +46,21 @@ export const SignUpPage = () => {
   })
 
   return (
-    //{TODO: ограничить инпуты}
     <Box>
-      <Paper>
-        <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
+      <Paper
+        sx={{
+          padding: { xs: 2, sm: 3, md: 4 },
+          minHeight: '70vh',
+        }}
+      >
+        <Stack
+          component="form"
+          onSubmit={formik.handleSubmit}
+          sx={{
+            maxWidth: 600,
+            width: '100%',
+          }}
+        >
           <Typography variant="h2">Регистрация</Typography>
           <TextInput name="nick" label="Nick" formik={formik} />
           <TextInput name="password" label="Password" formik={formik} type="password" />
