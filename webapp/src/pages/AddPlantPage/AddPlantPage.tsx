@@ -17,12 +17,9 @@ export const AddPlantPage = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      inventoryNumber: '',
-      variety: '',
-      genus: '',
+      name: '',
       description: '',
       images: [],
-      price: 0, // {TODO: не удобно приходиться удалять 0 если сделать пустую строку то ошибка - можно использовать regex /^\d+$/ как в inventoryNumber}
     },
     validationSchema: zAddPlantTrpcInput,
     onSubmit: async (values) => {
@@ -45,11 +42,8 @@ export const AddPlantPage = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
               <Typography variant="h2">Добавить растение</Typography>
-              <TextInput name="inventoryNumber" label="инвентарный номер" formik={formik} />
-              <TextInput name="variety" label="сорт" formik={formik} />
-              <TextInput name="genus" label="вид" formik={formik} />
+              <TextInput name="name" label="название" formik={formik} />
               <TextInput name="description" label="описание" formik={formik} />
-              <TextInput type="number" name="price" label="цена" formik={formik} />
               <ImagesInput name="images" formik={formik} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}

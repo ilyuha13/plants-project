@@ -80,13 +80,6 @@ export const PlantDetailPage = () => {
   // Prepare image URLs
   const imageUrls = plant.imagesUrl.map((url) => `${env.VITE_BACKEND_URL}/${url.replace('public/', '')}`)
 
-  // Telegram contact link
-  const telegramUsername = 'your_bot_username' // TODO: Move to env variables
-  const telegramMessage = encodeURIComponent(
-    `Здравствуйте! Интересует растение "${plant.variety}" (${plant.genus}). Цена: ${plant.price} ₽`,
-  )
-  const telegramLink = `https://t.me/${telegramUsername}?text=${telegramMessage}`
-
   return (
     <Box
       sx={{
@@ -106,37 +99,16 @@ export const PlantDetailPage = () => {
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* LEFT COLUMN - Галерея фото */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Galery imageUrls={imageUrls} alt={plant.variety} />
+            <Galery imageUrls={imageUrls} alt={plant.name} />
           </Grid>
 
           {/* RIGHT COLUMN - Контент */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={3} sx={{ height: '100%' }}>
-              {/* Инвентарный номер (только для админов) */}
-              {me?.role === 'ADMIN' && plant.inventoryNumber && (
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Инвентарный номер
-                  </Typography>
-                  <Typography variant="body2" fontWeight="medium">
-                    #{plant.inventoryNumber}
-                  </Typography>
-                </Box>
-              )}
-
-              {/* Вид (genus) */}
-              <Box>
-                <Typography variant="h6" color="text.secondary">
-                  {plant.genus}
-                </Typography>
-              </Box>
-
-              {/* Сорт (variety) */}
-              <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
-                  {plant.variety}
-                </Typography>
-              </Box>
+              {/* Название */}
+              <Typography variant="h3" component="div" fontWeight="bold">
+                {plant.name}
+              </Typography>
 
               {/* Описание */}
               <Box>
@@ -147,25 +119,6 @@ export const PlantDetailPage = () => {
               <Box flex="1"></Box>
 
               {/* Цена и кнопка связи - внутри карточки, смещены вправо */}
-              <Paper
-                sx={{
-                  padding: 2,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  gap: 2,
-                  marginTop: 'auto',
-                  width: { xs: '100%', sm: 'auto' },
-                }}
-              >
-                <Typography variant="h5" component="div" fontWeight="bold">
-                  {plant.price} ₽
-                </Typography>
-                <Button component="a" href={telegramLink} target="_blank" rel="noopener noreferrer">
-                  Связаться в Telegram
-                </Button>
-              </Paper>
             </Stack>
           </Grid>
         </Grid>
@@ -188,7 +141,7 @@ export const PlantDetailPage = () => {
         <DialogTitle>Подтверждение удаления</DialogTitle>
         <DialogContent>
           <Typography>
-            Вы уверены что хотите удалить "{plant.variety}"?
+            Вы уверены что хотите удалить "{plant.name}"?
             <br />
             Это действие нельзя отменить.
           </Typography>
