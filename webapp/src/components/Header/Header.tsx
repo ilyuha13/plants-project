@@ -1,7 +1,7 @@
 import { AppBar, Box, Toolbar, IconButton, Button } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { useMe } from '../../lib/ctx'
-import { getAddPlantPageRoute } from '../../lib/routes'
+import { getAddPlantInstsancePageRoute, getAddPlantPageRoute } from '../../lib/routes'
 import { Logo } from '../Logo/Logo'
 import { UserPanel } from '../UserPanel/UserPanel'
 
@@ -18,13 +18,16 @@ export const Header = () => {
             <Logo color="primary.main" />
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
-          <Toolbar sx={{ justifyContent: 'center', flexDirection: 'column', gap: 0.5 }}>
-            {isAdmin && (
+          {isAdmin && (
+            <Toolbar>
               <Button component={RouterLink} to={getAddPlantPageRoute()} sx={{ minWidth: 140 }}>
-                добавить
+                добавить растение
               </Button>
-            )}
-          </Toolbar>
+              <Button component={RouterLink} to={getAddPlantInstsancePageRoute()} sx={{ minWidth: 140 }}>
+                добавить экземпляр
+              </Button>
+            </Toolbar>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           <UserPanel />
         </Toolbar>
