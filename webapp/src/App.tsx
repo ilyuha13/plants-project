@@ -5,6 +5,7 @@ import { Layout } from './layout/Layout'
 import * as routes from './lib/routes'
 import { AddPlantInstancePage } from './pages/AddPlantInstancePage/AddPlantInstancePage'
 import { AddPlantPage } from './pages/AddPlantPage/AddPlantPage'
+import { InstanceDetailPage } from './pages/InstanceDetailPage/InstanceDetailPage'
 import { PlantDetailPage } from './pages/PlantDetailPage/PlantDetailPage'
 import { PlantsListPage } from './pages/PlantsListPage/PlantsListPage'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
@@ -22,6 +23,7 @@ export const App = () => {
         <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
         <Route path={routes.getSignInRoute()} element={<SignInPage />} />
         <Route path={routes.getAddPlantInstsancePageRoute()} element={<AddPlantInstancePage />} />
+        <Route path={routes.getInstanceDetailRoute()} element={<InstanceDetailPage />} />
       </Route>
     </Routes>
   )

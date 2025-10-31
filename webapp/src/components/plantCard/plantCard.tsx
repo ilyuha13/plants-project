@@ -1,6 +1,7 @@
-import { Card, CardContent, CardMedia, Typography, CardActionArea } from '@mui/material'
+import { Card, CardContent, CardMedia, Typography, CardActions } from '@mui/material'
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
+import { Button } from '../Button/Button'
 
 type BaseCardProps = {
   onClick?: () => void
@@ -42,19 +43,27 @@ export const PlantCard = (props: TPlantCardProps) => {
   if (type === 'plant') {
     return (
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <CardActionArea onClick={onClick}>
-          <CardMedia component="img" height="300" image={imageUrl} alt={data.name} sx={{ objectFit: 'cover' }} />
-          <CardContent sx={{ flexGrow: 1 }}>
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={data.name}
+          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
+        />
+        <CardActions>
+          <Button type="button" variant="text" onClick={onClick}>
             <Typography variant="h6" gutterBottom>
               {data.name}
             </Typography>
-            {data.description && (
-              <Typography variant="body2" color="text.secondary" noWrap>
-                {data.description}
-              </Typography>
-            )}
-          </CardContent>
-        </CardActionArea>
+          </Button>
+        </CardActions>
+
+        <CardContent sx={{ flexGrow: 1 }}>
+          {data.description && (
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {data.description}
+            </Typography>
+          )}
+        </CardContent>
       </Card>
     )
   }
@@ -62,45 +71,45 @@ export const PlantCard = (props: TPlantCardProps) => {
   if (type === 'instance') {
     return (
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <CardActionArea onClick={onClick}>
-          <CardMedia
-            component="img"
-            height="250"
-            image={imageUrl}
-            alt={`Экземпляр #${data.inventoryNumber}`}
-            sx={{ objectFit: 'cover' }}
-          />
-          <CardContent sx={{ flexGrow: 1 }}>
-            {data.plantName && (
-              <Typography variant="caption" color="text.secondary">
-                {data.plantName}
-              </Typography>
-            )}
-            {me?.role === 'ADMIN' && (
-              <Typography variant="body2" fontWeight="medium" color="primary">
-                #{data.inventoryNumber}
-              </Typography>
-            )}
-            <Typography variant="h6" fontWeight="bold" sx={{ mt: 1 }}>
-              {data.price} ₽
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={`Экземпляр #${data.inventoryNumber}`}
+          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
+        />
+        <CardActions>
+          <Button type="button" variant="text" onClick={onClick}>
+            <Typography variant="h5" color="text.secondary">
+              {data.plantName}
             </Typography>
-            {data.description && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} noWrap>
-                {data.description}
-              </Typography>
-            )}
-            {me?.role === 'ADMIN' && (
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                Добавлено:{' '}
-                {data.createdAt.toLocaleDateString('ru-RU', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                })}
-              </Typography>
-            )}
-          </CardContent>
-        </CardActionArea>
+          </Button>
+        </CardActions>
+
+        <CardContent sx={{ flexGrow: 1 }}>
+          {me?.role === 'ADMIN' && (
+            <Typography variant="body2" fontWeight="medium" color="primary">
+              #{data.inventoryNumber}
+            </Typography>
+          )}
+          <Typography variant="h6" fontWeight="bold" sx={{ mt: 1 }}>
+            {data.price} ₽
+          </Typography>
+          {data.description && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} noWrap>
+              {data.description}
+            </Typography>
+          )}
+          {me?.role === 'ADMIN' && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+              Добавлено:{' '}
+              {data.createdAt.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </Typography>
+          )}
+        </CardContent>
       </Card>
     )
   }

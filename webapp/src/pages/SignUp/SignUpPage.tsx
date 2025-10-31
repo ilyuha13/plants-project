@@ -32,7 +32,7 @@ export const SignUpPage = () => {
         if (val.password !== val.passwordAgain) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Password must be the same',
+            message: 'Пароли должны совпадать',
             path: ['passwordAgain'],
           })
         }
@@ -62,9 +62,9 @@ export const SignUpPage = () => {
           }}
         >
           <Typography variant="h2">Регистрация</Typography>
-          <TextInput name="nick" label="Nick" formik={formik} />
-          <TextInput name="password" label="Password" formik={formik} type="password" />
-          <TextInput name="passwordAgain" label="Password again" formik={formik} type="password" />
+          <TextInput name="nick" label="Имя пользователя" formik={formik} />
+          <TextInput name="password" label="Пароль" formik={formik} type="password" />
+          <TextInput name="passwordAgain" label="Повторите пароль" formik={formik} type="password" />
           <Button {...buttonProps}>создать пользователя</Button>
           {!alertHidden && <Alert {...alertProps} />}
         </Stack>

@@ -56,7 +56,7 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
     if (showValidationAlert && !formik.isValid && !!formik.submitCount) {
       return {
         hidden: false,
-        children: 'Some fields are invalid',
+        children: 'некоторые поля заполнены неверно',
         type: 'error',
       }
     }

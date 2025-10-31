@@ -1,0 +1,32 @@
+import { TRPCError } from '@trpc/server'
+import { trpc } from '../../lib/trpc'
+import { zDeletePlantInstanceTrpcInput } from './input'
+
+export const deletePlantInstanceTrpcRoute = trpc.procedure
+  .input(zDeletePlantInstanceTrpcInput)
+  .mutation(async ({ ctx, input }) => {
+    const { Id } = input
+
+    // Check if user is authenticated
+    if (!ctx.me) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You must be logged in to delete plants',
+      })
+    }
+
+    // Check if user is admin
+    if (ctx.me.role !== 'ADMIN') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Only admins can delete plants',
+      })
+    }
+
+    // Delete plant
+    await ctx.prisma.plantInstance.delete({
+      where: { Id },
+    })
+
+    return { success: true }
+  })

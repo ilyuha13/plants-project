@@ -1,21 +1,8 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material'
-import { useState } from 'react'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Galery } from '../../components/Galery/Galery'
-import { useMe } from '../../lib/ctx'
-import { env } from '../../lib/env'
-import { getPlantsListRoute } from '../../lib/routes'
+import { DetailCard } from '../../components/DetailCard/DetailCard'
+import { PlantCard } from '../../components/plantCard/plantCard'
+import { getInstanceDetailRoute, getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 type PlantDetailParams = {
@@ -25,28 +12,15 @@ type PlantDetailParams = {
 export const PlantDetailPage = () => {
   const { plantId } = useParams<PlantDetailParams>()
   const navigate = useNavigate()
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const me = useMe()
 
-  // Fetch plant data
   const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId! }, { enabled: !!plantId })
-
-  // Fetch current user to check if admin
-
-  // Delete mutation
   const deletePlant = trpc.deletePlant.useMutation()
 
   const handleDelete = async () => {
-    try {
-      await deletePlant.mutateAsync({ plantId: plantId! })
-      navigate(getPlantsListRoute())
-    } catch (error) {
-      console.error('Failed to delete plant:', error)
-      alert('Не удалось удалить растение')
-    }
+    await deletePlant.mutateAsync({ plantId: plantId! })
+    navigate(getPlantsListRoute())
   }
 
-  // Loading state
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
@@ -55,7 +29,6 @@ export const PlantDetailPage = () => {
     )
   }
 
-  // Error state
   if (isError) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
@@ -66,7 +39,6 @@ export const PlantDetailPage = () => {
     )
   }
 
-  // Not found state
   if (!data?.plant) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
@@ -74,11 +46,6 @@ export const PlantDetailPage = () => {
       </Box>
     )
   }
-
-  const { plant } = data
-
-  // Prepare image URLs
-  const imageUrls = plant.imagesUrl.map((url) => `${env.VITE_BACKEND_URL}/${url.replace('public/', '')}`)
 
   return (
     <Box
@@ -89,70 +56,22 @@ export const PlantDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      {/* Main Card - почти на весь экран */}
-      <Paper
-        sx={{
-          padding: { xs: 2, sm: 3, md: 4 },
-          minHeight: '70vh',
-        }}
-      >
-        <Grid container spacing={{ xs: 2, md: 4 }}>
-          {/* LEFT COLUMN - Галерея фото */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Galery imageUrls={imageUrls} alt={plant.name} />
-          </Grid>
+      <DetailCard type="plant" data={data.plant} onDelete={handleDelete} isDeleting={deletePlant.isPending} />
 
-          {/* RIGHT COLUMN - Контент */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Stack spacing={3} sx={{ height: '100%' }}>
-              {/* Название */}
-              <Typography variant="h3" component="div" fontWeight="bold">
-                {plant.name}
-              </Typography>
-
-              {/* Описание */}
-              <Box>
-                <Typography variant="body1" paragraph>
-                  {plant.description}
-                </Typography>
-              </Box>
-              <Box flex="1"></Box>
-
-              {/* Цена и кнопка связи - внутри карточки, смещены вправо */}
-            </Stack>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      {/* Кнопка назад под Paper */}
       <Button onClick={() => navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
         ← Назад к каталогу
       </Button>
-
-      {/* Кнопка удаления (только для админов) */}
-      {me?.role === 'ADMIN' && (
-        <Button color="error" onClick={() => setDeleteDialogOpen(true)} fullWidth sx={{ marginTop: 1 }}>
-          Удалить растение
-        </Button>
-      )}
-
-      {/* Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Подтверждение удаления</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Вы уверены что хотите удалить "{plant.name}"?
-            <br />
-            Это действие нельзя отменить.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Отмена</Button>
-          <Button onClick={handleDelete} color="error" disabled={deletePlant.isPending}>
-            {deletePlant.isPending ? 'Удаление...' : 'Удалить'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Grid container spacing={2}>
+        {data?.plant.plantInstances.map((instance) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={instance.Id} sx={{ marginTop: 3 }}>
+            <PlantCard
+              type="instance"
+              onClick={() => navigate(getInstanceDetailRoute(instance.Id))}
+              data={{ ...instance, plantName: data.plant.name }}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   )
 }

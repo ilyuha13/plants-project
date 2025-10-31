@@ -20,9 +20,83 @@ export const theme = createTheme({
 
   // Типографика
   typography: {
+    fontFamily: ['Roboto', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Arial', 'sans-serif'].join(','),
+
+    fontSize: 16,
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+    fontWeightBold: 700,
+
+    // Заголовки
+    h1: {
+      fontSize: '2.5rem', // 40px
+      fontWeight: 700,
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontSize: '2rem', // 32px
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    h3: {
+      fontSize: '1.75rem', // 28px
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    h4: {
+      fontSize: '1.5rem', // 24px
+      fontWeight: 600,
+      lineHeight: 1.4,
+    },
+    h5: {
+      fontSize: '1.25rem', // 20px
+      fontWeight: 600,
+      lineHeight: 1.4,
+    },
+    h6: {
+      fontSize: '1.125rem', // 18px
+      fontWeight: 600,
+      lineHeight: 1.4,
+    },
+
+    // Основной текст
+    body1: {
+      fontSize: '1rem', // 16px
+      fontWeight: 400,
+      lineHeight: 1.5,
+    },
+    body2: {
+      fontSize: '0.875rem', // 14px
+      fontWeight: 400,
+      lineHeight: 1.5,
+    },
+
+    // Кнопки
     button: {
+      fontSize: '0.875rem', // 14px
+      fontWeight: 500,
       textTransform: 'none', // Отключаем UPPERCASE для всех кнопок
-      fontWeight: 500, // Средняя жирность текста
+      letterSpacing: '0.02em',
+    },
+
+    // Подписи
+    caption: {
+      fontSize: '0.75rem', // 12px
+      fontWeight: 400,
+      lineHeight: 1.4,
+    },
+
+    // Дополнительно
+    subtitle1: {
+      fontSize: '1rem', // 16px
+      fontWeight: 500,
+      lineHeight: 1.5,
+    },
+    subtitle2: {
+      fontSize: '0.875rem', // 14px
+      fontWeight: 500,
+      lineHeight: 1.5,
     },
   },
 
@@ -41,11 +115,18 @@ export const theme = createTheme({
         size: 'large', // По умолчанию крупные кнопки
       },
       styleOverrides: {
-        root: {
-          borderRadius: 1, // 1 * 8px = 8px (как у Paper)
+        root: ({ theme }) => ({
+          borderRadius: theme.shape.borderRadius * 0.5, // Берем из theme.shape.borderRadius (8px * 0.5 = 4px)
           fontWeight: 500,
           padding: '10px 24px',
-        },
+          // Для анимации children при hover
+          '& > *': {
+            transition: 'transform 0.2s ease',
+          },
+          '&:hover > *': {
+            transform: 'scale(1.02)',
+          },
+        }),
         sizeLarge: {
           padding: '12px 32px',
           fontSize: '1rem',
@@ -53,6 +134,35 @@ export const theme = createTheme({
         sizeMedium: {
           padding: '8px 20px',
         },
+        // Отдельные стили для текстовых кнопок
+        text: {
+          padding: '4px 8px',
+          '&:hover': {
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+          },
+        },
+        textSizeLarge: {
+          padding: '6px 12px',
+        },
+        textSizeMedium: {
+          padding: '4px 8px',
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.primary.main,
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+          '& > *': {
+            transition: 'transform 0.2s ease',
+          },
+          '&:hover > *': {
+            transform: 'scale(1.1)',
+          },
+        }),
       },
     },
 

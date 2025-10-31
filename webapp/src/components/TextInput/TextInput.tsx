@@ -17,6 +17,7 @@ export const TextInput = ({ type = 'text', formik, label, name }: TTextInput) =>
   return (
     <TextField
       error={invalid}
+      helperText={invalid ? error : undefined}
       disabled={disabled}
       label={label}
       type={type}
@@ -26,6 +27,7 @@ export const TextInput = ({ type = 'text', formik, label, name }: TTextInput) =>
       onChange={formik.handleChange}
       onBlur={formik.handleBlur}
       color="secondary"
+      fullWidth
     />
   )
 }
