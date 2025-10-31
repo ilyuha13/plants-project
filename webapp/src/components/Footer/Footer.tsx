@@ -3,7 +3,7 @@ import { Logo } from '../Logo/Logo'
 
 export const Footer = () => {
   return (
-    <Box sx={{ bgcolor: 'primary.main' }}>
+    <Box component="footer" sx={{ bgcolor: 'primary.main' }}>
       <Logo color="secondary" />
     </Box>
   )

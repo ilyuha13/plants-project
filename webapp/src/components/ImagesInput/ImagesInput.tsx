@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import { FormikProps } from 'formik'
 import { Alert } from '../Alert/Alert'
 
@@ -14,39 +14,41 @@ export const ImagesInput = ({
   const touched = formik.touched[name]
   const invalid = !!touched && !!error
   return (
-    <Button component="label" variant="outlined" sx={{ width: 200 }}>
-      <input
-        hidden
-        multiple
-        onChange={(e) => {
-          if (e.target.files) {
-            const files = e.target.files
-            const fileArray = Array.from(files)
-            const imageUrls: string[] = []
-            fileArray.forEach((file) => {
-              const reader = new FileReader()
-              reader.readAsDataURL(file)
-              reader.onload = () => {
-                if (reader.result) {
-                  imageUrls.push(reader.result as string)
-                  if (imageUrls.length === fileArray.length) {
-                    formik.setFieldValue(name, imageUrls)
+    <Stack spacing={2} sx={{ mb: 2 }}>
+      <Button component="label" variant="outlined" sx={{ width: 200 }}>
+        <input
+          hidden
+          multiple
+          onChange={(e) => {
+            if (e.target.files) {
+              const files = e.target.files
+              const fileArray = Array.from(files)
+              const imageUrls: string[] = []
+              fileArray.forEach((file) => {
+                const reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload = () => {
+                  if (reader.result) {
+                    imageUrls.push(reader.result as string)
+                    if (imageUrls.length === fileArray.length) {
+                      formik.setFieldValue(name, imageUrls)
+                    }
                   }
                 }
-              }
-            })
-          }
-        }}
-        onFocus={() => {
-          formik.setFieldTouched(name, false)
-        }}
-        onBlur={() => {
-          formik.setFieldTouched(name)
-        }}
-        type="file"
-      />
-      добавить фото
+              })
+            }
+          }}
+          onFocus={() => {
+            formik.setFieldTouched(name, false)
+          }}
+          onBlur={() => {
+            formik.setFieldTouched(name)
+          }}
+          type="file"
+        />
+        добавить фото
+      </Button>
       {invalid && <Alert type="error" children={error} />}
-    </Button>
+    </Stack>
   )
 }

@@ -1,15 +1,16 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
-import { zAddPlantTrpcInput } from '@plants-project/backend/src/router/addPlant/input'
+import { zAddPlantInstanceTrpcInput } from '@plants-project/backend/src/router/addPlantInstance/input'
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { Galery } from '../../components/Galery/Galery'
 import { ImagesInput } from '../../components/ImagesInput/ImagesInput'
+import { PlantSelect } from '../../components/PlantSelect/PlantSelect'
 import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 
-export const AddPlantPage = () => {
-  const addPlant = trpc.addPlant.useMutation()
+export const AddPlantInstancePage = () => {
+  const addPlantInstance = trpc.addPlantInstance.useMutation()
 
   const {
     formik,
@@ -17,15 +18,17 @@ export const AddPlantPage = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      name: '',
+      plantId: '',
+      inventoryNumber: '',
       description: '',
       images: [],
+      price: '',
     },
-    validationSchema: zAddPlantTrpcInput,
+    validationSchema: zAddPlantInstanceTrpcInput,
     onSubmit: async (values) => {
-      await addPlant.mutateAsync(values)
+      await addPlantInstance.mutateAsync(values)
     },
-    successMessage: 'растение добавленно',
+    successMessage: 'экземпляр добавлен',
     showValidationAlert: true,
     resetOnSuccess: true,
   })
@@ -41,9 +44,11 @@ export const AddPlantPage = () => {
         <Grid container spacing={{ xs: 2, md: 4 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
-              <Typography variant="h2">Добавить растение</Typography>
-              <TextInput name="name" label="название" formik={formik} />
-              <TextInput name="description" label="описание" formik={formik} />
+              <Typography variant="h2">Добавить экземпляр растения</Typography>
+              <PlantSelect name="plantId" label="Растение" formik={formik} />
+              <TextInput name="inventoryNumber" label="Инвентарный номер" formik={formik} />
+              <TextInput name="price" label="Цена (₽)" formik={formik} />
+              <TextInput name="description" label="Описание (опционально)" formik={formik} />
               <ImagesInput name="images" formik={formik} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}

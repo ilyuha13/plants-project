@@ -19,17 +19,7 @@ export const PlantsListPage = () => {
     <Grid container spacing={2}>
       {data?.plants.map((plant) => (
         <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={plant.plantId}>
-          <PlantCard
-            inventoryNumber={plant.inventoryNumber}
-            onClick={() => navigate(getPlantDetailRoute(plant.plantId))}
-            plantId={plant.plantId}
-            variety={plant.variety}
-            genus={plant.genus}
-            description={plant.description}
-            price={plant.price}
-            imagesUrl={plant.imagesUrl}
-            createdAt={plant.createdAt}
-          />
+          <PlantCard type="plant" onClick={() => navigate(getPlantDetailRoute(plant.plantId))} data={plant} />
         </Grid>
       ))}
     </Grid>

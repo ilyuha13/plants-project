@@ -13,7 +13,7 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
           alt={`${alt} - фото ${selectedImageIndex + 1}`}
           sx={{
             width: '100%',
-            height: { xs: '300px', sm: '400px', md: '500px' },
+            aspectRatio: '3/4',
             borderRadius: 1, // 1 * 8px = 8px (соответствует theme.shape.borderRadius)
             objectFit: 'cover',
             cursor: 'pointer',
@@ -63,7 +63,7 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
                 loading="lazy"
                 style={{
                   width: '100%',
-                  height: '100%',
+                  aspectRatio: '3/4',
                   objectFit: 'cover',
                 }}
               />

@@ -1,46 +1,118 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material'
+import { Card, CardContent, CardMedia, Typography, CardActions } from '@mui/material'
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
-import { RouterOutput } from '../../lib/trpc'
+import { Button } from '../Button/Button'
 
-type TPlantCard = RouterOutput['getPlant']['plant'] & { onClick: () => void }
+type BaseCardProps = {
+  onClick?: () => void
+}
 
-export const PlantCard = ({ onClick, ...plant }: TPlantCard) => {
+type PlantCardProps = BaseCardProps & {
+  type: 'plant'
+  data: {
+    plantId: string
+    name: string
+    description: string
+    imagesUrl: string[]
+  }
+}
+
+type PlantInstanceCardProps = BaseCardProps & {
+  type: 'instance'
+  data: {
+    Id: string
+    inventoryNumber: string
+    plantName?: string
+    price: string
+    description?: string | null
+    imagesUrl: string[]
+    createdAt: Date
+  }
+}
+
+type TPlantCardProps = PlantCardProps | PlantInstanceCardProps
+
+export const PlantCard = (props: TPlantCardProps) => {
   const me = useMe()
-  const imageUrl = `${env.VITE_BACKEND_URL}/${plant.imagesUrl[0].replace('public/', '')}`
-  return (
-    <Card sx={{ maxWidth: 345, margin: '0 auto', height: '100%' }}>
-      <CardMedia component="img" height="300" image={imageUrl} alt="plant image" />
-      <CardActions>
-        <Button variant="text" onClick={onClick}>
-          {plant.variety}
-        </Button>
-      </CardActions>
-      <CardContent>
-        {me?.role === 'ADMIN' && plant.inventoryNumber && (
-          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'medium' }}>
-            #{plant.inventoryNumber}
+  const { type, data, onClick } = props
+
+  const imageUrl = data.imagesUrl[0]
+    ? `${env.VITE_BACKEND_URL}/${data.imagesUrl[0].replace('public/', '')}`
+    : '/placeholder.jpg'
+
+  if (type === 'plant') {
+    return (
+      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={data.name}
+          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
+        />
+        <CardActions>
+          <Button type="button" variant="text" onClick={onClick}>
+            <Typography variant="h6" gutterBottom>
+              {data.name}
+            </Typography>
+          </Button>
+        </CardActions>
+
+        <CardContent sx={{ flexGrow: 1 }}>
+          {data.description && (
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {data.description}
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (type === 'instance') {
+    return (
+      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={`Экземпляр #${data.inventoryNumber}`}
+          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
+        />
+        <CardActions>
+          <Button type="button" variant="text" onClick={onClick}>
+            <Typography variant="h5" color="text.secondary">
+              {data.plantName}
+            </Typography>
+          </Button>
+        </CardActions>
+
+        <CardContent sx={{ flexGrow: 1 }}>
+          {me?.role === 'ADMIN' && (
+            <Typography variant="body2" fontWeight="medium" color="primary">
+              #{data.inventoryNumber}
+            </Typography>
+          )}
+          <Typography variant="h6" fontWeight="bold" sx={{ mt: 1 }}>
+            {data.price} ₽
           </Typography>
-        )}
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {plant.description}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {plant.genus}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {plant.price}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {plant.createdAt.toLocaleString('en-US', {
-            month: '2-digit',
-            year: 'numeric',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </Typography>
-      </CardContent>
-    </Card>
-  )
+          {data.description && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} noWrap>
+              {data.description}
+            </Typography>
+          )}
+          {me?.role === 'ADMIN' && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+              Добавлено:{' '}
+              {data.createdAt.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return null
 }

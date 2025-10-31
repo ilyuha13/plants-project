@@ -22,11 +22,19 @@ enum Role {
 
 model Plant {
     plantId String @unique @id @default(uuid())
-    inventoryNumber String? @unique
-    variety String
-    genus String
+    name String
     description String
     imagesUrl String[]
-    price Int
+    plantInstances PlantInstance[] @relation
+}
+
+model PlantInstance {
+    Id String @unique @id @default(uuid())
+    inventoryNumber String @unique
+    plantId String
+    plant Plant @relation(fields: [plantId], references: [plantId], onDelete: Cascade)
+    description String?
+    imagesUrl String[]
+    price String
     createdAt DateTime @default(now())
 }

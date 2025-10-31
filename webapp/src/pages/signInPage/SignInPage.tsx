@@ -48,8 +48,8 @@ export const SignInPage = () => {
           }}
         >
           <Typography variant="h2">Авторизация</Typography>
-          <TextInput name="nick" label="Nick" formik={formik} />
-          <TextInput name="password" label="Password" formik={formik} type="password" />
+          <TextInput name="nick" label="Имя пользователя" formik={formik} />
+          <TextInput name="password" label="Пароль" formik={formik} type="password" />
           <Button {...buttonProps}>войти</Button>
           {!alertHidden && <Alert {...alertProps} />}
           <Button variant="text" onClick={() => navigate(getSignUpRoute())}>

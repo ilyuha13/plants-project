@@ -3,7 +3,7 @@ import { Typography } from '@mui/material'
 export const Logo = ({ color }: { color: string }) => {
   return (
     <Typography
-      variant="h4"
+      variant="h2"
       sx={{
         color: { color },
         fontFamily: 'monospace',
