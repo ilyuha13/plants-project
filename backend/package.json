@@ -12,6 +12,9 @@
     "lint": "eslint '**/*.ts' --cache --cache-location ./node_modules/.cache/.eslintcache ",
     "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'",
     "types": "tsc --noEmit --project ./tsconfig.json",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
     "prepare": "pnpm pgc"
   },
   "prisma": {
@@ -25,7 +28,9 @@
     "@types/node": "^22.13.14",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
-    "prisma": "^6.6.0"
+    "@vitest/ui": "^4.0.6",
+    "prisma": "^6.6.0",
+    "vitest": "^4.0.6"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",

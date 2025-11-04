@@ -13,6 +13,7 @@ model User {
     password String
     createdAt DateTime @default(now())
     role Role @default(USER)
+    cart Cart?
 }
 
 enum Role {
@@ -36,5 +37,34 @@ model PlantInstance {
     description String?
     imagesUrl String[]
     price String
+    status PlantStatus @default(AVAILABLE)
+    reservedUntil DateTime?
     createdAt DateTime @default(now())
+    cartItems CartItem[]
+}
+
+enum PlantStatus {
+    AVAILABLE
+    IN_CART
+    SOLD
+}
+
+model Cart {
+    id String @id @default(uuid())
+    userId String @unique
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    items CartItem[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+    id String @id @default(uuid())
+    cartId String
+    cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+    plantInstanceId String
+    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [Id], onDelete: Cascade)
+    addedAt DateTime @default(now())
+
+    @@unique([cartId, plantInstanceId])
 }
