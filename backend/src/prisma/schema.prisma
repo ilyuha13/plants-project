@@ -38,7 +38,7 @@ model PlantInstance {
     imagesUrl String[]
     price String
     status PlantStatus @default(AVAILABLE)
-    reservedUntil DateTime?
+    reservedUntil DateTime? // подумать о другой логике резервирования
     createdAt DateTime @default(now())
     cartItems CartItem[]
 }
@@ -54,11 +54,11 @@ model Cart {
     userId String @unique
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     items CartItem[]
-    createdAt DateTime @default(now())
+    createdAt DateTime @default(now()) // подумать надо ли
     updatedAt DateTime @updatedAt
 }
 
-model CartItem {
+model CartItem { // может быть не нужен
     id String @id @default(uuid())
     cartId String
     cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)

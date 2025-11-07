@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material'
+import { Grid, Stack, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { PlantCard } from '../../components/plantCard/plantCard'
 import { getPlantDetailRoute } from '../../lib/routes'
@@ -16,12 +16,17 @@ export const PlantsListPage = () => {
   }
 
   return (
-    <Grid container spacing={2}>
-      {data?.plants.map((plant) => (
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={plant.plantId}>
-          <PlantCard type="plant" onClick={() => navigate(getPlantDetailRoute(plant.plantId))} data={plant} />
-        </Grid>
-      ))}
-    </Grid>
+    <Stack>
+      <Typography variant="h2" gutterBottom>
+        Каталог растений
+      </Typography>
+      <Grid container spacing={2}>
+        {data?.plants.map((plant) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={plant.plantId}>
+            <PlantCard type="plant" onClick={() => navigate(getPlantDetailRoute(plant.plantId))} data={plant} />
+          </Grid>
+        ))}
+      </Grid>
+    </Stack>
   )
 }

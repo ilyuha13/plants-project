@@ -20,6 +20,7 @@ export const getPlantInstanceTrpcRoute = trpc.procedure
         createdAt: true,
         description: true,
         imagesUrl: true,
+        status: true,
       },
     })
 

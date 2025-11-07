@@ -13,6 +13,7 @@ import {
 import { useState } from 'react'
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
+import { trpc } from '../../lib/trpc'
 import { Galery } from '../Galery/Galery'
 
 type BasePlantDetailProps = {
@@ -40,6 +41,7 @@ type PlantInstanceDetailProps = {
     description?: string | null
     imagesUrl: string[]
     createdAt: Date
+    status: 'AVAILABLE' | 'SOLD' | 'IN_CART'
   }
   onDelete?: () => Promise<void>
   isDeleting?: boolean
@@ -51,6 +53,9 @@ export const DetailCard = (props: DetailCardProps) => {
   const me = useMe()
   const { type, data, onDelete, isDeleting } = props
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const addToCart = trpc.addToCart.useMutation()
+
+  const utils = trpc.useUtils()
 
   const imageUrls = data.imagesUrl.map((url) => `${env.VITE_BACKEND_URL}/${url.replace('public/', '')}`)
 
@@ -122,12 +127,6 @@ export const DetailCard = (props: DetailCardProps) => {
   }
 
   if (type === 'instance') {
-    const telegramUsername = env.VITE_TELEGRAM_BOT_USERNAME
-    const telegramMessage = encodeURIComponent(
-      `Здравствуйте! Интересует растение "${data.plant.name}". Цена: ${data.price} ₽`,
-    )
-    const telegramLink = `https://t.me/${telegramUsername}?text=${telegramMessage}`
-
     return (
       <>
         <Paper
@@ -185,9 +184,26 @@ export const DetailCard = (props: DetailCardProps) => {
                   <Typography variant="h5" component="div" fontWeight="bold">
                     {data.price} ₽
                   </Typography>
-                  <Button component="a" href={telegramLink} target="_blank" rel="noopener noreferrer">
-                    Связаться в Telegram
-                  </Button>
+                  {me && (
+                    <Button
+                      variant="contained"
+                      disabled={data.status !== 'AVAILABLE' || addToCart.isPending}
+                      onClick={async () => {
+                        await addToCart.mutateAsync({ userId: me.id, plantInstanceId: data.Id })
+                        await utils.getCart.invalidate()
+                        await utils.getPlantInstance.invalidate()
+                      }}
+                      sx={{ minWidth: 200 }}
+                    >
+                      {addToCart.isPending
+                        ? 'Добавление...'
+                        : data.status === 'IN_CART'
+                          ? 'В корзине'
+                          : data.status === 'SOLD'
+                            ? 'Продано'
+                            : 'Добавить в корзину'}
+                    </Button>
+                  )}
                 </Paper>
 
                 {me?.role === 'ADMIN' && onDelete && (

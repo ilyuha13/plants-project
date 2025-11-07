@@ -8,12 +8,15 @@ export const getPlantTrpcRoute = trpc.procedure
     }),
   )
   .query(async ({ ctx, input }) => {
+    const isAdmin = ctx.me?.role === 'ADMIN'
     const plant = await ctx.prisma.plant.findUnique({
       where: {
         plantId: input.plantId,
       },
       select: {
-        plantInstances: true,
+        plantInstances: {
+          where: isAdmin ? {} : { status: 'AVAILABLE' },
+        },
         plantId: true,
         name: true,
         description: true,

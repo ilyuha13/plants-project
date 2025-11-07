@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import { dbOperation } from '../../utils/dbOperation'
 
-export async function removeFromCart(
+export async function removeFromCart( // можно сразу удалять по itemId и userId
   { userId, cartItemId }: { userId: string; cartItemId: string },
   prisma: PrismaClient,
 ) {
   const cartItemResult = await dbOperation(
     () =>
       prisma.cartItem.findUnique({
-        where: { id: cartItemId },
+        where: { cart: { userId }, id: cartItemId },
         include: { cart: true },
       }),
     'removeFromCart - find cartItem',
@@ -24,7 +24,7 @@ export async function removeFromCart(
   }
 
   if (cartItem.cart.userId !== userId) {
-    return { success: false, error: 'UNAUTHORIZED', message: 'Нет доступа к этому элементу корзины' }
+    return { success: false, error: 'UNAUTHORIZED', message: 'Нет доступа к этому элементу корзины' } // лишняя проверка
   }
 
   const plantInstanceResult = await dbOperation(

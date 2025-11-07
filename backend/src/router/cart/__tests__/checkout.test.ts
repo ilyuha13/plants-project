@@ -102,6 +102,7 @@ describe('checkout', () => {
 
     // ASSERT
     expect(isError(result)).toBe(true)
+    //это лишенее
     if (isError(result)) {
       expect(result.error).toBe('CART_NOT_FOUND')
       expect(result.message).toBe('Корзина не найдена')

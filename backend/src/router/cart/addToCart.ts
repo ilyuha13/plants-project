@@ -56,7 +56,7 @@ export async function addToCart(
 
     cart = newCartResult.data
   }
-
+  // возможно не нужно
   const checkItemResult = await dbOperation(
     () =>
       prisma.cartItem.findUnique({
@@ -101,6 +101,7 @@ export async function addToCart(
   )
 
   if (!createCartItemResult.success) {
+    // сделать откат с помошью транзакций?
     await dbOperation(
       () =>
         prisma.plantInstance.update({

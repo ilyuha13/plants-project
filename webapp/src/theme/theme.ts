@@ -150,17 +150,24 @@ export const theme = createTheme({
       },
     },
     MuiIconButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
         root: ({ theme }) => ({
           color: theme.palette.primary.main,
           '&:hover': {
             backgroundColor: 'transparent',
           },
+          '&:active': {
+            transform: 'scale(0.95)',
+          },
           '& > *': {
             transition: 'transform 0.2s ease',
           },
           '&:hover > *': {
             transform: 'scale(1.1)',
+            color: theme.palette.primary.dark,
           },
         }),
       },

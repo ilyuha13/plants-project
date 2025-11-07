@@ -2,6 +2,9 @@ import { trpc } from '../../lib/trpc'
 
 export const getPlantInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
   const instances = await ctx.prisma.plantInstance.findMany({
+    where: {
+      status: 'AVAILABLE',
+    },
     select: {
       Id: true,
       inventoryNumber: true,
@@ -10,6 +13,7 @@ export const getPlantInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) =
       createdAt: true,
       description: true,
       imagesUrl: true,
+      status: true,
     },
   })
 

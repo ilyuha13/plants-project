@@ -183,7 +183,7 @@ async function main() {
       userId: testUserId,
       contactInfo,
     })
-
+    // очень странная фигня
     if (isSuccess(checkoutResult)) {
       // ✅ TypeScript теперь знает что checkoutResult.data существует!
       logger.success(`Заказ оформлен! ID: ${checkoutResult.data.orderId}`)

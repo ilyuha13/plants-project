@@ -66,6 +66,7 @@ export async function clearCart({ userId }: { userId: string }, prisma: PrismaCl
   }
 
   // 4. Удалить все элементы корзины
+  // тоже стоит обернуть в транзакцию
   const deleteResult = await dbOperation(
     () =>
       prisma.cartItem.deleteMany({
