@@ -5,6 +5,7 @@ import { PlantInstanceDetailCard } from '../../components/Cards/PlantInstanceDet
 import { DeleteDialog } from '../../components/DeleteDialog'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
+import { env } from '../../lib/env'
 import { getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
@@ -78,7 +79,12 @@ export const InstanceDetailPage = () => {
     )
   }
 
-  const { plant, imagesUrl, description, price, inventoryNumber, status } = data.instance
+  const imageUrls: string[] = []
+  data.instance.imagesUrl.map((imageUrl) => {
+    imageUrls.push(`${env.VITE_BACKEND_URL}/${imageUrl.replace('public/', '')}`)
+  })
+
+  const { plant, description, price, inventoryNumber, status } = data.instance
   const name = plant.name
 
   // Показываем кнопку только авторизованным пользователям
@@ -107,7 +113,7 @@ export const InstanceDetailPage = () => {
     >
       <PlantInstanceDetailCard
         name={name}
-        imageUrls={imagesUrl}
+        imageUrls={imageUrls}
         description={description}
         price={price}
         inventoryNumber={inventoryNumber}

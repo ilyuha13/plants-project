@@ -6,6 +6,7 @@ import { DeleteDialog } from '../../components/DeleteDialog'
 import { PlantCard } from '../../components/plantCard/plantCard'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
+import { env } from '../../lib/env'
 import { getInstanceDetailRoute, getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
@@ -61,7 +62,12 @@ export const PlantDetailPage = () => {
     )
   }
 
-  const { name, description, imagesUrl } = data.plant
+  const imageUrls: string[] = []
+  data.plant.imagesUrl.map((imageUrl) => {
+    imageUrls.push(`${env.VITE_BACKEND_URL}/${imageUrl.replace('public/', '')}`)
+  })
+
+  const { name, description } = data.plant
 
   const showDeleteButton = me?.role === 'ADMIN'
 
@@ -77,7 +83,7 @@ export const PlantDetailPage = () => {
       <PlantDetailCard
         name={name}
         description={description}
-        imageUrls={imagesUrl}
+        imageUrls={imageUrls}
         showDeleteButton={showDeleteButton}
         onDelete={handleDeleteClick}
         deleteButtonLoading={deletePlant.isPending}
