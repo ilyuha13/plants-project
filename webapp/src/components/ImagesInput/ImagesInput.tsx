@@ -1,5 +1,6 @@
 import { Button, Stack } from '@mui/material'
 import { FormikProps } from 'formik'
+
 import { Alert } from '../Alert/Alert'
 
 export const ImagesInput = ({
@@ -31,7 +32,7 @@ export const ImagesInput = ({
                   if (reader.result) {
                     imageUrls.push(reader.result as string)
                     if (imageUrls.length === fileArray.length) {
-                      formik.setFieldValue(name, imageUrls)
+                      void formik.setFieldValue(name, imageUrls)
                     }
                   }
                 }
@@ -39,10 +40,10 @@ export const ImagesInput = ({
             }
           }}
           onFocus={() => {
-            formik.setFieldTouched(name, false)
+            void formik.setFieldTouched(name, false)
           }}
           onBlur={() => {
-            formik.setFieldTouched(name)
+            void formik.setFieldTouched(name)
           }}
           type="file"
         />

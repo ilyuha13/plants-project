@@ -1,8 +1,9 @@
 import { TrpcRouterOutput } from '@plants-project/backend/src/router'
 import { createContext, useContext } from 'react'
+
 import { trpc } from './trpc'
 
-export type AppContext = {
+export interface AppContext {
   me: TrpcRouterOutput['getMe']['me']
 }
 

@@ -2,6 +2,7 @@ import { FormikHelpers, useFormik } from 'formik'
 import { withZodSchema } from 'formik-validator-zod'
 import { useMemo, useState } from 'react'
 import { z } from 'zod'
+
 import { AlertProps } from '../components/Alert/Alert'
 import { ButtonProps } from '../components/Button/Button'
 
@@ -18,8 +19,7 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
   showValidationAlert?: boolean
   initialValues?: z.infer<TZodSchema>
   validationSchema?: TZodSchema
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: z.infer<TZodSchema>, actions: FormikHelpers<z.infer<TZodSchema>>) => Promise<any> | any
+  onSubmit: (values: z.infer<TZodSchema>, actions: FormikHelpers<z.infer<TZodSchema>>) => Promise<void>
 }) => {
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [submittingError, setSubmittingError] = useState<Error | null>(null)
@@ -38,9 +38,8 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
         setTimeout(() => {
           setSuccessMessageVisible(false)
         }, 3000)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        setSubmittingError(error)
+      } catch (error: unknown) {
+        setSubmittingError(error instanceof Error ? error : new Error(String(error)))
       }
     },
   })

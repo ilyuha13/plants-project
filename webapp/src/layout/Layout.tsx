@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material'
 import { ReactNode } from 'react'
 
-type LayoutProps = {
+interface LayoutProps {
   header?: ReactNode
   mainContent: ReactNode
   footer?: ReactNode

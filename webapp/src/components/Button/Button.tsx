@@ -1,6 +1,6 @@
 import MuiButton from '@mui/material/Button'
 
-export type ButtonProps = {
+export interface ButtonProps {
   children: React.ReactNode
   loading?: boolean
   onClick?: React.MouseEventHandler<HTMLButtonElement>

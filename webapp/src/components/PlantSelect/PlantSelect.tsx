@@ -1,20 +1,23 @@
 import { Autocomplete, TextField } from '@mui/material'
 import { FormikProps } from 'formik'
+
 import { trpc } from '../../lib/trpc'
 
-type TPlantSelectProps = {
-  name: string
+interface TPlantSelectProps<T> {
+  name: keyof T & string
   label?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: FormikProps<any>
+  formik: FormikProps<T>
   required?: boolean
 }
 
-export const PlantSelect = ({ name, label = 'Растение', formik, required = false }: TPlantSelectProps) => {
+export const PlantSelect = <T,>({ name, label = 'Растение', formik, required = false }: TPlantSelectProps<T>) => {
   const { data, isLoading } = trpc.getPlants.useQuery()
 
   const plants = data?.plants || []
-  const selectedPlant = plants.find((p) => p.plantId === formik.values[name])
+  const selectedPlant = plants.find((plant) => plant.plantId === formik.values[name])
+
+  const error = formik.errors[name]
+  const errorMessage = typeof error === 'string' ? error : ''
 
   return (
     <Autocomplete
@@ -25,7 +28,7 @@ export const PlantSelect = ({ name, label = 'Растение', formik, required
       value={selectedPlant || null}
       loading={isLoading}
       onChange={(_, newValue) => {
-        formik.setFieldValue(name, newValue?.plantId || '')
+        void formik.setFieldValue(name, newValue?.plantId || '')
       }}
       onBlur={formik.handleBlur}
       renderInput={(params) => (
@@ -35,7 +38,7 @@ export const PlantSelect = ({ name, label = 'Растение', formik, required
           label={label}
           required={required}
           error={formik.touched[name] && Boolean(formik.errors[name])}
-          helperText={formik.touched[name] && formik.errors[name] ? String(formik.errors[name]) : ''}
+          helperText={formik.touched[name] ? errorMessage : ''}
         />
       )}
     />

@@ -1,12 +1,13 @@
 {
-  "name": "plants-progect",
-  "private": "true",
+  "name": "plants-project",
+  "private": true,
   "version": "0.0.0",
   "scripts": {
     "b": "pnpm --filter @plants-project/backend",
     "w": "pnpm --filter @plants-project/webapp",
     "dev": "pnpm -r --parallel dev",
-    "types": "concurrently 'pnpm b types' 'pnpm w types'",
+    "build": "tsc -b",
+    "types": "tsc -b --force",
     "lint": "concurrently 'pnpm b lint' 'pnpm w lint'",
     "prettify": "pnpm -r --parallel prettify",
     "prepare": "husky"
@@ -28,6 +29,7 @@
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.1.0"
   }
 }

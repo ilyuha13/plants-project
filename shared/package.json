@@ -1,0 +1,31 @@
+{
+  "name": "@plants-project/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/zod.js",
+  "types": "./dist/zod.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/zod.d.ts",
+      "import": "./dist/zod.js"
+    },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "import": "./dist/zod.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "types": "tsc --noEmit --project ./tsconfig.json",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --ext .ts .",
+    "prettify": "prettier --loglevel warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'"
+  },
+  "dependencies": {
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/node": "20.3.1"
+  }
+}

@@ -1,12 +1,8 @@
+import { zNonemptyTrimmed, zNonemptyTrimmedRequiredOnNotLocal } from '@plants-project/shared'
 import * as dotenv from 'dotenv'
 import { z } from 'zod'
 
 dotenv.config()
-
-const zNonemptyTrimmed = z.string().trim().min(1)
-// const zNonemptyTrimmedRequiredOnNotLocal = zNonemptyTrimmed
-//   .optional()
-//   .refine((val) => process.env.HOST_ENV === 'local' || !!val, 'Required on local host')
 
 const envSchema = z.object({
   PORT: zNonemptyTrimmed,
@@ -14,5 +10,8 @@ const envSchema = z.object({
   DATABASE_URL: zNonemptyTrimmed,
   JWT_SECRET: zNonemptyTrimmed,
   PASSWORD_SALT: zNonemptyTrimmed,
+  CLAUDINARY_API_KEY: zNonemptyTrimmedRequiredOnNotLocal,
+  CLAUDINARY_API_SECRET: zNonemptyTrimmedRequiredOnNotLocal,
+  CLAUDINARY_CLOUDE_NAME: zNonemptyTrimmed,
 })
 export const env = envSchema.parse(process.env)

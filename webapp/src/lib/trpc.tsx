@@ -1,11 +1,13 @@
-import type { TrpcRouter } from '@plants-project/backend/src/router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
 import { inferRouterOutputs } from '@trpc/server'
 import Cookies from 'js-cookie'
 import superjson from 'superjson'
+
 import { env } from './env'
+
+import type { TrpcRouter } from '@plants-project/backend/src/router'
 export const trpc = createTRPCReact<TrpcRouter>()
 
 export type RouterOutput = inferRouterOutputs<TrpcRouter>

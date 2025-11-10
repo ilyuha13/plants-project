@@ -1,5 +1,8 @@
 node_modules
 
+# Claude Code instructions (keep private)
+.claude/
+
 # User uploaded images
 backend/public/images/*.png
 backend/public/images/*.jpg

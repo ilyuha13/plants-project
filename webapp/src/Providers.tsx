@@ -1,5 +1,6 @@
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { BrowserRouter } from 'react-router-dom'
+
 import { AppContextProvider } from './lib/ctx'
 import { TrpcProvider } from './lib/trpc'
 import { theme } from './theme/theme'

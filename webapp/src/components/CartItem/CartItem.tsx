@@ -1,8 +1,10 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { Box, Card, CardContent, CardMedia, IconButton, Stack, Typography } from '@mui/material'
+
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
 import { trpc } from '../../lib/trpc'
+
 import type { TCartItem } from '../../stores/cartStore'
 
 export const CartItem = ({ item }: { item: TCartItem }) => {
@@ -15,6 +17,16 @@ export const CartItem = ({ item }: { item: TCartItem }) => {
     return null
   }
 
+  const handleRemove = async () => {
+    try {
+      await removeItem.mutateAsync({ userId: me.id, cartItemId: item.id })
+      await utils.getCart.invalidate()
+      await utils.getPlantInstance.invalidate()
+    } catch (error) {
+      console.error('Failed to remove item:', error)
+      // Можно добавить toast/notification
+    }
+  }
   return (
     <Card variant="outlined">
       <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
@@ -41,10 +53,8 @@ export const CartItem = ({ item }: { item: TCartItem }) => {
           <IconButton
             size="small"
             color="error"
-            onClick={async () => {
-              await removeItem.mutateAsync({ userId: me.id, cartItemId: item.id })
-              await utils.getCart.invalidate()
-              await utils.getPlantInstance.invalidate()
+            onClick={() => {
+              handleRemove().catch(console.error)
             }}
             disabled={removeItem.isPending}
           >

@@ -3,6 +3,7 @@ import { zSignUpTrpcInput } from '@plants-project/backend/src/router/signUp/inpu
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
+
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
@@ -40,7 +41,7 @@ export const SignUpPage = () => {
     onSubmit: async (values) => {
       const { token } = await signUp.mutateAsync(values)
       Cookies.set('token', token, { expires: 60 * 60 * 5 })
-      navigate(getPlantsListRoute())
+      void navigate(getPlantsListRoute())
       void trpcUtils.invalidate()
     },
   })

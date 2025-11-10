@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 
-type MockPrismaClient = {
+interface MockPrismaClient {
   cart: {
     findUnique: ReturnType<typeof vi.fn>
     create: ReturnType<typeof vi.fn>

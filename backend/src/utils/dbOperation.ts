@@ -1,11 +1,11 @@
 import { logger } from './logger'
 
-type SuccessResult<T> = {
+interface SuccessResult<T> {
   success: true
   data: T
 }
 
-export type ErrorResult = {
+export interface ErrorResult {
   success: false
   message: string
   error: string

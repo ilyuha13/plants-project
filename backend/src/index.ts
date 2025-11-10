@@ -1,5 +1,6 @@
 import cors from 'cors'
 import express from 'express'
+
 import { AppContext, createAppContext } from './lib/ctx'
 import { env } from './lib/env'
 import { applyPassportToExpressApp } from './lib/pasport'
@@ -21,11 +22,6 @@ void (async () => {
 
     expressApp.get('/ping', (req, res) => {
       res.send('pong')
-    })
-
-    expressApp.post('/test', (req, res) => {
-      const data = req.body
-      res.json({ message: 'Data received', data })
     })
 
     applyPassportToExpressApp(expressApp, ctx)

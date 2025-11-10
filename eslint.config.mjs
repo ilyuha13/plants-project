@@ -3,9 +3,7 @@ import { fileURLToPath } from 'url'
 
 import { fixupPluginRules } from '@eslint/compat'
 import { FlatCompat } from '@eslint/eslintrc'
-
 import eslintJs from '@eslint/js'
-import { globalIgnores } from 'eslint/config'
 import eslintPluginPrettier from 'eslint-plugin-prettier'
 import eslintReact from 'eslint-plugin-react'
 import eslintTs from 'typescript-eslint'
@@ -28,11 +26,38 @@ function legacyPlugin(name, alias = name) {
 }
 
 export default eslintTs.config(
+  // Base configs
   eslintJs.configs.recommended,
-  ...eslintTs.configs.recommended,
-  globalIgnores(['**/node_modules', '**/dist']),
+  ...eslintTs.configs.recommendedTypeChecked,
+  ...eslintTs.configs.stylisticTypeChecked,
+
+  // Global ignores
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.next/**',
+      '**/build/**',
+      '**/.tmp/**',
+      '**/scripts/**',
+      '**/vitest.config.ts',
+    ],
+  },
+
+  // TypeScript parser with Project Service (v8 feature)
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  // Import plugin
   ...compat.extends('plugin:import/typescript'),
 
+  // Plugins
   {
     plugins: {
       react: eslintReact,
@@ -41,6 +66,25 @@ export default eslintTs.config(
     },
   },
 
+  // Backend-specific rules
+  {
+    files: ['backend/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+    },
+  },
+
+  // Webapp-specific rules
+  {
+    files: ['webapp/**/*.tsx', 'webapp/**/*.ts'],
+    rules: {
+      'react/react-in-jsx-scope': 'off', // React 19
+      'react/prop-types': 'off', // TypeScript handles this
+    },
+  },
+
+  // Custom rules
   {
     rules: {
       '@typescript-eslint/strict-boolean-expressions': 'off',
@@ -49,7 +93,7 @@ export default eslintTs.config(
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/triple-slash-reference': 'off',
       '@typescript-eslint/ban-types': 'off',
-      '@typescript-eslint/consistent-type-assertions': 2,
+      '@typescript-eslint/consistent-type-assertions': 'error',
       'jsx-a11y/anchor-is-valid': 'off',
       curly: ['error', 'all'],
       'no-irregular-whitespace': ['error', { skipTemplates: true, skipStrings: true }],
@@ -59,20 +103,44 @@ export default eslintTs.config(
         {
           alphabetize: { order: 'asc', caseInsensitive: false },
           distinctGroup: true,
+          'newlines-between': 'always',
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling'],
+            'index',
+            'object',
+            'type',
+          ],
           named: false,
           warnOnUnassignedImports: false,
         },
       ],
-      //   'sort-imports': [
-      //     'error',
-      //     {
-      //       ignoreCase: false,
-      //       ignoreDeclarationSort: false,
-      //       ignoreMemberSort: false,
-      //       memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-      //       allowSeparatedGroups: false,
-      //     },
-      //   ],
+    },
+  },
+
+  // Relax rules for config files
+  {
+    files: ['*.config.*', '*.mjs', '*.cjs'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+
+  // Relax rules for tests and scripts
+  {
+    files: ['**/__tests__/**', '**/*.test.ts', '**/*.spec.ts', '**/scripts/**'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
 )

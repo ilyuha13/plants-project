@@ -1,5 +1,6 @@
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { Badge, IconButton, Tooltip } from '@mui/material'
+
 import { useCartStore } from '../../stores/cartStore'
 
 export function CartButton() {

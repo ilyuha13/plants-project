@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+
 import { Logo } from '../Logo/Logo'
 
 export const Footer = () => {

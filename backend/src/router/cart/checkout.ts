@@ -1,15 +1,16 @@
 import { PrismaClient } from '@prisma/client'
+
 import { formatOrderMessage, sendTelegramMessage } from '../../lib/telegram'
 import { dbOperation } from '../../utils/dbOperation'
 import { logger } from '../../utils/logger'
 
-type ContactInfo = {
+interface ContactInfo {
   name: string
   phone: string
   telegram?: string
 }
 
-type CheckoutSuccessResult = {
+interface CheckoutSuccessResult {
   success: true
   data: {
     orderId: string
@@ -19,7 +20,7 @@ type CheckoutSuccessResult = {
   }
 }
 
-type CheckoutErrorResult = {
+interface CheckoutErrorResult {
   success: false
   error: string
   message: string

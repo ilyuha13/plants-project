@@ -1,9 +1,10 @@
 import { Card, CardContent, CardMedia, Typography, CardActions } from '@mui/material'
+
 import { useMe } from '../../lib/ctx'
 import { env } from '../../lib/env'
 import { Button } from '../Button/Button'
 
-type BaseCardProps = {
+interface BaseCardProps {
   onClick?: () => void
 }
 

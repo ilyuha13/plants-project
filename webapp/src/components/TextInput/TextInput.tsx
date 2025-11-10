@@ -1,19 +1,28 @@
 import TextField from '@mui/material/TextField'
-import { FormikProps } from 'formik'
-type TTextInput = {
+import { FormikProps, getIn } from 'formik'
+
+// Рекурсивный тип для поддержки вложенных путей (например "contactInfo.name")
+type NestedKeyOf<T> = {
+  [K in keyof T & string]: T[K] extends object
+    ? K | `${K}.${NestedKeyOf<T[K]>}`
+    : K
+}[keyof T & string]
+
+interface TTextInput<T> {
   label: string
-  name: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formik: FormikProps<any>
+  name: NestedKeyOf<T>  // ✅ Поддерживает вложенные пути
+  formik: FormikProps<T>
   type?: 'text' | 'password' | 'number'
 }
 
-export const TextInput = ({ type = 'text', formik, label, name }: TTextInput) => {
-  const value = formik.values[name]
-  const error = formik.errors[name] as string | undefined
-  const touched = formik.touched[name]
+export const TextInput = <T,>({ type = 'text', formik, label, name }: TTextInput<T>) => {
+  // getIn возвращает any, поэтому явно типизируем
+  const value = getIn(formik.values, name) as string | undefined
+  const error = getIn(formik.errors, name) as string | undefined
+  const touched = getIn(formik.touched, name) as boolean | undefined
   const disabled = formik.isSubmitting
   const invalid = !!touched && !!error
+
   return (
     <TextField
       error={invalid}
@@ -23,7 +32,7 @@ export const TextInput = ({ type = 'text', formik, label, name }: TTextInput) =>
       type={type}
       id={name}
       name={name}
-      value={value}
+      value={value ?? ''}
       onChange={formik.handleChange}
       onBlur={formik.handleBlur}
       color="secondary"

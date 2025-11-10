@@ -50,7 +50,7 @@ export function formatOrderMessage(order: {
   customerName: string
   customerPhone: string
   customerTelegram?: string
-  items: Array<{ name: string; price: string }>
+  items: { name: string; price: string }[]
   total: number
 }): string {
   const itemsList = order.items.map((item) => `  • ${item.name} - ${item.price}₽`).join('\n')

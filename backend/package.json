@@ -4,8 +4,8 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "dev": "node --experimental-specifier-resolution=node  --loader ts-node/esm ./src/index.ts",
-    "build": "rimraf ./dist && tsc --build ./tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -b",
     "start": "node ./dist/index.js",
     "pmd": "prisma migrate dev",
     "pgc": "prisma generate",
@@ -30,12 +30,15 @@
     "@types/passport-jwt": "^4.0.1",
     "@vitest/ui": "^4.0.6",
     "prisma": "^6.6.0",
+    "tsx": "^4.20.6",
     "vitest": "^4.0.6"
   },
   "dependencies": {
+    "@plants-project/shared": "workspace:^",
     "@prisma/client": "^6.6.0",
     "@trpc/server": "^11.0.1",
     "@types/lodash": "^4.17.16",
+    "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",

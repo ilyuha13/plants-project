@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-export type TCartItem = {
+export interface TCartItem {
   id: string
   plantInstanceId: string
   plantInstance: {
@@ -15,7 +15,7 @@ export type TCartItem = {
   }
 }
 
-type CartStore = {
+interface CartStore {
   items: TCartItem[]
   isOpen: boolean
   isLoading: boolean

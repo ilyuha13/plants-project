@@ -2,6 +2,7 @@ import { Box, Paper, Stack, Typography } from '@mui/material'
 import { zSignInTrpcInput } from '@plants-project/backend/src/router/signIn/input'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
+
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
@@ -27,7 +28,7 @@ export const SignInPage = () => {
       const { token } = await signIn.mutateAsync(values)
       Cookies.set('token', token, { expires: 60 * 60 * 5 })
       void trpcUtils.invalidate()
-      navigate(getPlantsListRoute())
+      void navigate(getPlantsListRoute())
     },
   })
 
@@ -52,7 +53,7 @@ export const SignInPage = () => {
           <TextInput name="password" label="Пароль" formik={formik} type="password" />
           <Button {...buttonProps}>войти</Button>
           {!alertHidden && <Alert {...alertProps} />}
-          <Button variant="text" onClick={() => navigate(getSignUpRoute())}>
+          <Button variant="text" onClick={() => void navigate(getSignUpRoute())}>
             зарегистрироваться
           </Button>
         </Stack>
