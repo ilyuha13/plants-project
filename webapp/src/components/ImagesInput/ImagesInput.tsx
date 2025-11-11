@@ -6,10 +6,12 @@ import { Alert } from '../Alert/Alert'
 export const ImagesInput = ({
   name,
   formik,
+  setFileArray,
 }: {
   name: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formik: FormikProps<any>
+  setFileArray: React.Dispatch<React.SetStateAction<File[] | null>>
 }) => {
   const error = formik.errors[name] as string | undefined
   const touched = formik.touched[name]
@@ -24,19 +26,7 @@ export const ImagesInput = ({
             if (e.target.files) {
               const files = e.target.files
               const fileArray = Array.from(files)
-              const imageUrls: string[] = []
-              fileArray.forEach((file) => {
-                const reader = new FileReader()
-                reader.readAsDataURL(file)
-                reader.onload = () => {
-                  if (reader.result) {
-                    imageUrls.push(reader.result as string)
-                    if (imageUrls.length === fileArray.length) {
-                      void formik.setFieldValue(name, imageUrls)
-                    }
-                  }
-                }
-              })
+              setFileArray(fileArray)
             }
           }}
           onFocus={() => {

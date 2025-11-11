@@ -2,7 +2,7 @@ import { cloudinary } from '../../lib/cloudinary'
 import { env } from '../../lib/env'
 import { trpc } from '../../lib/trpc'
 
-export const getUploadSignatureTrpcRoute = trpc.procedure.query(({ ctx }) => {
+export const getUploadSignatureTrpcRoute = trpc.procedure.mutation(({ ctx }) => {
   if (!(ctx.me?.role === 'ADMIN')) {
     return 'нет доступа к получению подписи'
   }

@@ -1,5 +1,6 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
 import { zAddPlantInstanceTrpcInput } from '@plants-project/backend/src/router/addPlantInstance/input'
+import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
@@ -7,11 +8,29 @@ import { Galery } from '../../components/Galery/Galery'
 import { ImagesInput } from '../../components/ImagesInput/ImagesInput'
 import { PlantSelect } from '../../components/PlantSelect/PlantSelect'
 import { TextInput } from '../../components/TextInput/TextInput'
+import { readFileArrayAsDataUrl } from '../../lib/fileReader'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 
 export const AddPlantInstancePage = () => {
   const addPlantInstance = trpc.addPlantInstance.useMutation()
+  const [arrayFromImagesInput, setArrayFromImagesInput] = useState<File[] | null>(null)
+
+  useEffect(() => {
+    if (!arrayFromImagesInput) {
+      return
+    }
+    const loadImages = async () => {
+      try {
+        const imageUrls = await readFileArrayAsDataUrl(arrayFromImagesInput)
+        await formik.setFieldValue('images', imageUrls)
+      } catch (error) {
+        console.error('Failed to read files:', error)
+      }
+    }
+
+    void loadImages()
+  }, [arrayFromImagesInput])
 
   const {
     formik,
@@ -50,7 +69,7 @@ export const AddPlantInstancePage = () => {
               <TextInput name="inventoryNumber" label="Инвентарный номер" formik={formik} />
               <TextInput name="price" label="Цена (₽)" formik={formik} />
               <TextInput name="description" label="Описание (опционально)" formik={formik} />
-              <ImagesInput name="images" formik={formik} />
+              <ImagesInput name="images" formik={formik} setFileArray={setArrayFromImagesInput} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>

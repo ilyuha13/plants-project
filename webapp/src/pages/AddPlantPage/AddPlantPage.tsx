@@ -1,16 +1,35 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
 import { zAddPlantTrpcInput } from '@plants-project/backend/src/router/addPlant/input'
+import { useEffect, useState } from 'react'
 
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { Galery } from '../../components/Galery/Galery'
 import { ImagesInput } from '../../components/ImagesInput/ImagesInput'
 import { TextInput } from '../../components/TextInput/TextInput'
+import { readFileArrayAsDataUrl } from '../../lib/fileReader'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 
 export const AddPlantPage = () => {
   const addPlant = trpc.addPlant.useMutation()
+  const [arrayFromImagesInput, setArrayFromImagesInput] = useState<File[] | null>(null)
+
+  useEffect(() => {
+    if (!arrayFromImagesInput) {
+      return
+    }
+    const loadImages = async () => {
+      try {
+        const imageUrls = await readFileArrayAsDataUrl(arrayFromImagesInput)
+        await formik.setFieldValue('images', imageUrls)
+      } catch (error) {
+        console.error('Failed to read files:', error)
+      }
+    }
+
+    void loadImages()
+  }, [arrayFromImagesInput])
 
   const {
     formik,
@@ -45,7 +64,7 @@ export const AddPlantPage = () => {
               <Typography variant="h2">Добавить растение</Typography>
               <TextInput name="name" label="название" formik={formik} />
               <TextInput name="description" label="описание" formik={formik} />
-              <ImagesInput name="images" formik={formik} />
+              <ImagesInput name="images" formik={formik} setFileArray={setArrayFromImagesInput} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>
