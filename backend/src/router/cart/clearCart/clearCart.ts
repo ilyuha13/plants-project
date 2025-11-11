@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
-import { dbOperation } from '../../utils/dbOperation'
+import { dbOperation } from '../../../utils/dbOperation'
 
 export async function clearCart({ userId }: { userId: string }, prisma: PrismaClient) {
   // 1. Найти корзину пользователя

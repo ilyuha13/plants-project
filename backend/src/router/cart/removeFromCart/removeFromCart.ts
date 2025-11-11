@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
-import { dbOperation } from '../../utils/dbOperation'
+import { dbOperation } from '../../../utils/dbOperation'
 
 export async function removeFromCart( // можно сразу удалять по itemId и userId
   { userId, cartItemId }: { userId: string; cartItemId: string },

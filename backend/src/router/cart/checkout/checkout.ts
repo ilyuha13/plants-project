@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 
-import { formatOrderMessage, sendTelegramMessage } from '../../lib/telegram'
-import { dbOperation } from '../../utils/dbOperation'
-import { logger } from '../../utils/logger'
+import { formatOrderMessage, sendTelegramMessage } from '../../../lib/telegram'
+import { dbOperation } from '../../../utils/dbOperation'
+import { logger } from '../../../utils/logger'
 
 interface ContactInfo {
   name: string

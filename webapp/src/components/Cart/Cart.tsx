@@ -13,7 +13,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { checkoutInput } from '@plants-project/backend/src/router/cart/input'
+import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
 import { useState } from 'react'
 
 import { useMe } from '../../lib/ctx'

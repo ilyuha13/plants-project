@@ -10,8 +10,8 @@ const envSchema = z.object({
   DATABASE_URL: zNonemptyTrimmed,
   JWT_SECRET: zNonemptyTrimmed,
   PASSWORD_SALT: zNonemptyTrimmed,
-  CLAUDINARY_API_KEY: zNonemptyTrimmedRequiredOnNotLocal,
-  CLAUDINARY_API_SECRET: zNonemptyTrimmedRequiredOnNotLocal,
-  CLAUDINARY_CLOUDE_NAME: zNonemptyTrimmed,
+  CLOUDINARY_API_KEY: zNonemptyTrimmedRequiredOnNotLocal,
+  CLOUDINARY_API_SECRET: zNonemptyTrimmedRequiredOnNotLocal,
+  CLOUDINARY_CLOUD_NAME: zNonemptyTrimmed,
 })
 export const env = envSchema.parse(process.env)

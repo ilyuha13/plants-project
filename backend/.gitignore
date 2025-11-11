@@ -2,3 +2,5 @@
 node_modules
 dist
 .env
+scripts/testCart.ts
+scripts/testCloudinary.ts
