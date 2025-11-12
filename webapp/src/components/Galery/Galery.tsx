@@ -1,20 +1,26 @@
 import { Box, ImageList, ImageListItem, Stack } from '@mui/material'
 import { useState } from 'react'
 
+import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
+
 export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const cloudinaryUrls: { mediumUrl: string; smallUrl: string }[] = []
+  imageUrls.map((iamgeId) => {
+    const { mediumUrl, smallUrl } = getCloudinaryUrl(iamgeId)
+    cloudinaryUrls.push({ mediumUrl, smallUrl })
+  })
   return (
     <Stack>
       {/* Главное изображение */}
       {imageUrls.length > 0 && (
         <Box
           component="img"
-          src={imageUrls[selectedImageIndex]}
+          src={cloudinaryUrls[selectedImageIndex].mediumUrl}
           alt={`${alt} - фото ${selectedImageIndex + 1}`}
           sx={{
             width: '100%',
-            aspectRatio: '3/4',
-            borderRadius: 1, // 1 * 8px = 8px (соответствует theme.shape.borderRadius)
+            borderRadius: 1,
             objectFit: 'cover',
             cursor: 'pointer',
             transition: 'transform 0.2s',
@@ -39,9 +45,9 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
             overflow: 'hidden',
           }}
         >
-          {imageUrls.map((url, index) => (
+          {cloudinaryUrls.map((urls, index) => (
             <ImageListItem
-              key={url}
+              key={urls.smallUrl}
               sx={{
                 cursor: 'pointer',
                 opacity: selectedImageIndex === index ? 1 : 0.6,
@@ -58,12 +64,11 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
               onClick={() => setSelectedImageIndex(index)}
             >
               <img
-                src={url}
+                src={urls.smallUrl}
                 alt={`${alt} - миниатюра ${index + 1}`}
                 loading="lazy"
                 style={{
                   width: '100%',
-                  aspectRatio: '3/4',
                   objectFit: 'cover',
                 }}
               />

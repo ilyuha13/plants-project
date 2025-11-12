@@ -4,12 +4,12 @@ import { trpc } from '../../lib/trpc'
 
 export const getUploadSignatureTrpcRoute = trpc.procedure.mutation(({ ctx }) => {
   if (!(ctx.me?.role === 'ADMIN')) {
-    return 'нет доступа к получению подписи'
+    throw new Error('нет доступа к получению подписи')
   }
   if (!(env.CLOUDINARY_API_SECRET && env.CLOUDINARY_API_KEY)) {
-    return 'не установлены переменные окружения для работы с cloudinary'
+    throw new Error('не установлены переменные окружения для работы с cloudinary')
   }
-  const timestamp = Math.round(Date.now() / 1000)
+  const timestamp = Date.now()
 
   const uploadParams = {
     timestamp: timestamp,

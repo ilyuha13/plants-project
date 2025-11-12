@@ -5,7 +5,6 @@ import { PlantInstanceDetailCard } from '../../components/Cards/PlantInstanceDet
 import { DeleteDialog } from '../../components/DeleteDialog'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
-import { env } from '../../lib/env'
 import { getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
@@ -79,19 +78,12 @@ export const InstanceDetailPage = () => {
     )
   }
 
-  const imageUrls: string[] = []
-  data.instance.imagesUrl.map((imageUrl) => {
-    imageUrls.push(`${env.VITE_BACKEND_URL}/${imageUrl.replace('public/', '')}`)
-  })
-
-  const { plant, description, price, inventoryNumber, status } = data.instance
+  const { plant, description, price, inventoryNumber, status, imagesUrl } = data.instance
   const name = plant.name
 
-  // Показываем кнопку только авторизованным пользователям
   const showAddButton = !!me
   const showDeleteButton = me?.role === 'ADMIN'
 
-  // Определяем текст кнопки на основе статуса
   const getAddButtonText = () => {
     if (status === 'IN_CART') {
       return 'В корзине'
@@ -113,7 +105,7 @@ export const InstanceDetailPage = () => {
     >
       <PlantInstanceDetailCard
         name={name}
-        imageUrls={imageUrls}
+        imagesUrl={imagesUrl}
         description={description}
         price={price}
         inventoryNumber={inventoryNumber}

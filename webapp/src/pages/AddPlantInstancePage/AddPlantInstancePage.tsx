@@ -8,29 +8,20 @@ import { Galery } from '../../components/Galery/Galery'
 import { ImagesInput } from '../../components/ImagesInput/ImagesInput'
 import { PlantSelect } from '../../components/PlantSelect/PlantSelect'
 import { TextInput } from '../../components/TextInput/TextInput'
-import { readFileArrayAsDataUrl } from '../../lib/fileReader'
+import { useGetUrlsFromCloudinary } from '../../hooks/useGetUrlsFromCloudinary'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
 
 export const AddPlantInstancePage = () => {
   const addPlantInstance = trpc.addPlantInstance.useMutation()
   const [arrayFromImagesInput, setArrayFromImagesInput] = useState<File[] | null>(null)
+  const imagesUrl = useGetUrlsFromCloudinary(arrayFromImagesInput)
 
   useEffect(() => {
-    if (!arrayFromImagesInput) {
-      return
+    if (imagesUrl) {
+      void formik.setFieldValue('imagesUrl', imagesUrl)
     }
-    const loadImages = async () => {
-      try {
-        const imageUrls = await readFileArrayAsDataUrl(arrayFromImagesInput)
-        await formik.setFieldValue('images', imageUrls)
-      } catch (error) {
-        console.error('Failed to read files:', error)
-      }
-    }
-
-    void loadImages()
-  }, [arrayFromImagesInput])
+  }, [imagesUrl])
 
   const {
     formik,
@@ -41,7 +32,7 @@ export const AddPlantInstancePage = () => {
       plantId: '',
       inventoryNumber: '',
       description: '',
-      images: [],
+      imagesUrl: [],
       price: '',
     },
     validationSchema: zAddPlantInstanceTrpcInput,
@@ -69,13 +60,13 @@ export const AddPlantInstancePage = () => {
               <TextInput name="inventoryNumber" label="Инвентарный номер" formik={formik} />
               <TextInput name="price" label="Цена (₽)" formik={formik} />
               <TextInput name="description" label="Описание (опционально)" formik={formik} />
-              <ImagesInput name="images" formik={formik} setFileArray={setArrayFromImagesInput} />
+              <ImagesInput name="imagesUrl" formik={formik} setFileArray={setArrayFromImagesInput} />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Galery imageUrls={formik.values.images} alt="addedImage" />
+            <Galery imageUrls={formik.values.imagesUrl} alt="addedImage" />
           </Grid>
         </Grid>
       </Paper>

@@ -3,7 +3,7 @@ import { Box, Button, Typography } from '@mui/material'
 import { DetailLayout } from './shared/DetailLayout'
 
 interface PlantDetailCardProps {
-  imageUrls: string[]
+  imagesUrl: string[]
   name: string
   description: string
 
@@ -14,7 +14,7 @@ interface PlantDetailCardProps {
 }
 
 export const PlantDetailCard = ({
-  imageUrls,
+  imagesUrl,
   name,
   description,
   showDeleteButton,
@@ -22,7 +22,7 @@ export const PlantDetailCard = ({
   onDelete,
 }: PlantDetailCardProps) => {
   return (
-    <DetailLayout imageUrls={imageUrls} imageAlt={name}>
+    <DetailLayout imagesUrl={imagesUrl} imageAlt={name}>
       <Typography variant="h3">{name}</Typography>
 
       <Typography variant="body1" paragraph>

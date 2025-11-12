@@ -1,7 +1,7 @@
 import { Card, CardContent, CardMedia, Typography, CardActions } from '@mui/material'
 
+import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
-import { env } from '../../lib/env'
 import { Button } from '../Button/Button'
 
 interface BaseCardProps {
@@ -37,19 +37,13 @@ export const PlantCard = (props: TPlantCardProps) => {
   const me = useMe()
   const { type, data, onClick } = props
 
-  const imageUrl = data.imagesUrl[0]
-    ? `${env.VITE_BACKEND_URL}/${data.imagesUrl[0].replace('public/', '')}`
-    : '/placeholder.jpg'
+  const { thumbnailUrl } = getCloudinaryUrl(data.imagesUrl[0])
+  const imageUrl = thumbnailUrl
 
   if (type === 'plant') {
     return (
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <CardMedia
-          component="img"
-          image={imageUrl}
-          alt={data.name}
-          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
-        />
+        <CardMedia component="img" image={imageUrl} alt={data.name} sx={{ width: '100%', objectFit: 'cover' }} />
         <CardActions>
           <Button type="button" variant="text" onClick={onClick}>
             <Typography variant="h6" gutterBottom>
@@ -76,7 +70,7 @@ export const PlantCard = (props: TPlantCardProps) => {
           component="img"
           image={imageUrl}
           alt={`Экземпляр #${data.inventoryNumber}`}
-          sx={{ aspectRatio: '3/4', width: '100%', objectFit: 'cover' }}
+          sx={{ width: '100%', objectFit: 'cover' }}
         />
         <CardActions>
           <Button type="button" variant="text" onClick={onClick}>

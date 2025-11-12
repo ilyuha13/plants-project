@@ -3,12 +3,12 @@ import { Grid, Paper, Stack } from '@mui/material'
 import { Galery } from '../../Galery/Galery'
 
 interface DetailLayoutProps {
-  imageUrls: string[]
+  imagesUrl: string[]
   imageAlt: string
   children: React.ReactNode
 }
 
-export const DetailLayout = ({ imageUrls, imageAlt, children }: DetailLayoutProps) => {
+export const DetailLayout = ({ imagesUrl, imageAlt, children }: DetailLayoutProps) => {
   return (
     <Paper
       sx={{
@@ -18,7 +18,7 @@ export const DetailLayout = ({ imageUrls, imageAlt, children }: DetailLayoutProp
     >
       <Grid container spacing={{ xs: 2, md: 4 }}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Galery imageUrls={imageUrls} alt={imageAlt} />
+          <Galery imageUrls={imagesUrl} alt={imageAlt} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>

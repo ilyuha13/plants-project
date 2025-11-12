@@ -24,9 +24,11 @@ export const ImagesInput = ({
           multiple
           onChange={(e) => {
             if (e.target.files) {
+              setFileArray(null)
               const files = e.target.files
               const fileArray = Array.from(files)
               setFileArray(fileArray)
+              e.target.files = null
             }
           }}
           onFocus={() => {

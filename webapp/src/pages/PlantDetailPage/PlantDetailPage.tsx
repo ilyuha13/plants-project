@@ -6,7 +6,6 @@ import { DeleteDialog } from '../../components/DeleteDialog'
 import { PlantCard } from '../../components/plantCard/plantCard'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
-import { env } from '../../lib/env'
 import { getInstanceDetailRoute, getPlantsListRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
@@ -20,16 +19,14 @@ export const PlantDetailPage = () => {
 
   const me = useMe()
 
-  // Эта функция ТОЛЬКО открывает диалог
   const handleDeleteClick = () => {
     confirmDeleteDialog.open()
   }
 
-  // Эта функция выполняет РЕАЛЬНОЕ удаление (вызывается из DeleteDialog)
   const handleConfirmDelete = async () => {
     try {
       await deletePlant.mutateAsync({ plantId: plantId! })
-      confirmDeleteDialog.close() //попробовать убрать useDialog
+      confirmDeleteDialog.close()
       void navigate(getPlantsListRoute())
     } catch (error) {
       console.error('Failed to delete plant:', error)
@@ -62,12 +59,7 @@ export const PlantDetailPage = () => {
     )
   }
 
-  const imageUrls: string[] = []
-  data.plant.imagesUrl.map((imageUrl) => {
-    imageUrls.push(`${env.VITE_BACKEND_URL}/${imageUrl.replace('public/', '')}`)
-  })
-
-  const { name, description } = data.plant
+  const { name, description, imagesUrl } = data.plant
 
   const showDeleteButton = me?.role === 'ADMIN'
 
@@ -83,7 +75,7 @@ export const PlantDetailPage = () => {
       <PlantDetailCard
         name={name}
         description={description}
-        imageUrls={imageUrls}
+        imagesUrl={imagesUrl}
         showDeleteButton={showDeleteButton}
         onDelete={handleDeleteClick}
         deleteButtonLoading={deletePlant.isPending}
@@ -93,9 +85,9 @@ export const PlantDetailPage = () => {
         ← Назад к каталогу
       </Button>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={{ xs: 2, sm: 2.5, xl: 3 }}>
         {data?.plant.plantInstances.map((instance) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={instance.Id} sx={{ marginTop: 3 }}>
+          <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
             <PlantCard
               type="instance"
               onClick={() => void navigate(getInstanceDetailRoute(instance.Id))}
