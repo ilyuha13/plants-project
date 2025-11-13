@@ -96,8 +96,8 @@ services:
 
     volumes:
       # Nginx configuration
-      # Change nginx.http.conf to nginx.https.conf after getting SSL certificate
-      - ./nginx/nginx.http.conf:/etc/nginx/nginx.conf:ro
+      # Using HTTPS configuration with SSL certificate
+      - ./nginx/nginx.https.conf:/etc/nginx/nginx.conf:ro
 
       # SSL certificates from certbot
       - certbot_certs:/etc/letsencrypt:ro
