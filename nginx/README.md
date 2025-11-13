@@ -31,8 +31,7 @@ docker-compose up -d
 docker-compose run --rm certbot certonly \
   --webroot \
   --webroot-path /var/www/certbot \
-  -d greenflagplants.ru \
-  -d www.greenflagplants.ru \
+  -d api.greenflagplants.ru \
   --email your@email.com \
   --agree-tos \
   --non-interactive
