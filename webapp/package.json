@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "build:full": "tsc -b && vite build",
     "lint": "eslint '**/*.ts' '**/*.tsx' --cache --cache-location ./node_modules/.cache/.eslintcache ",
     "preview": "vite preview",
     "types": "tsc --noEmit --project ./tsconfig.json && tsc --noEmit --project ./tsconfig.node.json",

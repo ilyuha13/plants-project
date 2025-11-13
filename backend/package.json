@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -b",
+    "build": "pnpm exec tsc",
+    "build:project": "tsc -b",
     "start": "node ./dist/index.js",
     "pmd": "prisma migrate dev",
     "pgc": "prisma generate",
