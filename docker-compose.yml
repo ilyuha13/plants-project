@@ -82,11 +82,62 @@ services:
     networks:
       - plants_network
 
+  # ==========================================
+  # Nginx Web Server (Reverse Proxy)
+  # ==========================================
+  nginx:
+    image: nginx:alpine
+    container_name: plants_nginx
+    restart: unless-stopped
+
+    ports:
+      - '80:80'
+      - '443:443'
+
+    volumes:
+      # Nginx configuration
+      # Change nginx.http.conf to nginx.https.conf after getting SSL certificate
+      - ./nginx/nginx.http.conf:/etc/nginx/nginx.conf:ro
+
+      # SSL certificates from certbot
+      - certbot_certs:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+
+    depends_on:
+      - backend
+
+    networks:
+      - plants_network
+
+  # ==========================================
+  # Certbot (SSL Certificate)
+  # ==========================================
+  # This service is run manually to obtain/renew SSL certificates
+  # Usage: docker-compose run --rm certbot certonly --webroot ...
+  certbot:
+    image: certbot/certbot:latest
+    container_name: plants_certbot
+
+    volumes:
+      # Share certificates with nginx
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+
+    # This service doesn't run continuously
+    # It's executed manually when needed
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
+
 # ============================================
 # Volumes (persistent data)
 # ============================================
 volumes:
   postgres_data:
+    driver: local
+
+  certbot_certs:
+    driver: local
+
+  certbot_www:
     driver: local
 
 # ============================================
