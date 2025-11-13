@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "s": "pnpm --filter @plants-project/shared",
     "b": "pnpm --filter @plants-project/backend",
     "w": "pnpm --filter @plants-project/webapp",
     "dev": "pnpm -r --parallel dev",

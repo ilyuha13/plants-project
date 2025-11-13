@@ -104,6 +104,9 @@ importers:
       passport-jwt:
         specifier: ^4.0.1
         version: 4.0.1
+      prisma:
+        specifier: ^6.6.0
+        version: 6.6.0(typescript@5.9.3)
       sharp:
         specifier: ^0.34.3
         version: 0.34.3
@@ -141,9 +144,6 @@ importers:
       '@vitest/ui':
         specifier: ^4.0.6
         version: 4.0.6(vitest@4.0.6)
-      prisma:
-        specifier: ^6.6.0
-        version: 6.6.0(typescript@5.9.3)
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
@@ -158,8 +158,8 @@ importers:
         version: 3.24.2
     devDependencies:
       '@types/node':
-        specifier: 20.3.1
-        version: 20.3.1
+        specifier: ^22.13.14
+        version: 22.13.14
 
   webapp:
     dependencies:
@@ -1563,9 +1563,6 @@ packages:
 
   '@types/node@14.18.63':
     resolution: {integrity: sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==}
-
-  '@types/node@20.3.1':
-    resolution: {integrity: sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==}
 
   '@types/node@22.13.14':
     resolution: {integrity: sha512-Zs/Ollc1SJ8nKUAgc7ivOEdIBM8JAKgrqqUYi2J997JuKO7/tpQC+WCetQ1sypiKCQWHdvdg9wBNpUPEWZae7w==}
@@ -5431,8 +5428,6 @@ snapshots:
       '@types/express': 5.0.1
 
   '@types/node@14.18.63': {}
-
-  '@types/node@20.3.1': {}
 
   '@types/node@22.13.14':
     dependencies:

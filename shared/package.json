@@ -2,17 +2,18 @@
   "name": "@plants-project/shared",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "main": "./dist/zod.js",
   "types": "./dist/zod.d.ts",
   "exports": {
     ".": {
       "types": "./dist/zod.d.ts",
-      "import": "./dist/zod.js"
+      "import": "./dist/zod.js",
+      "require": "./dist/zod.js"
     },
     "./zod": {
       "types": "./dist/zod.d.ts",
-      "import": "./dist/zod.js"
+      "import": "./dist/zod.js",
+      "require": "./dist/zod.js"
     }
   },
   "scripts": {
@@ -26,6 +27,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/node": "20.3.1"
+    "@types/node": "^22.13.14"
   }
 }

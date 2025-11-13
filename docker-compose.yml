@@ -1,0 +1,97 @@
+# ============================================
+# Docker Compose for Plants Project
+# ============================================
+# Local testing: docker-compose up --build
+# Production: Same file, different .env
+# ============================================
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: plants_postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-plants_db}
+      POSTGRES_USER: ${POSTGRES_USER:-plants_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+
+    ports:
+      # External:Internal
+      # Using 5433 locally to avoid conflict with local PostgreSQL on 5432
+      - '5433:5432'
+
+    volumes:
+      # Persistent data storage
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-plants_user} -d ${POSTGRES_DB:-plants_db}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - plants_network
+
+  # ==========================================
+  # Backend API
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    container_name: plants_backend
+    restart: unless-stopped
+
+    ports:
+      - '3000:3000'
+
+    environment:
+      # Database connection
+      DATABASE_URL: postgresql://${POSTGRES_USER:-plants_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-plants_db}?schema=public
+
+      # Application
+      NODE_ENV: production
+      HOST_ENV: production
+      PORT: 3000
+
+      # Security
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      PASSWORD_SALT: ${PASSWORD_SALT:?PASSWORD_SALT is required}
+
+      # Cloudinary
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?CLOUDINARY_CLOUD_NAME is required}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?CLOUDINARY_API_KEY is required}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?CLOUDINARY_API_SECRET is required}
+
+      # Telegram
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN is required}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:?TELEGRAM_BOT_USERNAME is required}
+      TELEGRAM_ADMIN_CHAT_ID: ${TELEGRAM_ADMIN_CHAT_ID:?TELEGRAM_ADMIN_CHAT_ID is required}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - plants_network
+
+# ============================================
+# Volumes (persistent data)
+# ============================================
+volumes:
+  postgres_data:
+    driver: local
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  plants_network:
+    driver: bridge

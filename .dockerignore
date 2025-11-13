@@ -1,0 +1,89 @@
+# ============================================
+# .dockerignore - Exclude files from Docker build
+# ============================================
+
+# Dependencies (will be installed inside container)
+node_modules
+**/node_modules
+.pnp
+.pnp.js
+
+# Build outputs (will be built inside container)
+dist
+**/dist
+build
+**/build
+
+# Development environment files
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+
+# Git
+.git
+.gitignore
+.github
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+__tests__
+**/__tests__
+
+# Documentation
+*.md
+!README.md
+docs/
+DEPLOYMENT.md
+
+# Docker itself
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# OS files
+Thumbs.db
+
+# Prisma
+# Keep Prisma migrations for deployment
+!backend/src/prisma/migrations/
+!**/schema.prisma
+
+# Backend specific
+backend/public/images/*.png
+backend/public/images/*.jpg
+backend/public/images/*.jpeg
+backend/public/images/*.webp
+
+# Webapp specific
+webapp/.env
+webapp/.env.local
+webapp/dist

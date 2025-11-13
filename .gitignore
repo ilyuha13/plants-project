@@ -1,5 +1,8 @@
 node_modules
 
+# Environment variables
+.env
+
 # Claude Code instructions (keep private)
 .claude/
 
