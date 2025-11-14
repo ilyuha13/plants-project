@@ -32,7 +32,7 @@
     "vitest": "^4.0.6"
   },
   "dependencies": {
-    "@plants-project/shared": "workspace:^",
+    "@plants-project/shared": "workspace:*",
     "@prisma/client": "^6.6.0",
     "@trpc/server": "^11.0.1",
     "@types/lodash": "^4.17.16",

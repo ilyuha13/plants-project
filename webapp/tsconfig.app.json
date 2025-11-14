@@ -17,6 +17,5 @@
     "noUnusedParameters": true,
     "noUncheckedSideEffectImports": true
   },
-  "references": [{ "path": "../shared" }],
-  "include": ["src"]
+  "include": ["src", "../shared/src"]
 }

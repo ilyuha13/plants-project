@@ -22,7 +22,7 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.0.1",
     "@plants-project/backend": "workspace:*",
-    "@plants-project/shared": "workspace:^",
+    "@plants-project/shared": "workspace:*",
     "@tanstack/react-query": "^5.70.0",
     "@toolpad/core": "^0.16.0",
     "@trpc/client": "^11.0.1",

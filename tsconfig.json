@@ -1,9 +1,4 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.eslint.json" },
-    { "path": "./shared" },
-    { "path": "./backend" },
-    { "path": "./webapp" }
-  ]
+  "references": [{ "path": "./tsconfig.eslint.json" }, { "path": "./backend" }, { "path": "./webapp" }]
 }

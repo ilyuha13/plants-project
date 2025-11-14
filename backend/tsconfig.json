@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "..",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
     "allowJs": true,
     "downlevelIteration": true,
@@ -13,6 +13,5 @@
     "moduleResolution": "Node",
     "target": "ES2021"
   },
-  "references": [{ "path": "../shared" }],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../shared/src/**/*"]
 }
