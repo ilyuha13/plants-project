@@ -13,4 +13,5 @@ backend/public/images/*.jpeg
 backend/public/images/*.svg
 backend/public/images/*.webp
 
-DEPLOYMENT.md
+TODO.md
+CLAUDE.md

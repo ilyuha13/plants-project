@@ -17,7 +17,16 @@ void (async () => {
       console.log(`${req.method} ${req.url}`) // Log the HTTP method and URL
       next()
     })
-    expressApp.use(cors())
+    expressApp.use(
+      cors({
+        origin: [
+          'http://localhost:5173', // Для разработки
+          'https://plants-project.vercel.app', // Vercel автоматический домен
+          'https://greenflagplants.vercel.app', // Если переименуешь проект
+        ],
+        credentials: true, // Для cookies (JWT токен)
+      }),
+    )
     expressApp.use(express.static('public'))
 
     expressApp.get('/ping', (req, res) => {
