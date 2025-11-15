@@ -44,7 +44,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
 
     container_name: plants_backend
     restart: unless-stopped
@@ -102,6 +102,10 @@ services:
       # SSL certificates from certbot
       - certbot_certs:/etc/letsencrypt:ro
       - certbot_www:/var/www/certbot:ro
+
+    # Монтируем файловую систему backend для доступа к webapp/dist
+    volumes_from:
+      - backend:ro
 
     depends_on:
       - backend

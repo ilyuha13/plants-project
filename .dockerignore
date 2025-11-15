@@ -13,6 +13,7 @@ dist
 **/dist
 build
 **/build
+**/*.tsbuildinfo
 
 # Development environment files
 .env.local
@@ -63,6 +64,9 @@ Dockerfile
 docker-compose.yml
 docker-compose.*.yml
 .dockerignore
+
+# Nginx (монтируется через volume, не нужен в образе)
+nginx/
 
 # Temporary files
 *.tmp
