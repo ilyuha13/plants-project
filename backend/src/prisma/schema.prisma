@@ -23,10 +23,13 @@ enum Role {
 
 model Plant {
     plantId String @unique @id @default(uuid())
-    name String
+    genus String // Род растения (например: "Сингониум", "Монстера")
+    name String // Полное название (например: "Сингониум Империал", "Монстера Адансона")
     description String
     imagesUrl String[]
     plantInstances PlantInstance[] @relation
+
+    @@index([genus]) // Индекс для быстрой сортировки/фильтрации по роду
 }
 
 model PlantInstance {
