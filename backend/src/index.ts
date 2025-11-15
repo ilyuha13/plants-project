@@ -21,8 +21,8 @@ void (async () => {
       cors({
         origin: [
           'http://localhost:5173', // Для разработки
-          'https://plants-project.vercel.app', // Vercel автоматический домен
-          'https://greenflagplants.vercel.app', // Если переименуешь проект
+          'https://www.greenflagplants.ru', // Production frontend
+          'https://greenflagplants.ru', // Редирект на www (но на всякий случай)
         ],
         credentials: true, // Для cookies (JWT токен)
       }),
