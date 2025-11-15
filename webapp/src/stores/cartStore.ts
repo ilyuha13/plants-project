@@ -7,10 +7,10 @@ export interface TCartItem {
   plantInstance: {
     Id: string
     price: string
+    imagesUrl: string[]
     plant: {
       plantId: string
       name: string
-      imagesUrl: string[]
     }
   }
 }

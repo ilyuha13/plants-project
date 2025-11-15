@@ -16,6 +16,7 @@ import {
 import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
 import { useState } from 'react'
 
+import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
@@ -89,7 +90,14 @@ export const Cart = () => {
           {items.length === 0 ? (
             <Typography color="text.secondary">Корзина пустая</Typography>
           ) : (
-            items.map((item) => <CartItem key={item.id} item={item} />)
+            items.map((item) => {
+              const { id, plantInstance } = item
+              const { plant, price, imagesUrl } = plantInstance
+              const { smallUrl } = getCloudinaryUrl(imagesUrl[0])
+
+              const name = plant.name
+              return <CartItem key={item.id} imageUrl={smallUrl} id={id} name={name} price={price} />
+            })
           )}
         </Stack>
 

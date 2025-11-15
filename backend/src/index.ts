@@ -20,7 +20,7 @@ void (async () => {
     expressApp.use(
       cors({
         origin: [
-          'http://localhost:5173', // Для разработки
+          'http://localhost:8000', // Для разработки
           'https://www.greenflagplants.ru', // Production frontend
           'https://greenflagplants.ru', // Редирект на www (но на всякий случай)
         ],
