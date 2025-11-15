@@ -72,6 +72,10 @@ COPY --from=builder /app/backend/dist/backend/src ./backend/dist
 # Эта папка будет доступна nginx через volume
 COPY --from=builder /app/webapp/dist ./webapp/dist
 
+# Объявляем webapp/dist как VOLUME для доступа из других контейнеров
+# Это позволяет nginx читать статику через volumes_from в docker-compose
+VOLUME ["/app/webapp/dist"]
+
 # Генерируем Prisma Client для production
 RUN cd backend && pnpm prisma generate
 
