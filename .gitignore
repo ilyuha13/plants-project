@@ -1,5 +1,8 @@
 node_modules
 
+# TypeScript build cache
+*.tsbuildinfo
+
 # Environment variables
 .env
 
