@@ -1,5 +1,6 @@
 import cors from 'cors'
 import express from 'express'
+import helmet from 'helmet'
 
 import { AppContext, createAppContext } from './lib/ctx'
 import { env } from './lib/env'
@@ -17,6 +18,7 @@ void (async () => {
       console.log(`${req.method} ${req.url}`) // Log the HTTP method and URL
       next()
     })
+    expressApp.use(helmet())
     expressApp.use(
       cors({
         origin: [
