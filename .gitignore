@@ -18,3 +18,5 @@ backend/public/images/*.webp
 
 TODO.md
 CLAUDE.md
+
+SCHEMA_PROPOSAL.prisma
