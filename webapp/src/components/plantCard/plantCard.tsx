@@ -45,7 +45,7 @@ export const PlantCard = (props: TPlantCardProps) => {
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <CardMedia component="img" image={imageUrl} alt={data.name} sx={{ width: '100%', objectFit: 'cover' }} />
         <CardActions>
-          <Button type="button" variant="text" onClick={onClick}>
+          <Button type={'button'} variant="text" onClick={onClick}>
             <Typography variant="h6" gutterBottom>
               {data.name}
             </Typography>
