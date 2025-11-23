@@ -2,7 +2,7 @@ import { zNonemptyString, zNonemtyImagesArray, zStringOptional } from '@plants-p
 import { z } from 'zod'
 
 export const zAddGenusTrpcInput = z.object({
-  name: zNonemptyString('не указано название'),
+  name: zNonemptyString,
   description: zStringOptional,
   imagesUrl: zNonemtyImagesArray,
 })
