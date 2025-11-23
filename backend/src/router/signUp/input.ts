@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const zSignUpTrpcInput = z.object({
   nick: z
     .string()
-    .min(1)
-    .regex(/^[a-z0-9-]+$/, 'Nick may contain only letters, numbers and dashes'),
-  password: z.string().min(1),
+    .min(5, 'минимум 5 символов')
+    .regex(/^[a-z0-9-]+$/, 'только буква латинского алфавита, цифры и тире'),
+  password: z.string().min(5),
 })

@@ -1,0 +1,143 @@
+import { Box, Button, Typography } from '@mui/material'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
+import { ReferenceDetailCard } from '../../components/Cards/ReferenceDetailCard'
+import { DeleteDialog } from '../../components/DeleteDialog'
+import { ReferenceCarousel } from '../../components/ReferenceCarousel/ReferenceCarousel'
+import { useDialog } from '../../hooks'
+import { useMe } from '../../lib/ctx'
+import { getPlantDetailRoute, LifeFormDetailRouteParams } from '../../lib/routes'
+import { trpc } from '../../lib/trpc'
+
+export const LifeFormDetailPage = () => {
+  const { lifeFormId } = useParams() as LifeFormDetailRouteParams
+  const navigate = useNavigate()
+  if (!lifeFormId) {
+    return
+  }
+
+  const { data, isLoading, isError, error } = trpc.getLifeFormById.useQuery(
+    { lifeFormId: lifeFormId },
+    { enabled: !!lifeFormId },
+  )
+  const deleteLifeForm = trpc.deleteLifeForm.useMutation()
+  const confirmDeleteDialog = useDialog()
+  const [currentDeleteData, setCurrentDeleteData] = useState<{
+    type: 'lifeForm' | 'plant'
+    id: string
+    name: string
+  }>({ type: 'lifeForm', id: lifeFormId, name: 'any' })
+
+  const me = useMe()
+  const isAdmin = me?.role === 'ADMIN'
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Typography variant="h5">Загрузка...</Typography>
+      </Box>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Typography variant="h5" color="error">
+          Ошибка: {error?.message || 'Не удалось загрузить жизненную форму'}
+        </Typography>
+      </Box>
+    )
+  }
+
+  if (!data?.lifeForm) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Typography variant="h5">Жизненная форма не найдена</Typography>
+      </Box>
+    )
+  }
+
+  const handleDeleteClick = () => {
+    confirmDeleteDialog.open()
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteLifeForm.mutateAsync({ lifeFormId: lifeFormId })
+      confirmDeleteDialog.close()
+      void navigate(-1)
+    } catch (error) {
+      console.error('Failed to delete life form:', error)
+    }
+  }
+
+  const { name, description, imagesUrl } = data.lifeForm
+
+  const plants = data.lifeForm.plants.map(({ plantId, ...rest }) => ({
+    ...rest,
+    id: plantId,
+  }))
+
+  const navigateToPlant = (id: string) => {
+    void navigate(getPlantDetailRoute({ plantId: id }))
+  }
+
+  const onDeletePlantClick = (id: string, name: string) => {
+    setCurrentDeleteData({ type: 'plant', id, name })
+    handleDeleteClick()
+  }
+
+  const getDeleteMassage = (): string => {
+    switch (currentDeleteData.type) {
+      case 'lifeForm':
+        return `жизненную форму: ${name}`
+      case 'plant':
+        return `все растения вида/сорта: ${currentDeleteData.name}`
+    }
+  }
+
+  return (
+    <Box
+      sx={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: { xs: 2, sm: 3, md: 4 },
+        minHeight: '80vh',
+      }}
+    >
+      <ReferenceDetailCard
+        name={name}
+        description={description}
+        imagesUrl={imagesUrl}
+        showDeleteButton={isAdmin}
+        onDelete={handleDeleteClick}
+        deleteButtonLoading={deleteLifeForm.isPending}
+      />
+
+      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
+        ← Назад
+      </Button>
+
+      {plants && plants.length > 0 && (
+        <Box marginTop={3}>
+          <ReferenceCarousel
+            data={plants}
+            title={`растения жизненной формы ${name}`}
+            type="plant"
+            showDeleteButton={isAdmin}
+            onCardClick={navigateToPlant}
+            onCardDelete={onDeletePlantClick}
+          />
+        </Box>
+      )}
+
+      <DeleteDialog
+        open={confirmDeleteDialog.isOpen}
+        onClose={confirmDeleteDialog.close}
+        onDelete={handleConfirmDelete}
+        message={`Вы уверены что хотите удалить  "${getDeleteMassage()}"? Это действие нельзя отменить.`}
+      />
+    </Box>
+  )
+}

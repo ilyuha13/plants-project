@@ -5,12 +5,11 @@ export const getPlantsTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
     select: {
       plantId: true,
       genus: true, // Род растения для сортировки
+      lifeForm: true,
+      variegation: true,
       name: true,
       description: true,
       imagesUrl: true,
-    },
-    orderBy: {
-      genus: 'asc', // Сортировка по роду (алфавитный порядок)
     },
   })
 

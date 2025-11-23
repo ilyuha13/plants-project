@@ -6,7 +6,10 @@ import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { Galery } from '../../components/Galery/Galery'
 import { ImagesInput } from '../../components/ImagesInput/ImagesInput'
+import { LifeFormSelect } from '../../components/LifeFormSelect/LifeFormSelect'
 import { TextInput } from '../../components/TextInput/TextInput'
+import { VariegationSelect } from '../../components/VariegationSelect/VariegationSelect'
+import { GenusSelect } from '../../components/genusSelect/genusSelect'
 import { useGetUrlsFromCloudinary } from '../../hooks/useGetUrlsFromCloudinary'
 import { useForm } from '../../lib/form'
 import { trpc } from '../../lib/trpc'
@@ -28,6 +31,9 @@ export const AddPlantPage = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
+      genusId: '',
+      variegationId: '',
+      lifeFormId: '',
       name: '',
       description: '',
       imagesUrl: [],
@@ -53,6 +59,9 @@ export const AddPlantPage = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
               <Typography variant="h2">Добавить растение</Typography>
+              <GenusSelect name="genusId" label="род" formik={formik} />
+              <VariegationSelect name="variegationId" label="вариегатность" formik={formik} />
+              <LifeFormSelect name="lifeFormId" label="жизненная форма" formik={formik} />
               <TextInput name="name" label="название" formik={formik} />
               <TextInput name="description" label="описание" formik={formik} />
               <ImagesInput name="imagesUrl" formik={formik} setFileArray={setArrayFromImagesInput} />

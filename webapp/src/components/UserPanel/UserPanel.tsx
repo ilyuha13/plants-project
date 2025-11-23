@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom'
 
 import { useMe } from '../../lib/ctx'
 import { getSignInRoute, getSignOutRoute } from '../../lib/routes'
+import { AdminButton } from '../AdminButton/AdminButton'
 import { CartButton } from '../CartButton/CartButton'
 
 export const UserPanel = () => {
   const me = useMe()
+  const isAdmin: boolean = me?.role === 'ADMIN'
   return !me ? (
     <Toolbar disableGutters>
       <Tooltip title="войти">
@@ -19,6 +21,7 @@ export const UserPanel = () => {
     </Toolbar>
   ) : (
     <Toolbar disableGutters>
+      {isAdmin && <AdminButton />}
       <CartButton />
       <Tooltip title="выйти">
         <IconButton component={Link} to={getSignOutRoute()} color="primary">

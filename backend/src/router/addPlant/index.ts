@@ -5,15 +5,8 @@ import { trpc } from '../../lib/trpc'
 
 export const addPlantTrpcRoute = trpc.procedure.input(zAddPlantTrpcInput).mutation(async ({ ctx, input }) => {
   try {
-    // TODO: Обновить форму на фронтенде для ввода genus отдельно
-    // Временно извлекаем род из первого слова названия
-    const genus = input.name.split(' ')[0]
-
     await ctx.prisma.plant.create({
-      data: {
-        ...input,
-        genus, // Автоматически извлеченный род
-      },
+      data: input,
     })
     return true
   } catch (error: unknown) {

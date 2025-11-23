@@ -8,7 +8,7 @@ import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
-import { getPlantsListRoute } from '../../lib/routes'
+import { getCatalogPageRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const SignUpPage = () => {
@@ -41,7 +41,7 @@ export const SignUpPage = () => {
     onSubmit: async (values) => {
       const { token } = await signUp.mutateAsync(values)
       Cookies.set('token', token, { expires: 60 * 60 * 5 })
-      void navigate(getPlantsListRoute())
+      void navigate(getCatalogPageRoute())
       void trpcUtils.invalidate()
     },
   })

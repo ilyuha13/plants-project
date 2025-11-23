@@ -6,14 +6,14 @@ import { DeleteDialog } from '../../components/DeleteDialog'
 import { PlantCard } from '../../components/plantCard/plantCard'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
-import { getInstanceDetailRoute, getPlantsListRoute } from '../../lib/routes'
+import { getInstanceDetailRoute, getPlantsListRoute, PlantDetailRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const PlantDetailPage = () => {
-  const { plantId } = useParams<string>()
+  const { plantId } = useParams() as PlantDetailRouteParams
   const navigate = useNavigate()
 
-  const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId! }, { enabled: !!plantId })
+  const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId }, { enabled: !!plantId })
   const deletePlant = trpc.deletePlant.useMutation()
   const confirmDeleteDialog = useDialog()
 
@@ -24,8 +24,11 @@ export const PlantDetailPage = () => {
   }
 
   const handleConfirmDelete = async () => {
+    if (!plantId) {
+      return
+    }
     try {
-      await deletePlant.mutateAsync({ plantId: plantId! })
+      await deletePlant.mutateAsync({ plantId })
       confirmDeleteDialog.close()
       void navigate(getPlantsListRoute())
     } catch (error) {
@@ -90,7 +93,7 @@ export const PlantDetailPage = () => {
           <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
             <PlantCard
               type="instance"
-              onClick={() => void navigate(getInstanceDetailRoute(instance.Id))}
+              onClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
               data={{ ...instance, plantName: name }}
             />
           </Grid>

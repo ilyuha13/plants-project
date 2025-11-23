@@ -7,7 +7,7 @@ import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
 import { TextInput } from '../../components/TextInput/TextInput'
 import { useForm } from '../../lib/form'
-import { getPlantsListRoute, getSignUpRoute } from '../../lib/routes'
+import { getCatalogPageRoute, getSignUpRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const SignInPage = () => {
@@ -28,7 +28,7 @@ export const SignInPage = () => {
       const { token } = await signIn.mutateAsync(values)
       Cookies.set('token', token, { expires: 60 * 60 * 5 })
       void trpcUtils.invalidate()
-      void navigate(getPlantsListRoute())
+      void navigate(getCatalogPageRoute())
     },
   })
 

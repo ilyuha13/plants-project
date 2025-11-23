@@ -1,3 +1,8 @@
+// ============================================
+// FINAL DATABASE SCHEMA - Plants Project
+// ============================================
+// Финальная схема с учетом упрощенного MVP
+
 generator client {
     provider = "prisma-client-js"
 }
@@ -7,13 +12,22 @@ datasource db {
     url = env("DATABASE_URL")
 }
 
+// ============================================
+// ПОЛЬЗОВАТЕЛИ И АВТОРИЗАЦИЯ
+// ============================================
+
 model User {
     id String @id @default(uuid())
     nick String @unique
-    password String
+    password String // bcrypt hash (не SHA256!)
     createdAt DateTime @default(now())
     role Role @default(USER)
+
+    // Связи
     cart Cart?
+    orders Order[]
+
+    @@index([role])
 }
 
 enum Role {
@@ -21,29 +35,96 @@ enum Role {
     USER
 }
 
+// ============================================
+// СПРАВОЧНИКИ (для фильтрации)
+// ============================================
+
+model Genus {
+    id String @id @default(uuid())
+    name String @unique
+    description String?
+    imagesUrl String[]
+    plants Plant[]
+    createdAt DateTime @default(now())
+
+    @@index([name])
+}
+
+model Variegation {
+    id String @id @default(uuid())
+    name String @unique
+    description String?
+    imagesUrl String[]
+    plants Plant[]
+    createdAt DateTime @default(now())
+
+    @@index([name])
+}
+
+model LifeForm {
+    id String @id @default(uuid())
+    name String @unique
+    description String?
+    imagesUrl String[]
+    plants Plant[]
+    createdAt DateTime @default(now())
+
+    @@index([name])
+}
+
+// ============================================
+// РАСТЕНИЯ И ЭКЗЕМПЛЯРЫ
+// ============================================
+
 model Plant {
     plantId String @unique @id @default(uuid())
-    genus String // Род растения (например: "Сингониум", "Монстера")
-    name String // Полное название (например: "Сингониум Империал", "Монстера Адансона")
+
+    genusId String
+    genus Genus @relation(fields: [genusId], references: [id])
+
+    variegationId String
+    variegation Variegation @relation(fields: [variegationId], references: [id])
+
+    lifeFormId String
+    lifeForm LifeForm @relation(fields: [lifeFormId], references: [id])
+
+    name String
     description String
     imagesUrl String[]
-    plantInstances PlantInstance[] @relation
 
-    @@index([genus]) // Индекс для быстрой сортировки/фильтрации по роду
+    plantInstances PlantInstance[]
+
+    createdAt DateTime @default(now())
+
+    @@index([genusId])
+    @@index([variegationId])
+    @@index([lifeFormId])
+    @@index([name])
 }
 
 model PlantInstance {
     Id String @unique @id @default(uuid())
     inventoryNumber String @unique
+
     plantId String
     plant Plant @relation(fields: [plantId], references: [plantId], onDelete: Cascade)
+
     description String?
     imagesUrl String[]
     price String
     status PlantStatus @default(AVAILABLE)
-    reservedUntil DateTime? // подумать о другой логике резервирования
+
+    reservedUntil DateTime?
+
     createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     cartItems CartItem[]
+    orderItems OrderItem[]
+
+    @@index([status])
+    @@index([plantId])
+    @@index([reservedUntil])
 }
 
 enum PlantStatus {
@@ -52,16 +133,20 @@ enum PlantStatus {
     SOLD
 }
 
+// ============================================
+// КОРЗИНА
+// ============================================
+
 model Cart {
     id String @id @default(uuid())
     userId String @unique
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     items CartItem[]
-    createdAt DateTime @default(now()) // подумать надо ли
+    createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-model CartItem { // может быть не нужен
+model CartItem {
     id String @id @default(uuid())
     cartId String
     cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
@@ -70,4 +155,61 @@ model CartItem { // может быть не нужен
     addedAt DateTime @default(now())
 
     @@unique([cartId, plantInstanceId])
+    @@index([cartId])
+    @@index([plantInstanceId])
+}
+
+// ============================================
+// ЗАКАЗЫ
+// ============================================
+
+model Order {
+    id String @id @default(uuid())
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    status OrderStatus @default(PENDING)
+
+    items OrderItem[]
+
+    customerName String
+    customerPhone String
+    customerAddress String
+
+    vkContact String?
+    telegramContact String?
+
+    customerNotes String?
+
+    totalAmount String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+    @@index([status])
+    @@index([createdAt])
+}
+
+enum OrderStatus {
+    PENDING
+    CONFIRMED
+    CANCELLED
+}
+
+model OrderItem {
+    id String @id @default(uuid())
+    orderId String
+    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    plantInstanceId String
+    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [Id])
+
+    priceAtPurchase String
+    plantNameSnapshot String
+    plantGenusSnapshot String
+    inventoryNumberSnapshot String
+
+    @@index([orderId])
+    @@index([plantInstanceId])
 }
