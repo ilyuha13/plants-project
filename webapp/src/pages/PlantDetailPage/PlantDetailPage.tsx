@@ -1,12 +1,13 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { InstancePreviewCard } from '../../components/Cards/InstancePreviewCard'
 import { PlantDetailCard } from '../../components/Cards/PlantDetailCard'
 import { DeleteDialog } from '../../components/DeleteDialog'
-import { PlantCard } from '../../components/plantCard/plantCard'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
-import { getInstanceDetailRoute, getPlantsListRoute, PlantDetailRouteParams } from '../../lib/routes'
+import { getCatalogPageRoute, getInstanceDetailRoute, PlantDetailRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const PlantDetailPage = () => {
@@ -15,26 +16,17 @@ export const PlantDetailPage = () => {
 
   const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId }, { enabled: !!plantId })
   const deletePlant = trpc.deletePlant.useMutation()
+  const deleteInstance = trpc.deletePlantInstance.useMutation()
+  const trpcUtils = trpc.useUtils()
+  const [currentDeleteData, setCurrentDeleteData] = useState<{
+    type: 'instance' | 'plant'
+    id: string
+    inventoryNumber: string
+  }>({ type: 'plant', id: plantId, inventoryNumber: '' })
   const confirmDeleteDialog = useDialog()
 
   const me = useMe()
-
-  const handleDeleteClick = () => {
-    confirmDeleteDialog.open()
-  }
-
-  const handleConfirmDelete = async () => {
-    if (!plantId) {
-      return
-    }
-    try {
-      await deletePlant.mutateAsync({ plantId })
-      confirmDeleteDialog.close()
-      void navigate(getPlantsListRoute())
-    } catch (error) {
-      console.error('Failed to delete plant:', error)
-    }
-  }
+  const isAdmin = me?.role === 'ADMIN'
 
   if (isLoading) {
     return (
@@ -62,9 +54,44 @@ export const PlantDetailPage = () => {
     )
   }
 
+  const onDeleteInstanceClick = (id: string, inventoryNumber: string) => {
+    setCurrentDeleteData({ type: 'instance', id, inventoryNumber })
+    handleDeleteClick()
+  }
+
+  const handleDeleteClick = () => {
+    confirmDeleteDialog.open()
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      switch (currentDeleteData.type) {
+        case 'plant':
+          await deletePlant.mutateAsync({ plantId })
+          confirmDeleteDialog.close()
+          void navigate(getCatalogPageRoute())
+          break
+        case 'instance':
+          await deleteInstance.mutateAsync({ Id: currentDeleteData.id })
+          await trpcUtils.getPlant.invalidate()
+          confirmDeleteDialog.close()
+          setCurrentDeleteData({ type: 'plant', id: plantId, inventoryNumber: '' })
+      }
+    } catch (error) {
+      console.error('Failed to delete plant:', error)
+    }
+  }
+
   const { name, description, imagesUrl } = data.plant
 
-  const showDeleteButton = me?.role === 'ADMIN'
+  const getDeleteMassage = (): string => {
+    switch (currentDeleteData.type) {
+      case 'plant':
+        return `все растения вида/сорта: ${name}`
+      case 'instance':
+        return `экземпляр вида/сорта ${name}: №: ${currentDeleteData.inventoryNumber}`
+    }
+  }
 
   return (
     <Box
@@ -79,7 +106,7 @@ export const PlantDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        showDeleteButton={showDeleteButton}
+        showDeleteButton={isAdmin}
         onDelete={handleDeleteClick}
         deleteButtonLoading={deletePlant.isPending}
       />
@@ -91,10 +118,11 @@ export const PlantDetailPage = () => {
       <Grid container spacing={{ xs: 2, sm: 2.5, xl: 3 }}>
         {data?.plant.plantInstances.map((instance) => (
           <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
-            <PlantCard
-              type="instance"
+            <InstancePreviewCard
+              showAdminOptions={isAdmin}
+              onDelete={() => onDeleteInstanceClick(instance.Id, instance.inventoryNumber)}
               onClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
-              data={{ ...instance, plantName: name }}
+              data={{ ...instance, name }}
             />
           </Grid>
         ))}
@@ -104,7 +132,7 @@ export const PlantDetailPage = () => {
         open={confirmDeleteDialog.isOpen}
         onClose={confirmDeleteDialog.close}
         onDelete={handleConfirmDelete}
-        message={`Вы уверены что хотите удалить "${name}"? Это действие нельзя отменить.`}
+        message={`Вы уверены что хотите удалить "${getDeleteMassage()}"? Это действие нельзя отменить.`}
       />
     </Box>
   )

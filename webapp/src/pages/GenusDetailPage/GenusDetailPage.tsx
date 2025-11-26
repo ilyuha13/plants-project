@@ -18,6 +18,7 @@ export const GenusDetailPage = () => {
   const { data, isLoading, isError, error } = trpc.getGenusById.useQuery({ genusId: genusId }, { enabled: !!genusId })
   const deleteGenus = trpc.deleteGenus.useMutation()
   const deletePlant = trpc.deletePlant.useMutation()
+  const trpcUtils = trpc.useUtils()
   const confirmDeleteDialog = useDialog()
   const [currentDeleteData, setCurrentDeleteData] = useState<{
     type: 'genus' | 'plant'
@@ -28,28 +29,6 @@ export const GenusDetailPage = () => {
   const me = useMe()
 
   const isAdmin = me?.role === 'ADMIN'
-
-  const handleDeleteClick = () => {
-    confirmDeleteDialog.open()
-  }
-
-  const handleConfirmDelete = async () => {
-    try {
-      switch (currentDeleteData.type) {
-        case 'genus':
-          await deleteGenus.mutateAsync({ genusId: genusId })
-          confirmDeleteDialog.close()
-          void navigate(-1)
-          break
-        case 'plant':
-          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
-          confirmDeleteDialog.close()
-          setCurrentDeleteData({ type: 'genus', id: genusId, name: 'any' })
-      }
-    } catch (error) {
-      console.error('Failed to delete genus:', error)
-    }
-  }
 
   if (isLoading) {
     return (
@@ -83,6 +62,30 @@ export const GenusDetailPage = () => {
     ...rest,
     id: plantId,
   }))
+
+  const handleDeleteClick = () => {
+    confirmDeleteDialog.open()
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      switch (currentDeleteData.type) {
+        case 'genus':
+          await deleteGenus.mutateAsync({ genusId: genusId })
+          confirmDeleteDialog.close()
+          void navigate(-1)
+          break
+        case 'plant':
+          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await trpcUtils.getGenusById.invalidate()
+          confirmDeleteDialog.close()
+          setCurrentDeleteData({ type: 'genus', id: genusId, name: 'any' })
+          break
+      }
+    } catch (error) {
+      console.error('Failed to delete genus:', error)
+    }
+  }
 
   const navigateToPlant = (id: string) => {
     void navigate(getPlantDetailRoute({ plantId: id }))

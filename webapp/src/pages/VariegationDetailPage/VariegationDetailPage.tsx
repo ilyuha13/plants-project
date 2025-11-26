@@ -25,24 +25,12 @@ export const VariegationDetailPage = () => {
     { enabled: !!variegationId },
   )
   const deleteVariegation = trpc.deleteVariegation.useMutation()
+  const deletePlant = trpc.deletePlant.useMutation()
   const confirmDeleteDialog = useDialog()
+  const trpcUtils = trpc.useUtils()
 
   const me = useMe()
   const isAdmin = me?.role === 'ADMIN'
-
-  const handleDeleteClick = () => {
-    confirmDeleteDialog.open()
-  }
-
-  const handleConfirmDelete = async () => {
-    try {
-      await deleteVariegation.mutateAsync({ variegationId: variegationId })
-      confirmDeleteDialog.close()
-      void navigate(-1)
-    } catch (error) {
-      console.error('Failed to delete variegation:', error)
-    }
-  }
 
   if (isLoading) {
     return (
@@ -76,6 +64,30 @@ export const VariegationDetailPage = () => {
     ...rest,
     id: plantId,
   }))
+
+  const handleDeleteClick = () => {
+    confirmDeleteDialog.open()
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      switch (currentDeleteData.type) {
+        case 'variegation':
+          await deleteVariegation.mutateAsync({ variegationId: variegationId })
+          confirmDeleteDialog.close()
+          void navigate(-1)
+          break
+        case 'plant':
+          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await trpcUtils.getVariegationById.invalidate()
+          confirmDeleteDialog.close()
+          setCurrentDeleteData({ type: 'variegation', id: variegationId, name: 'any' })
+          break
+      }
+    } catch (error) {
+      console.error('Failed to delete variegation:', error)
+    }
+  }
 
   const onDeletePlantClick = (id: string, name: string) => {
     setCurrentDeleteData({ type: 'plant', id, name })
@@ -121,7 +133,7 @@ export const VariegationDetailPage = () => {
         <Box marginTop={3}>
           <ReferenceCarousel
             data={plants}
-            title={`растения жизненной формы ${name}`}
+            title={`растения c расцветкой ${name}`}
             type="plant"
             showDeleteButton={isAdmin}
             onCardClick={navigateToPlant}

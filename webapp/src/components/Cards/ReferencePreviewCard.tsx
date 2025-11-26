@@ -8,7 +8,7 @@ interface ReferencePreviewCardProps {
   data: { imagesUrl: string[]; name: string; description: string | null }
 
   // Delete button
-  showDeleteButton: boolean
+  adminOptions: boolean
   deleteButtonLoading?: boolean
   onDelete?: () => void
   onClick: () => void
@@ -18,14 +18,14 @@ export const ReferencePreviewCard = ({
   data,
   onClick,
   onDelete,
-  showDeleteButton,
+  adminOptions,
   deleteButtonLoading,
 }: ReferencePreviewCardProps) => {
   const { imagesUrl, name, description } = data
   const { thumbnailUrl } = getCloudinaryUrl(imagesUrl[0])
   return (
     <PreviewCardLayout name={name} description={description} imageUrl={thumbnailUrl} onClick={onClick}>
-      {showDeleteButton && onDelete && (
+      {adminOptions && onDelete && (
         <IconButton color="error" onClick={() => onDelete()} disabled={deleteButtonLoading}>
           <DeleteOutlineIcon color="error" />
         </IconButton>

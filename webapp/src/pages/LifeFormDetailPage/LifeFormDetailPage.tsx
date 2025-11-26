@@ -22,6 +22,8 @@ export const LifeFormDetailPage = () => {
     { enabled: !!lifeFormId },
   )
   const deleteLifeForm = trpc.deleteLifeForm.useMutation()
+  const deletePlant = trpc.deletePlant.useMutation()
+  const trpcUtils = trpc.useUtils()
   const confirmDeleteDialog = useDialog()
   const [currentDeleteData, setCurrentDeleteData] = useState<{
     type: 'lifeForm' | 'plant'
@@ -64,9 +66,19 @@ export const LifeFormDetailPage = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteLifeForm.mutateAsync({ lifeFormId: lifeFormId })
-      confirmDeleteDialog.close()
-      void navigate(-1)
+      switch (currentDeleteData.type) {
+        case 'lifeForm':
+          await deleteLifeForm.mutateAsync({ lifeFormId: lifeFormId })
+          confirmDeleteDialog.close()
+          void navigate(-1)
+          break
+        case 'plant':
+          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await trpcUtils.getGenusById.invalidate()
+          confirmDeleteDialog.close()
+          setCurrentDeleteData({ type: 'lifeForm', id: lifeFormId, name: 'any' })
+          break
+      }
     } catch (error) {
       console.error('Failed to delete life form:', error)
     }
@@ -123,7 +135,7 @@ export const LifeFormDetailPage = () => {
         <Box marginTop={3}>
           <ReferenceCarousel
             data={plants}
-            title={`растения жизненной формы ${name}`}
+            title={`растения с типом роста ${name}`}
             type="plant"
             showDeleteButton={isAdmin}
             onCardClick={navigateToPlant}

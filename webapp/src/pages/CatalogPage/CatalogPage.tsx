@@ -21,6 +21,19 @@ export const CatalogPage = () => {
     id: string
     name: string
   }>()
+  const [isFullViewGenusGalery, setIsFullViewGenusGalery] = useState<boolean>(false)
+  const [isFullViewVariegationGalery, setIsFullViewVariegationGalery] = useState<boolean>(false)
+  const [isFullViewLifeFormGalery, setIsFullViewLifeFormGalery] = useState<boolean>(false)
+
+  const togleIsFullViewGenusGalery = () => {
+    setIsFullViewGenusGalery(!isFullViewGenusGalery)
+  }
+  const togleIsFullViewVariegationGalery = () => {
+    setIsFullViewVariegationGalery(!isFullViewVariegationGalery)
+  }
+  const togleIsFullViewLifeFormGalery = () => {
+    setIsFullViewLifeFormGalery(!isFullViewLifeFormGalery)
+  }
 
   const confirmDeleteDialog = useDialog()
 
@@ -112,6 +125,8 @@ export const CatalogPage = () => {
         </Typography>
         <Divider />
         <ReferenceCarousel
+          isFullView={isFullViewGenusGalery}
+          togleIsFullView={togleIsFullViewGenusGalery}
           onCardDelete={deleteReference}
           onCardClick={navigateToReference}
           showDeleteButton={isAdmin}
@@ -121,20 +136,24 @@ export const CatalogPage = () => {
         />
         <Divider />
         <ReferenceCarousel
+          isFullView={isFullViewVariegationGalery}
+          togleIsFullView={togleIsFullViewVariegationGalery}
           onCardDelete={deleteReference}
           onCardClick={navigateToReference}
           showDeleteButton={isAdmin}
           data={variegation}
-          title="Вариегатность"
+          title="Расцветка"
           type="variegation"
         />
         <Divider />
         <ReferenceCarousel
+          isFullView={isFullViewLifeFormGalery}
+          togleIsFullView={togleIsFullViewLifeFormGalery}
           onCardDelete={deleteReference}
           onCardClick={navigateToReference}
           showDeleteButton={isAdmin}
           data={lifeForm}
-          title="Жизненная форма"
+          title="Тип роста"
           type="lifeForm"
         />
       </Stack>
