@@ -31,9 +31,9 @@ COPY shared/package.json ./shared/
 
 # Копируем TypeScript конфигурацию (нужна для некоторых зависимостей)
 COPY tsconfig.base.json tsconfig.json ./
-COPY backend/tsconfig.json ./backend/
-COPY webapp/tsconfig.json ./webapp/
-COPY shared/tsconfig.json ./shared/
+COPY backend/tsconfig*.json ./backend/
+COPY webapp/tsconfig*.json ./webapp/
+COPY shared/tsconfig*.json ./shared/
 
 # ============================================
 # Копируем Prisma схему ДО pnpm install
