@@ -79,6 +79,11 @@ services:
       postgres:
         condition: service_healthy
 
+    volumes:
+      # Named volume for webapp static files
+      # При запуске контейнера файлы из образа автоматически копируются в volume
+      - webapp_dist:/app/webapp/dist
+
     networks:
       - plants_network
 
@@ -103,9 +108,8 @@ services:
       - certbot_certs:/etc/letsencrypt:ro
       - certbot_www:/var/www/certbot:ro
 
-    # Монтируем файловую систему backend для доступа к webapp/dist
-    volumes_from:
-      - backend:ro
+      # Webapp static files (shared with backend via named volume)
+      - webapp_dist:/app/webapp/dist:ro
 
     depends_on:
       - backend
@@ -143,6 +147,11 @@ volumes:
 
   certbot_www:
     driver: local
+
+  webapp_dist:
+    driver: local
+    # Named volume for webapp static files
+    # Shared between backend (writes) and nginx (reads)
 
 # ============================================
 # Networks

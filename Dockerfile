@@ -69,12 +69,11 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 COPY --from=builder /app/backend/dist/backend/src ./backend/dist
 
 # Копируем собранный webapp (готовая статика HTML/CSS/JS)
-# Эта папка будет доступна nginx через volume
+# Эта папка будет доступна nginx через named volume (webapp_dist)
 COPY --from=builder /app/webapp/dist ./webapp/dist
 
-# Объявляем webapp/dist как VOLUME для доступа из других контейнеров
-# Это позволяет nginx читать статику через volumes_from в docker-compose
-VOLUME ["/app/webapp/dist"]
+# Named volume webapp_dist будет монтироваться сюда из docker-compose.yml
+# При запуске контейнера файлы из образа копируются в volume автоматически
 
 # Генерируем Prisma Client для production
 RUN cd backend && pnpm prisma generate
