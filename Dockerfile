@@ -16,16 +16,48 @@ WORKDIR /app
 # Включаем pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Копируем ВСЁ (кроме того что в .dockerignore)
-# Это включает: backend/, webapp/, shared/, все package.json и конфиги
-COPY . .
+# ============================================
+# ОПТИМИЗАЦИЯ: Копируем только package.json файлы СНАЧАЛА
+# Это позволяет кешировать pnpm install пока зависимости не меняются
+# ============================================
+
+# Копируем workspace конфигурацию
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Копируем package.json из всех воркспейсов
+COPY backend/package.json ./backend/
+COPY webapp/package.json ./webapp/
+COPY shared/package.json ./shared/
+
+# Копируем TypeScript конфигурацию (нужна для некоторых зависимостей)
+COPY tsconfig.base.json tsconfig.json ./
+COPY backend/tsconfig.json ./backend/
+COPY webapp/tsconfig.json ./webapp/
+COPY shared/tsconfig.json ./shared/
 
 # Устанавливаем ВСЕ зависимости (dev + prod)
-# Нужны для компиляции TypeScript
+# ✅ ЭТОТ СЛОЙ КЕШИРУЕТСЯ если package.json не менялся!
+# Экономия: 3-4 минуты на каждом билде если только код изменился
 RUN pnpm install --frozen-lockfile
+
+# ============================================
+# Копируем Prisma схему и генерируем Client
+# ============================================
+COPY backend/src/prisma ./backend/src/prisma
 
 # Генерируем Prisma Client (типы для backend)
 RUN cd backend && pnpm prisma generate
+
+# ============================================
+# ТЕПЕРЬ копируем весь остальной код
+# Этот слой инвалидируется при изменении кода, но pnpm install уже в кеше!
+# ============================================
+COPY backend/src ./backend/src
+COPY webapp/src ./webapp/src
+COPY webapp/public ./webapp/public
+COPY webapp/index.html ./webapp/
+COPY webapp/vite.config.ts ./webapp/
+COPY shared/src ./shared/src
 
 # Собираем backend (TypeScript → JavaScript в backend/dist/)
 RUN cd backend && pnpm build
