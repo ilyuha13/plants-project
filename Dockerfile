@@ -35,18 +35,17 @@ COPY backend/tsconfig.json ./backend/
 COPY webapp/tsconfig.json ./webapp/
 COPY shared/tsconfig.json ./shared/
 
-# Устанавливаем ВСЕ зависимости (dev + prod)
-# ✅ ЭТОТ СЛОЙ КЕШИРУЕТСЯ если package.json не менялся!
-# Экономия: 3-4 минуты на каждом билде если только код изменился
-RUN pnpm install --frozen-lockfile
-
 # ============================================
-# Копируем Prisma схему и генерируем Client
+# Копируем Prisma схему ДО pnpm install
+# Нужно для prepare hook который запускает prisma generate
 # ============================================
 COPY backend/src/prisma ./backend/src/prisma
 
-# Генерируем Prisma Client (типы для backend)
-RUN cd backend && pnpm prisma generate
+# Устанавливаем ВСЕ зависимости (dev + prod)
+# ✅ ЭТОТ СЛОЙ КЕШИРУЕТСЯ если package.json И schema.prisma не менялись!
+# При pnpm install автоматически выполнится prepare hook → prisma generate
+# Экономия: 3-4 минуты на каждом билде если только код изменился
+RUN pnpm install --frozen-lockfile
 
 # ============================================
 # ТЕПЕРЬ копируем весь остальной код
