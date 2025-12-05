@@ -124,9 +124,6 @@ export const CatalogPage = () => {
         <Typography variant="h2" gutterBottom>
           Каталог растений
         </Typography>
-        <Typography variant="h2" gutterBottom>
-          Каталог растений
-        </Typography>
         <Divider />
         <CardsCollection
           isFullView={isFullViewGenusGalery}
