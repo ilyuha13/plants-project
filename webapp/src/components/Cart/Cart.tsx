@@ -93,10 +93,10 @@ export const Cart = () => {
             items.map((item) => {
               const { id, plantInstance } = item
               const { plant, price, imagesUrl } = plantInstance
-              const { smallUrl } = getCloudinaryUrl(imagesUrl[0])
+              const imageUrl = getCloudinaryUrl(imagesUrl[0], 'small')
 
               const name = plant.name
-              return <CartItem key={item.id} imageUrl={smallUrl} id={id} name={name} price={price} />
+              return <CartItem key={item.id} imageUrl={imageUrl} id={id} name={name} price={price} />
             })
           )}
         </Stack>

@@ -2,8 +2,8 @@ import { Divider, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { CardsCollection, TType } from '../../components/CardsCollection/CardsCollection'
 import { DeleteDialog } from '../../components/DeleteDialog'
-import { ReferenceCarousel, TType } from '../../components/ReferenceCarousel/ReferenceCarousel'
 import { useDialog } from '../../hooks'
 import { useReferences } from '../../hooks/useReferences'
 import { useMe } from '../../lib/ctx'
@@ -39,6 +39,7 @@ export const CatalogPage = () => {
 
   const me = useMe()
   const isAdmin = me?.role === 'ADMIN'
+
   if (isLoading) {
     return <span>loading...</span>
   }
@@ -124,34 +125,31 @@ export const CatalogPage = () => {
           Каталог растений
         </Typography>
         <Divider />
-        <ReferenceCarousel
+        <CardsCollection
           isFullView={isFullViewGenusGalery}
           togleIsFullView={togleIsFullViewGenusGalery}
-          onCardDelete={deleteReference}
+          onCardDelete={isAdmin ? deleteReference : null}
           onCardClick={navigateToReference}
-          showDeleteButton={isAdmin}
           data={genus}
           title="Род"
           type="genus"
         />
         <Divider />
-        <ReferenceCarousel
+        <CardsCollection
           isFullView={isFullViewVariegationGalery}
           togleIsFullView={togleIsFullViewVariegationGalery}
-          onCardDelete={deleteReference}
+          onCardDelete={isAdmin ? deleteReference : null}
           onCardClick={navigateToReference}
-          showDeleteButton={isAdmin}
           data={variegation}
           title="Расцветка"
           type="variegation"
         />
         <Divider />
-        <ReferenceCarousel
+        <CardsCollection
           isFullView={isFullViewLifeFormGalery}
           togleIsFullView={togleIsFullViewLifeFormGalery}
-          onCardDelete={deleteReference}
+          onCardDelete={isAdmin ? deleteReference : null}
           onCardClick={navigateToReference}
-          showDeleteButton={isAdmin}
           data={lifeForm}
           title="Тип роста"
           type="lifeForm"

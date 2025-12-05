@@ -7,7 +7,8 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const cloudinaryUrls: { mediumUrl: string; smallUrl: string }[] = []
   imageUrls.map((iamgeId) => {
-    const { mediumUrl, smallUrl } = getCloudinaryUrl(iamgeId)
+    const smallUrl = getCloudinaryUrl(iamgeId, 'small')
+    const mediumUrl = getCloudinaryUrl(iamgeId, 'medium')
     cloudinaryUrls.push({ mediumUrl, smallUrl })
   })
   return (
