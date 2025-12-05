@@ -1,3 +1,5 @@
+import path from 'path'
+
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
@@ -37,6 +39,21 @@ void (async () => {
 
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
+
+    // Serve frontend static files (for production)
+    const webappDistPath = path.join(__dirname, '../../webapp/dist')
+    expressApp.use(express.static(webappDistPath))
+
+    // SPA fallback: serve index.html for all non-API routes
+    // This allows React Router to handle client-side routing
+    expressApp.get('*', (req, res) => {
+      // Don't interfere with API routes
+      if (req.path.startsWith('/trpc') || req.path.startsWith('/auth')) {
+        res.status(404).send('Not found')
+        return
+      }
+      res.sendFile(path.join(webappDistPath, 'index.html'))
+    })
 
     const server = expressApp.listen(env.PORT, () => {
       console.info(`Listening at http://localhost:${env.PORT}`)

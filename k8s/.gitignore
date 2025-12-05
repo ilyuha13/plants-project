@@ -1,0 +1,7 @@
+# Ignore filled secrets file (contains sensitive data)
+*-filled.yaml
+01-secrets-filled.yaml
+
+# Ignore any local kubeconfig
+kubeconfig*.yaml
+*.kubeconfig

@@ -1,0 +1,145 @@
+# ============================================
+# Backend Deployment for Plants Project
+# ============================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: plants
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: plants
+spec:
+  replicas: 2  # 2 replicas for zero-downtime deployments
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Never take down both replicas at once
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/GITHUB_USERNAME/plants-backend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            # ConfigMap values
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: plants-config
+                  key: NODE_ENV
+            - name: HOST_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: plants-config
+                  key: HOST_ENV
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: plants-config
+                  key: PORT
+
+            # Database URL (constructed from ConfigMap + Secret)
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: plants-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: plants-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)?schema=public"
+
+            # Secrets
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: JWT_SECRET
+            - name: PASSWORD_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: PASSWORD_SALT
+            - name: CLOUDINARY_CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: CLOUDINARY_CLOUD_NAME
+            - name: CLOUDINARY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: CLOUDINARY_API_KEY
+            - name: CLOUDINARY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: CLOUDINARY_API_SECRET
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: TELEGRAM_BOT_TOKEN
+            - name: TELEGRAM_BOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: TELEGRAM_BOT_USERNAME
+            - name: TELEGRAM_ADMIN_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: plants-secrets
+                  key: TELEGRAM_ADMIN_CHAT_ID
+
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

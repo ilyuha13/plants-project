@@ -1,0 +1,62 @@
+# ============================================
+# Ingress for Plants Project
+# ============================================
+# Handles both API and static frontend files
+# ============================================
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plants-ingress
+  namespace: plants
+  annotations:
+    # cert-manager will automatically create SSL certificate
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # Nginx ingress settings
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+    # Serve static files from backend container
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.greenflagplants.ru
+        - greenflagplants.ru
+      secretName: plants-tls
+  rules:
+    # API backend
+    - host: api.greenflagplants.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3000
+
+    # Frontend (served from backend's /app/webapp/dist)
+    - host: greenflagplants.ru
+      http:
+        paths:
+          # Try static files first
+          - path: /assets(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3000
+
+          # All other requests go to index.html (SPA routing)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3000
