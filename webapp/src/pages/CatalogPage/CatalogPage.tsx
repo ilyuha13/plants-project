@@ -122,7 +122,10 @@ export const CatalogPage = () => {
     <>
       <Stack>
         <Typography variant="h2" gutterBottom>
-          Каталог растений тест деплой тест деплой
+          Каталог растений
+        </Typography>
+        <Typography variant="h2" gutterBottom>
+          Каталог растений
         </Typography>
         <Divider />
         <CardsCollection
