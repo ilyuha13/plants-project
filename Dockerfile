@@ -58,10 +58,15 @@ COPY webapp/index.html ./webapp/
 COPY webapp/vite.config.ts ./webapp/
 COPY shared/src ./shared/src
 
+# Копируем production env переменные для Vite
+# Vite встроит эти переменные в код при сборке
+COPY webapp/.env.production ./webapp/.env.production
+
 # Собираем backend (TypeScript → JavaScript в backend/dist/)
 RUN cd backend && pnpm build
 
 # Собираем webapp (React + Vite → HTML/CSS/JS в webapp/dist/)
+# Vite автоматически использует .env.production при production build
 RUN cd webapp && pnpm build
 
 # ============================================
