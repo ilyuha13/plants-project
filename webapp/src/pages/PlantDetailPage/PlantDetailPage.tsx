@@ -2,10 +2,11 @@ import { Box, Button, Grid, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { InstancePreviewCard } from '../../components/Cards/InstancePreviewCard'
 import { PlantDetailCard } from '../../components/Cards/PlantDetailCard'
+import { PreviewCard } from '../../components/Cards/shared/PrewiewCard'
 import { DeleteDialog } from '../../components/DeleteDialog'
 import { useDialog } from '../../hooks'
+import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
 import { getCatalogPageRoute, getInstanceDetailRoute, PlantDetailRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
@@ -116,16 +117,25 @@ export const PlantDetailPage = () => {
       </Button>
 
       <Grid container spacing={{ xs: 2, sm: 2.5, xl: 3 }}>
-        {data?.plant.plantInstances.map((instance) => (
-          <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
-            <InstancePreviewCard
-              showAdminOptions={isAdmin}
-              onDelete={() => onDeleteInstanceClick(instance.Id, instance.inventoryNumber)}
-              onClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
-              data={{ ...instance, name }}
-            />
-          </Grid>
-        ))}
+        {data?.plant.plantInstances.map((instance) => {
+          const { createdAt, description, inventoryNumber, imagesUrl, price } = instance
+          const imageUrl = getCloudinaryUrl(imagesUrl[0], 'thumbnail')
+          return (
+            <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
+              <PreviewCard
+                onDeleteClick={() => onDeleteInstanceClick(instance.Id, instance.inventoryNumber)}
+                onCardClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
+                type="instance"
+                createdAt={createdAt}
+                description={description}
+                imageUrl={imageUrl}
+                inventoryNumber={inventoryNumber}
+                name={name}
+                price={price}
+              />
+            </Grid>
+          )
+        })}
       </Grid>
 
       <DeleteDialog

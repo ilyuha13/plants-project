@@ -1,38 +1,40 @@
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import { Button, Grid, Stack, Typography } from '@mui/material'
 
-import { ReferencePreviewCard } from '../Cards/ReferencePreviewCard'
+import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
+import { PreviewCard } from '../Cards/shared/PrewiewCard'
 
-interface Reference {
+interface DataFromCards {
   name: string
   id: string
   description: string | null
   imagesUrl: string[]
+  inventoryNumber?: string
+  price?: string
+  createdAt?: Date
 }
 
-export type TType = 'genus' | 'lifeForm' | 'variegation' | 'plant'
+export type TType = 'genus' | 'lifeForm' | 'variegation' | 'plant' | 'instance'
 
-interface TReferenceCarousel {
-  showDeleteButton: boolean
+interface СardsCollection {
   title: string
   type: TType
-  data: Reference[]
+  data: DataFromCards[]
   onCardClick: (id: string, type?: TType) => void
-  onCardDelete: (id: string, name: string, type?: TType) => void
-  isFullView?: boolean
+  onCardDelete: ((id: string, name: string, type?: TType) => void) | null
+  isFullView: boolean | null
   togleIsFullView?: () => void
 }
 
-export const ReferenceCarousel = ({
+export const CardsCollection = ({
   title,
   data,
   onCardClick,
   onCardDelete,
-  showDeleteButton,
   type,
   isFullView = true,
   togleIsFullView,
-}: TReferenceCarousel) => {
+}: СardsCollection) => {
   return (
     <Stack>
       <Grid container justifyContent="space-between">
@@ -62,17 +64,21 @@ export const ReferenceCarousel = ({
         spacing={{ xs: 2, sm: 2.5, xl: 3 }}
       >
         {data.map((item) => {
+          const imageUrl = getCloudinaryUrl(item.imagesUrl[0], 'thumbnail')
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}
               size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }}
               key={item.id}
             >
-              <ReferencePreviewCard
-                data={item}
-                adminOptions={showDeleteButton}
-                onClick={() => onCardClick(item.id, type)}
-                onDelete={() => onCardDelete(item.id, item.name, type)}
+              <PreviewCard
+                type="reference"
+                onCardClick={() => onCardClick(item.id, type)}
+                onDeleteClick={onCardDelete && (() => onCardDelete(item.id, item.name, type))}
+                imageUrl={imageUrl}
+                name={item.name}
+                description={item.description}
+                key={item.id}
               />
             </Grid>
           )

@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { ReferenceDetailCard } from '../../components/Cards/ReferenceDetailCard'
+import { CardsCollection } from '../../components/CardsCollection/CardsCollection'
 import { DeleteDialog } from '../../components/DeleteDialog'
-import { ReferenceCarousel } from '../../components/ReferenceCarousel/ReferenceCarousel'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
 import { getPlantDetailRoute, LifeFormDetailRouteParams } from '../../lib/routes'
@@ -133,11 +133,11 @@ export const LifeFormDetailPage = () => {
 
       {plants && plants.length > 0 && (
         <Box marginTop={3}>
-          <ReferenceCarousel
+          <CardsCollection
+            isFullView={null}
             data={plants}
             title={`растения с типом роста ${name}`}
             type="plant"
-            showDeleteButton={isAdmin}
             onCardClick={navigateToPlant}
             onCardDelete={onDeletePlantClick}
           />

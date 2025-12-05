@@ -36,9 +36,7 @@ type TPlantCardProps = PlantCardProps | PlantInstanceCardProps
 export const PlantCard = (props: TPlantCardProps) => {
   const me = useMe()
   const { type, data, onClick } = props
-
-  const { thumbnailUrl } = getCloudinaryUrl(data.imagesUrl[0])
-  const imageUrl = thumbnailUrl
+  const imageUrl = getCloudinaryUrl(data.imagesUrl[0], 'thumbnail')
 
   if (type === 'plant') {
     return (
