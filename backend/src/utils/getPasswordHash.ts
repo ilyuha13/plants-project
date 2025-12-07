@@ -1,7 +1,11 @@
-import crypto from 'crypto'
+import bcrypt from 'bcrypt'
 
-import { env } from '../lib/env'
+const SALT_ROUNDS = 10
 
-export const getPasswordHash = (password: string) => {
-  return crypto.createHash('sha256').update(`${env.PASSWORD_SALT}${password}`).digest('hex')
+export const getPasswordHash = async (password: string): Promise<string> => {
+  return await bcrypt.hash(password, SALT_ROUNDS)
+}
+
+export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+  return await bcrypt.compare(password, hash)
 }

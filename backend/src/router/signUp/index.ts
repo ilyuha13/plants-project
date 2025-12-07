@@ -15,7 +15,7 @@ export const signUpTrpcRoute = trpc.procedure.input(zSignUpTrpcInput).mutation(a
   const user = await ctx.prisma.user.create({
     data: {
       nick: input.nick,
-      password: getPasswordHash(input.password),
+      password: await getPasswordHash(input.password),
     },
   })
   const token = signJWT(user.id)

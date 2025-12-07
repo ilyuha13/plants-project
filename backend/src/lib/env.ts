@@ -9,7 +9,7 @@ const envSchema = z.object({
   HOST_ENV: z.enum(['local', 'production']),
   DATABASE_URL: zNonemptyTrimmed,
   JWT_SECRET: zNonemptyTrimmed,
-  PASSWORD_SALT: zNonemptyTrimmed,
+  // PASSWORD_SALT больше не нужен - bcrypt генерирует соль автоматически
   CLOUDINARY_API_KEY: zNonemptyTrimmedRequiredOnNotLocal,
   CLOUDINARY_API_SECRET: zNonemptyTrimmedRequiredOnNotLocal,
   CLOUDINARY_CLOUD_NAME: zNonemptyTrimmed,
