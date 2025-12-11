@@ -135,7 +135,7 @@ export const GenusDetailPage = () => {
             title={`растения рода ${name}`}
             type="plant"
             onCardClick={navigateToPlant}
-            onCardDelete={onDeletePlantClick}
+            onCardDelete={isAdmin ? onDeletePlantClick : null}
           />
         </Box>
       )}

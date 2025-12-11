@@ -123,7 +123,7 @@ export const PlantDetailPage = () => {
           return (
             <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
               <PreviewCard
-                onDeleteClick={() => onDeleteInstanceClick(instance.Id, instance.inventoryNumber)}
+                onDeleteClick={isAdmin ? () => onDeleteInstanceClick(instance.Id, instance.inventoryNumber) : null}
                 onCardClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
                 type="instance"
                 createdAt={createdAt}

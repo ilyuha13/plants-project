@@ -137,7 +137,7 @@ export const VariegationDetailPage = () => {
             title={`растения c расцветкой ${name}`}
             type="plant"
             onCardClick={navigateToPlant}
-            onCardDelete={onDeletePlantClick}
+            onCardDelete={isAdmin ? onDeletePlantClick : null}
           />
         </Box>
       )}

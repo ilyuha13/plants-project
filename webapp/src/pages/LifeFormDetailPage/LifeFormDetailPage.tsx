@@ -139,7 +139,7 @@ export const LifeFormDetailPage = () => {
             title={`растения с типом роста ${name}`}
             type="plant"
             onCardClick={navigateToPlant}
-            onCardDelete={onDeletePlantClick}
+            onCardDelete={isAdmin ? onDeletePlantClick : null}
           />
         </Box>
       )}
