@@ -63,7 +63,6 @@ services:
 
       # Security
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
-      PASSWORD_SALT: ${PASSWORD_SALT:?PASSWORD_SALT is required}
 
       # Cloudinary
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?CLOUDINARY_CLOUD_NAME is required}
