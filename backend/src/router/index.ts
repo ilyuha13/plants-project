@@ -32,6 +32,7 @@ import { getPlantsTrpcRoute } from './getPlants'
 import { getUploadSignatureTrpcRoute } from './getUploadSignature'
 import { getVariegationTrpcRoute } from './getVariegation'
 import { getVariegationByIdTrpcRoute } from './getVariegationById'
+import { requestPasswordResetTrpcRoute } from './requestPasswordReset'
 import { resetPasswordWithTokenTrpcRoute } from './resetPasswordWithToken'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
@@ -79,6 +80,7 @@ export const trpcRouter = trpc.router({
 
   // Public routes
   resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
+  requestPasswordReset: requestPasswordResetTrpcRoute,
 })
 
 export type TrpcRouter = typeof trpcRouter
