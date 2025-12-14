@@ -1,6 +1,7 @@
 import { Box, Button, Paper, Stack } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { UsersManagement } from '../../components/UsersManagement/UsersManagement'
 import {
   getAddGenusPageRoute,
   getAddLifeFormPageRoute,
@@ -40,6 +41,8 @@ export const AdminPage = () => {
             добавить экземпляр
           </Button>
         </Stack>
+
+        <UsersManagement />
       </Paper>
     </Box>
   )

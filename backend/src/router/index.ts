@@ -6,6 +6,9 @@ import { addLifeFormTrpcRoute } from './addLifeForm'
 import { addPlantTrpcRoute } from './addPlant'
 import { addPlantInstanceTrpcRoute } from './addPlantInstance'
 import { addVariegationTrpcRoute } from './addVariegation'
+import { deleteUserTrpcRoute } from './admin/deleteUser'
+import { getAllUsersTrpcRoute } from './admin/getAllUsers'
+import { resetUserPasswordTrpcRoute } from './admin/resetUserPassword'
 import { addToCartTrpcRoute } from './cart/addToCart'
 import { checkoutTrpcRoute } from './cart/checkout'
 import { clearCartTrpcRoute } from './cart/clearCart'
@@ -65,6 +68,11 @@ export const trpcRouter = trpc.router({
   signIn: signInTrpcRoute,
   signUp: signUpTrpcRoute,
   //@endindex
+
+  // Admin routes
+  getAllUsers: getAllUsersTrpcRoute,
+  deleteUser: deleteUserTrpcRoute,
+  resetUserPassword: resetUserPasswordTrpcRoute,
 })
 
 export type TrpcRouter = typeof trpcRouter
