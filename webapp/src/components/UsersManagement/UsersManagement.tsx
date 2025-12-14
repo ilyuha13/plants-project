@@ -1,3 +1,4 @@
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DeleteIcon from '@mui/icons-material/Delete'
 import KeyIcon from '@mui/icons-material/Key'
 import {
@@ -26,14 +27,15 @@ import { trpc } from '../../lib/trpc'
 
 export const UsersManagement = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
+  const [resetLinkDialogOpen, setResetLinkDialogOpen] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [selectedUserNick, setSelectedUserNick] = useState<string>('')
-  const [newPassword, setNewPassword] = useState('')
+  const [resetLink, setResetLink] = useState<string>('')
+  const [linkCopied, setLinkCopied] = useState(false)
 
   const { data: users, isLoading, refetch } = trpc.getAllUsers.useQuery()
   const deleteUserMutation = trpc.deleteUser.useMutation()
-  const resetPasswordMutation = trpc.resetUserPassword.useMutation()
+  const generateResetLinkMutation = trpc.generatePasswordResetToken.useMutation()
 
   const handleDeleteClick = (userId: string, nick: string) => {
     setSelectedUserId(userId)
@@ -56,28 +58,37 @@ export const UsersManagement = () => {
     }
   }
 
-  const handleResetPasswordClick = (userId: string, nick: string) => {
+  const handleGenerateResetLinkClick = (userId: string, nick: string) => {
     setSelectedUserId(userId)
     setSelectedUserNick(nick)
-    setNewPassword('')
-    setPasswordDialogOpen(true)
+    setResetLink('')
+    setLinkCopied(false)
+    setResetLinkDialogOpen(true)
   }
 
-  const handleResetPasswordConfirm = async () => {
-    if (!selectedUserId || !newPassword) {
+  const handleGenerateResetLink = async () => {
+    if (!selectedUserId) {
       return
     }
 
     try {
-      await resetPasswordMutation.mutateAsync({
+      const result = await generateResetLinkMutation.mutateAsync({
         userId: selectedUserId,
-        newPassword,
       })
-      setPasswordDialogOpen(false)
-      setSelectedUserId(null)
-      setNewPassword('')
+      setResetLink(result.resetLink)
     } catch (error) {
-      console.error('Error resetting password:', error)
+      console.error('Error generating reset link:', error)
+    }
+  }
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(resetLink)
+      setLinkCopied(true)
+      // Сбросим статус "скопировано" через 2 секунды
+      setTimeout(() => setLinkCopied(false), 2000)
+    } catch (error) {
+      console.error('Error copying to clipboard:', error)
     }
   }
 
@@ -113,8 +124,8 @@ export const UsersManagement = () => {
                   <IconButton
                     size="small"
                     color="primary"
-                    onClick={() => handleResetPasswordClick(user.id, user.nick)}
-                    title="Сменить пароль"
+                    onClick={() => handleGenerateResetLinkClick(user.id, user.nick)}
+                    title="Сгенерировать ссылку для сброса пароля"
                   >
                     <KeyIcon />
                   </IconButton>
@@ -161,46 +172,68 @@ export const UsersManagement = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Reset Password Dialog */}
-      <Dialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)}>
-        <DialogTitle>Сменить пароль</DialogTitle>
+      {/* Generate Reset Link Dialog */}
+      <Dialog open={resetLinkDialogOpen} onClose={() => setResetLinkDialogOpen(false)}>
+        <DialogTitle>Сброс пароля</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            Введите новый пароль для пользователя <strong>{selectedUserNick}</strong>
+            Сгенерируйте ссылку для сброса пароля пользователя <strong>{selectedUserNick}</strong>.
+            <br />
+            Отправьте эту ссылку пользователю через email или мессенджер. Ссылка действительна 24 часа.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Новый пароль"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            error={newPassword.length > 0 && newPassword.length < 4}
-            helperText={newPassword.length > 0 && newPassword.length < 4 ? 'Минимум 4 символа' : ''}
-          />
-          {resetPasswordMutation.isError && (
+
+          {!resetLink && (
+            <Button
+              onClick={() => void handleGenerateResetLink()}
+              variant="contained"
+              disabled={generateResetLinkMutation.isPending}
+              fullWidth
+            >
+              {generateResetLinkMutation.isPending ? 'Генерация...' : 'Сгенерировать ссылку'}
+            </Button>
+          )}
+
+          {resetLink && (
+            <>
+              <TextField
+                label="Ссылка для сброса пароля"
+                value={resetLink}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                InputProps={{
+                  readOnly: true,
+                }}
+                multiline
+                rows={3}
+              />
+              <Button
+                onClick={() => void handleCopyLink()}
+                variant="contained"
+                color={linkCopied ? 'success' : 'primary'}
+                startIcon={<ContentCopyIcon />}
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                {linkCopied ? 'Скопировано!' : 'Скопировать ссылку'}
+              </Button>
+            </>
+          )}
+
+          {generateResetLinkMutation.isError && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {resetPasswordMutation.error.message}
+              {generateResetLinkMutation.error.message}
             </Alert>
           )}
-          {resetPasswordMutation.isSuccess && (
+
+          {generateResetLinkMutation.isSuccess && (
             <Alert severity="success" sx={{ mt: 2 }}>
-              Пароль успешно изменён
+              Ссылка успешно создана
             </Alert>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPasswordDialogOpen(false)}>Отмена</Button>
-          <Button
-            onClick={() => void handleResetPasswordConfirm()}
-            color="primary"
-            variant="contained"
-            disabled={!newPassword || newPassword.length < 4 || resetPasswordMutation.isPending}
-          >
-            {resetPasswordMutation.isPending ? 'Сохранение...' : 'Сменить пароль'}
-          </Button>
+          <Button onClick={() => setResetLinkDialogOpen(false)}>Закрыть</Button>
         </DialogActions>
       </Dialog>
     </Box>

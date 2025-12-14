@@ -7,6 +7,7 @@ import { addPlantTrpcRoute } from './addPlant'
 import { addPlantInstanceTrpcRoute } from './addPlantInstance'
 import { addVariegationTrpcRoute } from './addVariegation'
 import { deleteUserTrpcRoute } from './admin/deleteUser'
+import { generatePasswordResetTokenTrpcRoute } from './admin/generatePasswordResetToken'
 import { getAllUsersTrpcRoute } from './admin/getAllUsers'
 import { resetUserPasswordTrpcRoute } from './admin/resetUserPassword'
 import { addToCartTrpcRoute } from './cart/addToCart'
@@ -31,6 +32,7 @@ import { getPlantsTrpcRoute } from './getPlants'
 import { getUploadSignatureTrpcRoute } from './getUploadSignature'
 import { getVariegationTrpcRoute } from './getVariegation'
 import { getVariegationByIdTrpcRoute } from './getVariegationById'
+import { resetPasswordWithTokenTrpcRoute } from './resetPasswordWithToken'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
 // @endindex
@@ -73,6 +75,10 @@ export const trpcRouter = trpc.router({
   getAllUsers: getAllUsersTrpcRoute,
   deleteUser: deleteUserTrpcRoute,
   resetUserPassword: resetUserPasswordTrpcRoute,
+  generatePasswordResetToken: generatePasswordResetTokenTrpcRoute,
+
+  // Public routes
+  resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
 })
 
 export type TrpcRouter = typeof trpcRouter

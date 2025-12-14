@@ -27,12 +27,27 @@ model User {
     cart Cart?
     orders Order[]
 
+    passwordResetTokens PasswordResetToken[]
+
     @@index([role])
 }
 
 enum Role {
     ADMIN
     USER
+}
+
+model PasswordResetToken {
+        id        String   @id @default(uuid())
+    token     String   @unique @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    expiresAt DateTime
+    used      Boolean  @default(false)
+    createdAt DateTime @default(now())
+
+    @@index([token])
+    @@index([userId])
 }
 
 // ============================================

@@ -19,6 +19,7 @@ import { LifeFormDetailPage } from './pages/LifeFormDetailPage/LifeFormDetailPag
 import { NotFoundPage } from './pages/NotFoundPage/NotFoundPage'
 import { PlantDetailPage } from './pages/PlantDetailPage/PlantDetailPage'
 import { PlantsListPage } from './pages/PlantsListPage/PlantsListPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage/ResetPasswordPage'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
 import { VariegationDetailPage } from './pages/VariegationDetailPage/VariegationDetailPage'
 import { SignInPage } from './pages/signInPage/SignInPage'
@@ -37,6 +38,7 @@ export const App = () => {
         <Route path={routes.getPlantDetailRoute(routes.plantDetailRouteParams)} element={<PlantDetailPage />} />
         <Route path={routes.getSignUpRoute()} element={<SignUpPage />} />
         <Route path={routes.getSignInRoute()} element={<SignInPage />} />
+        <Route path={routes.getResetPasswordRoute()} element={<ResetPasswordPage />} />
         <Route path={routes.getAddPlantInstsancePageRoute()} element={<AddPlantInstancePage />} />
         <Route
           path={routes.getInstanceDetailRoute(routes.instanceDetailRouteParams)}

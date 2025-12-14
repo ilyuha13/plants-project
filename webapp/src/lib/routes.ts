@@ -18,6 +18,8 @@ export const getSignInRoute = () => '/signIn'
 
 export const getSignOutRoute = () => '/signOut'
 
+export const getResetPasswordRoute = () => '/reset-password'
+
 export const getAddPlantInstsancePageRoute = () => '/plants/instance/add'
 
 export const instanceDetailRouteParams = getRouteParams({ instanceId: true })
