@@ -60,6 +60,7 @@ services:
       NODE_ENV: production
       HOST_ENV: production
       PORT: 3000
+      FRONTEND_URL: ${FRONTEND_URL:?FRONTEND_URL is required}
 
       # Security
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
