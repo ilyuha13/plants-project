@@ -89,8 +89,21 @@ STEP_END=$(date +%s)
 log "✅ Containers started in $((STEP_END - STEP_START))s"
 echo ""
 
-# Step 7: Wait for site to become available
-log "Step 7: Waiting for site to become available..."
+# Step 7: Run database migrations
+log "Step 7: Running database migrations..."
+STEP_START=$(date +%s)
+# Wait a bit for database to be ready
+sleep 3
+# Execute Prisma migrations inside backend container
+docker compose exec -T backend sh -c 'cd /app/backend && pnpm prisma migrate deploy' || {
+    log "⚠️  Migration failed or no migrations to apply"
+}
+STEP_END=$(date +%s)
+log "✅ Migrations completed in $((STEP_END - STEP_START))s"
+echo ""
+
+# Step 8: Wait for site to become available
+log "Step 8: Waiting for site to become available..."
 MAX_WAIT=60  # Maximum 60 seconds
 WAIT_COUNT=0
 
