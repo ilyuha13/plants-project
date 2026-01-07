@@ -21,12 +21,16 @@ interface СardsCollection {
   type: TType
   data: DataFromCards[]
   onCardClick: (id: string, type?: TType) => void
-  onCardDelete: ((id: string, name: string, type?: TType) => void) | null
+  onCardDelete:
+    | ((id: string, name: string, type?: TType, inventoryNumber?: string) => void)
+    | null
   isFullView: boolean | null
   togleIsFullView?: () => void
+  isAdmin?: boolean
 }
 
 export const CardsCollection = ({
+  isAdmin = false,
   title,
   data,
   onCardClick,
@@ -45,10 +49,15 @@ export const CardsCollection = ({
         </Grid>
         {togleIsFullView && (
           <Grid>
-            <Button sx={{ justifyContent: 'space-between', width: '150px' }} variant="text" onClick={togleIsFullView}>
+            <Button
+              sx={{ justifyContent: 'space-between', width: '150px' }}
+              variant="text"
+              onClick={togleIsFullView}
+            >
               <ArrowDownwardIcon
                 sx={{
-                  transform: (isFullView ? 'rotate(180deg)' : 'rotate(0deg)') + '!important',
+                  transform:
+                    (isFullView ? 'rotate(180deg)' : 'rotate(0deg)') + '!important',
                   transition: 'transform 0.5s ease',
                 }}
               />
@@ -65,21 +74,42 @@ export const CardsCollection = ({
       >
         {data.map((item) => {
           const imageUrl = getCloudinaryUrl(item.imagesUrl[0], 'thumbnail')
+
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}
               size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }}
               key={item.id}
             >
-              <PreviewCard
-                type="reference"
-                onCardClick={() => onCardClick(item.id, type)}
-                onDeleteClick={onCardDelete && (() => onCardDelete(item.id, item.name, type))}
-                imageUrl={imageUrl}
-                name={item.name}
-                description={item.description}
-                key={item.id}
-              />
+              {type === 'instance' ? (
+                <PreviewCard
+                  type="instance"
+                  onCardClick={() => onCardClick(item.id, type)}
+                  onDeleteClick={
+                    onCardDelete &&
+                    (() =>
+                      onCardDelete(item.id, item.name, undefined, item.inventoryNumber))
+                  }
+                  imageUrl={imageUrl}
+                  name={item.name}
+                  description={item.description}
+                  inventoryNumber={isAdmin ? item.inventoryNumber : undefined}
+                  price={item.price || null}
+                  createdAt={item.createdAt || null}
+                />
+              ) : (
+                <PreviewCard
+                  type="reference"
+                  onCardClick={() => onCardClick(item.id, type)}
+                  onDeleteClick={
+                    onCardDelete && (() => onCardDelete(item.id, item.name, type))
+                  }
+                  imageUrl={imageUrl}
+                  name={item.name}
+                  description={item.description}
+                  key={item.id}
+                />
+              )}
             </Grid>
           )
         })}

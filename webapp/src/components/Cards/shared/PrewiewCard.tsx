@@ -1,5 +1,13 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, IconButton } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  CardActionArea,
+  CardActions,
+  IconButton,
+} from '@mui/material'
 
 interface Card {
   name: string
@@ -11,7 +19,7 @@ interface Card {
 
 interface InstanceCard extends Card {
   type: 'instance'
-  inventoryNumber: string | null
+  inventoryNumber?: string
   price: string | null
   createdAt: Date | null
 }
@@ -27,7 +35,12 @@ export const PreviewCard = (props: PreviewCard) => {
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardActionArea onClick={onCardClick}>
-        <CardMedia component="img" image={imageUrl} alt={name} sx={{ width: '100%', objectFit: 'cover' }} />
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={name}
+          sx={{ width: '100%', objectFit: 'cover' }}
+        />
 
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="h6" gutterBottom>
@@ -51,7 +64,11 @@ export const PreviewCard = (props: PreviewCard) => {
                 </Typography>
               )}
               {props.createdAt && (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: 'block', mt: 1 }}
+                >
                   Добавлено:{' '}
                   {props.createdAt.toLocaleDateString('ru-RU', {
                     day: '2-digit',

@@ -6,9 +6,10 @@ interface LayoutProps {
   mainContent: ReactNode
   footer?: ReactNode
   cart?: ReactNode
+  menu?: ReactNode
 }
 
-export const Layout = ({ header, mainContent, footer, cart }: LayoutProps) => {
+export const Layout = ({ header, mainContent, footer, cart, menu }: LayoutProps) => {
   return (
     <Box
       sx={{
@@ -19,6 +20,7 @@ export const Layout = ({ header, mainContent, footer, cart }: LayoutProps) => {
     >
       {header}
       {cart}
+      {menu}
 
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Container maxWidth="xl" sx={{ py: 3 }}>
