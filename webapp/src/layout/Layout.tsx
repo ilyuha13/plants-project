@@ -22,7 +22,7 @@ export const Layout = ({ header, mainContent, footer, cart, menu }: LayoutProps)
       {cart}
       {menu}
 
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box right="0px" component="main" sx={{ flexGrow: 1 }}>
         <Container maxWidth="xl" sx={{ py: 3 }}>
           {mainContent}
         </Container>

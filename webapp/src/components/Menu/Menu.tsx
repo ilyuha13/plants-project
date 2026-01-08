@@ -24,6 +24,7 @@ export const Menu = () => {
   return (
     <>
       <Drawer
+        variant="temporary"
         anchor="left"
         open={isOpen}
         onClose={closeMenu}
@@ -50,13 +51,17 @@ export const Menu = () => {
         <Divider />
 
         <Stack spacing={2} sx={{ p: 2, flex: 1, overflowY: 'auto' }}>
-          <Button component={RouterLink} to={getCatalogPageRoute()}>
+          <Button component={RouterLink} onClick={closeMenu} to={getCatalogPageRoute()}>
             каталог
           </Button>
-          <Button component={RouterLink} to={getAllInstancePageRoute()}>
+          <Button
+            component={RouterLink}
+            onClick={closeMenu}
+            to={getAllInstancePageRoute()}
+          >
             все экземпляры
           </Button>
-          <Button component={RouterLink} to={getAllPlantsPageRoute()}>
+          <Button component={RouterLink} onClick={closeMenu} to={getAllPlantsPageRoute()}>
             все сорта
           </Button>
         </Stack>

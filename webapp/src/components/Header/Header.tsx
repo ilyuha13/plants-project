@@ -1,8 +1,6 @@
-import { AppBar, Box, Toolbar, IconButton } from '@mui/material'
+import { AppBar, Box, Toolbar } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
 
-import { Logo } from '../Logo/Logo'
 import { MenuButton } from '../MenuButton/MenuButton'
 import { UserPanel } from '../UserPanel/UserPanel'
 
@@ -31,9 +29,6 @@ export const Header = () => {
       }}
     >
       <Toolbar>
-        <IconButton component={RouterLink} to={'/'}>
-          <Logo color="primary.main" />
-        </IconButton>
         <MenuButton />
 
         <Box sx={{ flexGrow: 1 }} />
