@@ -27,6 +27,7 @@ interface СardsCollection {
   isFullView: boolean | null
   togleIsFullView?: () => void
   isAdmin?: boolean
+  wrapperStyle?: React.CSSProperties
 }
 
 export const CardsCollection = ({
@@ -38,9 +39,10 @@ export const CardsCollection = ({
   type,
   isFullView = true,
   togleIsFullView,
+  wrapperStyle,
 }: СardsCollection) => {
   return (
-    <Stack>
+    <Stack sx={wrapperStyle}>
       <Grid container justifyContent="space-between">
         <Grid>
           <Typography variant="h3" gutterBottom>
