@@ -1,20 +1,20 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { PlantInstanceDetailCard } from '../../components/Cards/PlantInstanceDetailCard'
-import { DeleteDialog } from '../../components/DeleteDialog'
-import { useDialog } from '../../hooks'
-import { useMe } from '../../lib/ctx'
-import { getPlantsListRoute } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
+import { DetailCard } from '../../../components/Cards/DetailCard'
+import { DeleteDialog } from '../../../components/DeleteDialog'
+import { useDialog } from '../../../hooks'
+import { useMe } from '../../../lib/ctx'
+import { getEditPlantInstanceRoute, getPlantsListRoute, InstanceDetailRouteParams } from '../../../lib/routes'
+import { trpc } from '../../../lib/trpc'
 
 export const InstanceDetailPage = () => {
-  const { instanceId } = useParams<string>()
+  const { instanceId } = useParams() as InstanceDetailRouteParams
   const navigate = useNavigate()
   const confirmDeleteDialog = useDialog()
 
   const { data, isLoading, isError, error } = trpc.getPlantInstance.useQuery(
-    { Id: instanceId! },
+    { Id: instanceId },
     { enabled: !!instanceId },
   )
   const deleteInstance = trpc.deletePlantInstance.useMutation()
@@ -29,7 +29,7 @@ export const InstanceDetailPage = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteInstance.mutateAsync({ Id: instanceId! })
+      await deleteInstance.mutateAsync({ Id: instanceId })
       confirmDeleteDialog.close()
       void navigate(getPlantsListRoute())
     } catch (error) {
@@ -44,7 +44,7 @@ export const InstanceDetailPage = () => {
     }
 
     try {
-      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId! })
+      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
       await utils.getCart.invalidate()
       await utils.getPlantInstance.invalidate()
     } catch (error) {
@@ -78,11 +78,8 @@ export const InstanceDetailPage = () => {
     )
   }
 
-  const { plant, description, price, inventoryNumber, status, imagesUrl } = data.instance
+  const { plant, description, price, inventoryNumber, status, imagesUrl, createdAt } = data.instance
   const name = plant.name
-
-  const showAddButton = !!me
-  const showDeleteButton = me?.role === 'ADMIN'
 
   const getAddButtonText = () => {
     if (status === 'IN_CART') {
@@ -94,6 +91,10 @@ export const InstanceDetailPage = () => {
     return 'Добавить в корзину'
   }
 
+  const navigateToEditInstance = () => {
+    void navigate(getEditPlantInstanceRoute({ instanceId: instanceId }))
+  }
+
   return (
     <Box
       sx={{
@@ -103,19 +104,18 @@ export const InstanceDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      <PlantInstanceDetailCard
+      <DetailCard
+        type="instance"
         name={name}
         imagesUrl={imagesUrl}
         description={description}
         price={price}
         inventoryNumber={inventoryNumber}
-        showAddButton={showAddButton}
+        createdAt={createdAt}
         addButtonText={getAddButtonText()}
-        addButtonLoading={addToCart.isPending}
         onAddToCart={handleAddToCart}
-        showDeleteButton={showDeleteButton}
-        deleteButtonLoading={deleteInstance.isPending}
-        onDelete={handleDeleteClick}
+        onDeleteClick={handleDeleteClick}
+        onEditClick={navigateToEditInstance}
       />
 
       <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>

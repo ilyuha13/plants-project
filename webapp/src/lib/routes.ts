@@ -44,4 +44,26 @@ export const lifeFormDetailRouteParams = getRouteParams({ lifeFormId: true })
 export type LifeFormDetailRouteParams = typeof lifeFormDetailRouteParams
 export const getLifeFormDetailRoute = ({ lifeFormId }: LifeFormDetailRouteParams) => `/lifeForm/${lifeFormId}`
 
+export const editVariegationRouteParams = getRouteParams({ variegationId: true })
+export type EditVariegationRouteParams = typeof editVariegationRouteParams
+export const getEditVariegationRoute = ({ variegationId }: EditVariegationRouteParams) =>
+  `/variegation/edit/${variegationId}`
+
+export const editPlantRouteParams = getRouteParams({ plantId: true })
+export type EditPlantRouteParams = typeof editPlantRouteParams
+export const getEditPlantRoute = ({ plantId }: EditPlantRouteParams) => `/plants/edit/${plantId}`
+
+export const editGenusRouteParams = getRouteParams({ genusId: true })
+export type EditGenusRouteParams = typeof editGenusRouteParams
+export const getEditGenusRoute = ({ genusId }: EditGenusRouteParams) => `/genus/edit/${genusId}`
+
+export const editLifeFormRouteParams = getRouteParams({ lifeFormId: true })
+export type EditLifeFormRouteParams = typeof editLifeFormRouteParams
+export const getEditLifeFormRoute = ({ lifeFormId }: EditLifeFormRouteParams) => `/lifeForm/edit/${lifeFormId}`
+
+export const editPlantInstanceRouteParams = getRouteParams({ instanceId: true })
+export type EditPlantInstanceRouteParams = typeof editPlantInstanceRouteParams
+export const getEditPlantInstanceRoute = ({ instanceId }: EditPlantInstanceRouteParams) =>
+  `/instances/edit/${instanceId}`
+
 export const getAdminPageRoute = () => '/admin'

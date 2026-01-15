@@ -2,7 +2,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import { Button, Grid, Stack, Typography } from '@mui/material'
 
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
-import { PreviewCard } from '../Cards/shared/PrewiewCard'
+import { PreviewCard } from '../Cards/PrewiewCard'
 
 interface DataFromCards {
   name: string
@@ -22,7 +22,8 @@ interface СardsCollection {
   data: DataFromCards[]
   onCardClick: (id: string, type?: TType) => void
   onCardDelete: ((id: string, name: string, type?: TType) => void) | null
-  isFullView: boolean | null
+  onCardEdit?: (id: string) => void
+  isFullView?: boolean
   togleIsFullView?: () => void
 }
 
@@ -31,6 +32,7 @@ export const CardsCollection = ({
   data,
   onCardClick,
   onCardDelete,
+  onCardEdit,
   type,
   isFullView = true,
   togleIsFullView,
@@ -64,22 +66,39 @@ export const CardsCollection = ({
         spacing={{ xs: 2, sm: 2.5, xl: 3 }}
       >
         {data.map((item) => {
-          const imageUrl = getCloudinaryUrl(item.imagesUrl[0], 'thumbnail')
+          const imagesUrl = item.imagesUrl.map((url) => getCloudinaryUrl(url, 'thumbnail'))
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}
               size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }}
               key={item.id}
             >
-              <PreviewCard
-                type="reference"
-                onCardClick={() => onCardClick(item.id, type)}
-                onDeleteClick={onCardDelete && (() => onCardDelete(item.id, item.name, type))}
-                imageUrl={imageUrl}
-                name={item.name}
-                description={item.description}
-                key={item.id}
-              />
+              {type === 'instance' ? (
+                <PreviewCard
+                  type="instance"
+                  onCardClick={() => onCardClick(item.id, type)}
+                  onDeleteClick={onCardDelete && (() => onCardDelete(item.id, item.name, type))}
+                  onEditClick={onCardEdit && (() => onCardEdit(item.id))}
+                  imagesUrl={imagesUrl}
+                  name={item.name}
+                  description={item.description}
+                  inventoryNumber={item.inventoryNumber || ''}
+                  price={item.price || ''}
+                  createdAt={item.createdAt}
+                  key={item.id}
+                />
+              ) : (
+                <PreviewCard
+                  type="reference"
+                  onCardClick={() => onCardClick(item.id, type)}
+                  onDeleteClick={onCardDelete && (() => onCardDelete(item.id, item.name, type))}
+                  onEditClick={onCardEdit && (() => onCardEdit(item.id))}
+                  imagesUrl={imagesUrl}
+                  name={item.name}
+                  description={item.description}
+                  key={item.id}
+                />
+              )}
             </Grid>
           )
         })}

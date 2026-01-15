@@ -2,13 +2,18 @@ import { Box, Button, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { ReferenceDetailCard } from '../../components/Cards/ReferenceDetailCard'
-import { CardsCollection } from '../../components/CardsCollection/CardsCollection'
-import { DeleteDialog } from '../../components/DeleteDialog'
-import { useDialog } from '../../hooks'
-import { useMe } from '../../lib/ctx'
-import { getPlantDetailRoute, VariegationDatailRouteParams } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
+import { DetailCard } from '../../../components/Cards/DetailCard'
+import { CardsCollection } from '../../../components/CardsCollection/CardsCollection'
+import { DeleteDialog } from '../../../components/DeleteDialog'
+import { useDialog } from '../../../hooks'
+import { useMe } from '../../../lib/ctx'
+import {
+  getEditPlantRoute,
+  getEditVariegationRoute,
+  getPlantDetailRoute,
+  VariegationDatailRouteParams,
+} from '../../../lib/routes'
+import { trpc } from '../../../lib/trpc'
 
 export const VariegationDetailPage = () => {
   const { variegationId } = useParams() as VariegationDatailRouteParams
@@ -107,6 +112,14 @@ export const VariegationDetailPage = () => {
     void navigate(getPlantDetailRoute({ plantId: id }))
   }
 
+  const navigateToEditVariegation = (id: string) => {
+    void navigate(getEditVariegationRoute({ variegationId: id }))
+  }
+
+  const navigateToEditPlant = (id: string) => {
+    void navigate(getEditPlantRoute({ plantId: id }))
+  }
+
   return (
     <Box
       sx={{
@@ -116,13 +129,13 @@ export const VariegationDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      <ReferenceDetailCard
+      <DetailCard
+        type="reference"
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        showDeleteButton={isAdmin}
-        onDelete={handleDeleteClick}
-        deleteButtonLoading={deleteVariegation.isPending}
+        onDeleteClick={handleDeleteClick}
+        onEditClick={isAdmin ? () => navigateToEditVariegation(variegationId) : undefined}
       />
 
       <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
@@ -132,12 +145,12 @@ export const VariegationDetailPage = () => {
       {plants && plants.length > 0 && (
         <Box marginTop={3}>
           <CardsCollection
-            isFullView={null}
             data={plants}
             title={`растения c расцветкой ${name}`}
             type="plant"
             onCardClick={navigateToPlant}
             onCardDelete={isAdmin ? onDeletePlantClick : null}
+            onCardEdit={navigateToEditPlant}
           />
         </Box>
       )}

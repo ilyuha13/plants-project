@@ -4,7 +4,7 @@ import { trpc } from '../lib/trpc'
 
 export const useGetUrlsFromCloudinary = (fileArray: File[] | null) => {
   const signatureMutation = trpc.getUploadSignature.useMutation()
-  const [urlArray, setUrlArray] = useState<string[] | null>([])
+  const [urlArray, setUrlArray] = useState<string[] | null>(null)
 
   useEffect(() => {
     if (!fileArray) {

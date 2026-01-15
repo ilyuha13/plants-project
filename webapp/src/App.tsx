@@ -13,15 +13,20 @@ import { AddPlantPage } from './pages/AddPlantPage/AddPlantPage'
 import { AddVariegationPage } from './pages/AddVariegationPage/AddVariegationPage'
 import { AdminPage } from './pages/AdminPage/AdminPage'
 import { CatalogPage } from './pages/CatalogPage/CatalogPage'
-import { GenusDetailPage } from './pages/GenusDetailPage/GenusDetailPage'
-import { InstanceDetailPage } from './pages/InstanceDetailPage/InstanceDetailPage'
-import { LifeFormDetailPage } from './pages/LifeFormDetailPage/LifeFormDetailPage'
+import { GenusDetailPage } from './pages/DitailPages/GenusDetailPage/GenusDetailPage'
+import { InstanceDetailPage } from './pages/DitailPages/InstanceDetailPage/InstanceDetailPage'
+import { LifeFormDetailPage } from './pages/DitailPages/LifeFormDetailPage/LifeFormDetailPage'
+import { PlantDetailPage } from './pages/DitailPages/PlantDetailPage/PlantDetailPage'
+import { VariegationDetailPage } from './pages/DitailPages/VariegationDetailPage/VariegationDetailPage'
+import { EditGenusPage } from './pages/EditGenusPage/EditGenus'
+import { EditLifeFormPage } from './pages/EditLifeFormPage/EditLifeFormPage'
+import { EditPlantInstancePage } from './pages/EditPlantInstancePage/EditPlantInstance'
+import { EditPlantPage } from './pages/EditPlantPage/EditPlantPage'
+import { EditVariegationPage } from './pages/EditVariegationPage/EditVariegationPage'
 import { NotFoundPage } from './pages/NotFoundPage/NotFoundPage'
-import { PlantDetailPage } from './pages/PlantDetailPage/PlantDetailPage'
 import { PlantsListPage } from './pages/PlantsListPage/PlantsListPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage/ResetPasswordPage'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
-import { VariegationDetailPage } from './pages/VariegationDetailPage/VariegationDetailPage'
 import { SignInPage } from './pages/signInPage/SignInPage'
 import { SignOutPage } from './pages/signOutPage/SignOutPage'
 
@@ -58,6 +63,18 @@ export const App = () => {
         />
         <Route path={routes.getAdminPageRoute()} element={<AdminPage />} />
         <Route path={routes.getCatalogPageRoute()} element={<CatalogPage />} />
+        <Route
+          path={routes.getEditVariegationRoute(routes.editVariegationRouteParams)}
+          element={<EditVariegationPage />}
+        />
+        <Route path={routes.getEditPlantRoute(routes.editPlantRouteParams)} element={<EditPlantPage />} />
+        <Route path={routes.getEditGenusRoute(routes.editGenusRouteParams)} element={<EditGenusPage />} />
+        <Route
+          path={routes.getEditPlantInstanceRoute(routes.editPlantInstanceRouteParams)}
+          element={<EditPlantInstancePage />}
+        />
+        <Route path={routes.getEditLifeFormRoute(routes.editLifeFormRouteParams)} element={<EditLifeFormPage />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

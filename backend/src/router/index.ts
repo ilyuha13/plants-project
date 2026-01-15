@@ -20,6 +20,11 @@ import { deleteLifeFormTrpcRoute } from './deleteLifeForm'
 import { deletePlantTrpcRoute } from './deletePlant'
 import { deletePlantInstanceTrpcRoute } from './deletePlantInstance'
 import { deleteVariegationTrpcRoute } from './deleteVariegation'
+import { editGenusTrpcRoute } from './editGenus'
+import { editLifeFormTrpcRoute } from './editLifeForm'
+import { editPlantTrpcRoute } from './editPlant'
+import { editPlantInstanceTrpcRoute } from './editPlantInstance'
+import { editVariegationTrpcRoute } from './editVariegation'
 import { getGenusTrpcRoute } from './getGenus'
 import { getGenusByIdTrpcRoute } from './getGenusById'
 import { getLifeFormTrpcRoute } from './getLifeForm'
@@ -46,16 +51,25 @@ export const trpcRouter = trpc.router({
   addPlant: addPlantTrpcRoute,
   addPlantInstance: addPlantInstanceTrpcRoute,
   addVariegation: addVariegationTrpcRoute,
+  deleteUser: deleteUserTrpcRoute,
+  generatePasswordResetToken: generatePasswordResetTokenTrpcRoute,
+  getAllUsers: getAllUsersTrpcRoute,
+  resetUserPassword: resetUserPasswordTrpcRoute,
   addToCart: addToCartTrpcRoute,
   checkout: checkoutTrpcRoute,
   clearCart: clearCartTrpcRoute,
   getCart: getCartTrpcRoute,
   removeFromCart: removeFromCartTrpcRoute,
+  deleteGenus: deleteGenusTrpcRoute,
+  deleteLifeForm: deleteLifeFormTrpcRoute,
   deletePlant: deletePlantTrpcRoute,
   deletePlantInstance: deletePlantInstanceTrpcRoute,
-  deleteGenus: deleteGenusTrpcRoute,
   deleteVariegation: deleteVariegationTrpcRoute,
-  deleteLifeForm: deleteLifeFormTrpcRoute,
+  editGenus: editGenusTrpcRoute,
+  editLifeForm: editLifeFormTrpcRoute,
+  editPlant: editPlantTrpcRoute,
+  editPlantInstance: editPlantInstanceTrpcRoute,
+  editVariegation: editVariegationTrpcRoute,
   getGenus: getGenusTrpcRoute,
   getGenusById: getGenusByIdTrpcRoute,
   getLifeForm: getLifeFormTrpcRoute,
@@ -68,19 +82,11 @@ export const trpcRouter = trpc.router({
   getUploadSignature: getUploadSignatureTrpcRoute,
   getVariegation: getVariegationTrpcRoute,
   getVariegationById: getVariegationByIdTrpcRoute,
+  requestPasswordReset: requestPasswordResetTrpcRoute,
+  resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
   signIn: signInTrpcRoute,
   signUp: signUpTrpcRoute,
   //@endindex
-
-  // Admin routes
-  getAllUsers: getAllUsersTrpcRoute,
-  deleteUser: deleteUserTrpcRoute,
-  resetUserPassword: resetUserPasswordTrpcRoute,
-  generatePasswordResetToken: generatePasswordResetTokenTrpcRoute,
-
-  // Public routes
-  resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
-  requestPasswordReset: requestPasswordResetTrpcRoute,
 })
 
 export type TrpcRouter = typeof trpcRouter

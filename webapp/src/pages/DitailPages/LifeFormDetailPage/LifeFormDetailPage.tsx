@@ -2,13 +2,18 @@ import { Box, Button, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { ReferenceDetailCard } from '../../components/Cards/ReferenceDetailCard'
-import { CardsCollection } from '../../components/CardsCollection/CardsCollection'
-import { DeleteDialog } from '../../components/DeleteDialog'
-import { useDialog } from '../../hooks'
-import { useMe } from '../../lib/ctx'
-import { getPlantDetailRoute, LifeFormDetailRouteParams } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
+import { DetailCard } from '../../../components/Cards/DetailCard'
+import { CardsCollection } from '../../../components/CardsCollection/CardsCollection'
+import { DeleteDialog } from '../../../components/DeleteDialog'
+import { useDialog } from '../../../hooks'
+import { useMe } from '../../../lib/ctx'
+import {
+  getEditLifeFormRoute,
+  getEditPlantRoute,
+  getPlantDetailRoute,
+  LifeFormDetailRouteParams,
+} from '../../../lib/routes'
+import { trpc } from '../../../lib/trpc'
 
 export const LifeFormDetailPage = () => {
   const { lifeFormId } = useParams() as LifeFormDetailRouteParams
@@ -109,6 +114,14 @@ export const LifeFormDetailPage = () => {
     }
   }
 
+  const navigateToEditLifeForm = () => {
+    void navigate(getEditLifeFormRoute({ lifeFormId: lifeFormId }))
+  }
+
+  const navigateToEditPlant = (id: string) => {
+    void navigate(getEditPlantRoute({ plantId: id }))
+  }
+
   return (
     <Box
       sx={{
@@ -118,13 +131,13 @@ export const LifeFormDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      <ReferenceDetailCard
+      <DetailCard
+        type="reference"
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        showDeleteButton={isAdmin}
-        onDelete={handleDeleteClick}
-        deleteButtonLoading={deleteLifeForm.isPending}
+        onDeleteClick={handleDeleteClick}
+        onEditClick={navigateToEditLifeForm}
       />
 
       <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
@@ -134,12 +147,12 @@ export const LifeFormDetailPage = () => {
       {plants && plants.length > 0 && (
         <Box marginTop={3}>
           <CardsCollection
-            isFullView={null}
             data={plants}
             title={`растения с типом роста ${name}`}
             type="plant"
             onCardClick={navigateToPlant}
             onCardDelete={isAdmin ? onDeletePlantClick : null}
+            onCardEdit={navigateToEditPlant}
           />
         </Box>
       )}

@@ -2,13 +2,13 @@ import { Box, Button, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { ReferenceDetailCard } from '../../components/Cards/ReferenceDetailCard'
-import { CardsCollection } from '../../components/CardsCollection/CardsCollection'
-import { DeleteDialog } from '../../components/DeleteDialog'
-import { useDialog } from '../../hooks'
-import { useMe } from '../../lib/ctx'
-import { GenusDetailRouteParams, getPlantDetailRoute } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
+import { DetailCard } from '../../../components/Cards/DetailCard'
+import { CardsCollection } from '../../../components/CardsCollection/CardsCollection'
+import { DeleteDialog } from '../../../components/DeleteDialog'
+import { useDialog } from '../../../hooks'
+import { useMe } from '../../../lib/ctx'
+import { GenusDetailRouteParams, getEditGenusRoute, getEditPlantRoute, getPlantDetailRoute } from '../../../lib/routes'
+import { trpc } from '../../../lib/trpc'
 
 export const GenusDetailPage = () => {
   const { genusId } = useParams() as GenusDetailRouteParams
@@ -105,6 +105,14 @@ export const GenusDetailPage = () => {
     }
   }
 
+  const navigateToEditPlant = (id: string) => {
+    void navigate(getEditPlantRoute({ plantId: id }))
+  }
+
+  const navigateToEditGenus = (id: string) => {
+    void navigate(getEditGenusRoute({ genusId: id }))
+  }
+
   return (
     <Box
       sx={{
@@ -114,13 +122,13 @@ export const GenusDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      <ReferenceDetailCard
+      <DetailCard
+        type="reference"
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        showDeleteButton={isAdmin}
-        onDelete={handleDeleteClick}
-        deleteButtonLoading={deleteGenus.isPending}
+        onDeleteClick={handleDeleteClick}
+        onEditClick={isAdmin ? () => navigateToEditGenus(genusId) : undefined}
       />
 
       <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
@@ -130,7 +138,7 @@ export const GenusDetailPage = () => {
       {plants && plants.length > 0 && (
         <Box marginTop={3}>
           <CardsCollection
-            isFullView={null}
+            onCardEdit={navigateToEditPlant}
             data={plants}
             title={`растения рода ${name}`}
             type="plant"

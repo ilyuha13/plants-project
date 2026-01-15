@@ -7,7 +7,14 @@ import { DeleteDialog } from '../../components/DeleteDialog'
 import { useDialog } from '../../hooks'
 import { useReferences } from '../../hooks/useReferences'
 import { useMe } from '../../lib/ctx'
-import { getGenusDetailRoute, getLifeFormDetailRoute, getVariegationDetailRoute } from '../../lib/routes'
+import {
+  getEditGenusRoute,
+  getEditLifeFormRoute,
+  getEditVariegationRoute,
+  getGenusDetailRoute,
+  getLifeFormDetailRoute,
+  getVariegationDetailRoute,
+} from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const CatalogPage = () => {
@@ -118,6 +125,18 @@ export const CatalogPage = () => {
     return ''
   }
 
+  const handleVariegationEditClick = (id: string) => {
+    void navigate(getEditVariegationRoute({ variegationId: id }))
+  }
+
+  const handleGenusEditClick = (id: string) => {
+    void navigate(getEditGenusRoute({ genusId: id }))
+  }
+
+  const handleLifeFormEditClick = (id: string) => {
+    void navigate(getEditLifeFormRoute({ lifeFormId: id }))
+  }
+
   return (
     <>
       <Stack>
@@ -126,6 +145,7 @@ export const CatalogPage = () => {
         </Typography>
         <Divider />
         <CardsCollection
+          onCardEdit={isAdmin ? handleGenusEditClick : undefined}
           isFullView={isFullViewGenusGalery}
           togleIsFullView={togleIsFullViewGenusGalery}
           onCardDelete={isAdmin ? deleteReference : null}
@@ -136,6 +156,7 @@ export const CatalogPage = () => {
         />
         <Divider />
         <CardsCollection
+          onCardEdit={isAdmin ? handleVariegationEditClick : undefined}
           isFullView={isFullViewVariegationGalery}
           togleIsFullView={togleIsFullViewVariegationGalery}
           onCardDelete={isAdmin ? deleteReference : null}
@@ -146,6 +167,7 @@ export const CatalogPage = () => {
         />
         <Divider />
         <CardsCollection
+          onCardEdit={isAdmin ? handleLifeFormEditClick : undefined}
           isFullView={isFullViewLifeFormGalery}
           togleIsFullView={togleIsFullViewLifeFormGalery}
           onCardDelete={isAdmin ? deleteReference : null}

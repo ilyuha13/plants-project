@@ -1,33 +1,25 @@
+import CreateIcon from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, IconButton } from '@mui/material'
 
-interface Card {
-  name: string
-  description: string | null
-  imageUrl: string
+import { InstanceCard, ReferenceCard } from './interfaces'
+
+interface ReferencePreviewCard extends ReferenceCard {
   onCardClick: () => void
-  onDeleteClick: (() => void) | null
 }
 
-interface InstanceCard extends Card {
-  type: 'instance'
-  inventoryNumber: string | null
-  price: string | null
-  createdAt: Date | null
+interface InstancePreviewCard extends InstanceCard {
+  onCardClick: () => void
 }
 
-interface ReferenceCard extends Card {
-  type: 'reference'
-}
-
-type PreviewCard = ReferenceCard | InstanceCard
+type PreviewCard = ReferencePreviewCard | InstancePreviewCard
 
 export const PreviewCard = (props: PreviewCard) => {
-  const { onCardClick, onDeleteClick, imageUrl, name, description } = props
+  const { onCardClick, onDeleteClick, onEditClick, imagesUrl, name, description, type } = props
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardActionArea onClick={onCardClick}>
-        <CardMedia component="img" image={imageUrl} alt={name} sx={{ width: '100%', objectFit: 'cover' }} />
+        <CardMedia component="img" image={imagesUrl[0]} alt={name} sx={{ width: '100%', objectFit: 'cover' }} />
 
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="h6" gutterBottom>
@@ -38,7 +30,7 @@ export const PreviewCard = (props: PreviewCard) => {
               {description}
             </Typography>
           )}
-          {props.type === 'instance' && (
+          {type === 'instance' && (
             <>
               {props.inventoryNumber && (
                 <Typography variant="body2" fontWeight="medium" color="primary">
@@ -68,6 +60,11 @@ export const PreviewCard = (props: PreviewCard) => {
         {onDeleteClick && (
           <IconButton color="error" onClick={() => onDeleteClick()}>
             <DeleteOutlineIcon color="error" />
+          </IconButton>
+        )}
+        {onEditClick && (
+          <IconButton color="primary" onClick={() => onEditClick()}>
+            <CreateIcon color="primary" />
           </IconButton>
         )}
       </CardActions>
