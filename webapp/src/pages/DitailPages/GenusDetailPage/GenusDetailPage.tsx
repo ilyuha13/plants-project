@@ -172,7 +172,7 @@ export const GenusDetailPage = () => {
       {plants && plants.length > 0 && (
         <Box marginTop={3}>
           <CardsCollection
-            onCardEdit={navigateToEditPlant}
+            onCardEdit={isAdmin ? navigateToEditPlant : undefined}
             data={plants}
             title={`растения рода ${name}`}
             type="plant"

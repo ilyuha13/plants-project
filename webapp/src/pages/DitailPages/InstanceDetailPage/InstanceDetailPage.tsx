@@ -29,6 +29,7 @@ export const InstanceDetailPage = () => {
   const openCart = useCartStore((state) => state.openCart)
 
   const me = useMe()
+  const isAdmin = me?.role === 'ADMIN'
 
   const handleDeleteClick = () => {
     confirmDeleteDialog.open()
@@ -149,8 +150,8 @@ export const InstanceDetailPage = () => {
         createdAt={createdAt}
         addButtonText={getAddButtonText()}
         onAddToCart={handleAddToCart}
-        onDeleteClick={handleDeleteClick}
-        onEditClick={navigateToEditInstance}
+        onDeleteClick={isAdmin ? handleDeleteClick : null}
+        onEditClick={isAdmin ? navigateToEditInstance : undefined}
       />
 
       <Button onClick={navigateToPlant} fullWidth sx={{ marginTop: 3 }}>

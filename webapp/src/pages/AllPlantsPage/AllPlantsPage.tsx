@@ -65,7 +65,7 @@ export const AllPlantsPage = () => {
         isFullView={true}
         onCardClick={navigateToPlantDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
-        onCardEdit={navigateToEditPlant}
+        onCardEdit={isAdmin ? navigateToEditPlant : undefined}
       />
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}

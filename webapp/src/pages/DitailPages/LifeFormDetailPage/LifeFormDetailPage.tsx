@@ -178,7 +178,7 @@ export const LifeFormDetailPage = () => {
             type="plant"
             onCardClick={navigateToPlant}
             onCardDelete={isAdmin ? onDeletePlantClick : null}
-            onCardEdit={navigateToEditPlant}
+            onCardEdit={isAdmin ? navigateToEditPlant : undefined}
           />
         </Box>
       )}

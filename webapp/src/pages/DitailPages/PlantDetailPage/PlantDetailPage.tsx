@@ -193,7 +193,7 @@ export const PlantDetailPage = () => {
         <Box marginTop={3}>
           <CardsCollection
             type="instance"
-            onCardEdit={navigateToEditPlantInstance}
+            onCardEdit={isAdmin ? navigateToEditPlantInstance : undefined}
             data={instances}
             title={`растения рода ${name}`}
             onCardClick={navigateToPlantInstance}
