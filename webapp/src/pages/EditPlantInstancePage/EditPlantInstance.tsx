@@ -9,7 +9,7 @@ import { PlantSelect } from '../../components/PlantSelect/PlantSelect'
 import { TextInput } from '../../components/TextInput/TextInput'
 import { useGetUrlsFromCloudinary } from '../../hooks/useGetUrlsFromCloudinary'
 import { useForm } from '../../lib/form'
-import { EditPlantInstanceRouteParams } from '../../lib/routes'
+import { EditPlantInstanceRouteParams, getInstanceDetailRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const EditPlantInstancePage = () => {
@@ -58,7 +58,7 @@ export const EditPlantInstancePage = () => {
     },
     successMessage: 'экземпляр обновлен',
     showValidationAlert: true,
-    redirectOnSuccess: `/instances/${instanceId}`,
+    redirectOnSuccess: getInstanceDetailRoute({ instanceId: instanceId }),
   })
 
   if (isLoading) {
