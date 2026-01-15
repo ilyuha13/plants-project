@@ -1,21 +1,29 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { PlantDetailCard } from '../../components/Cards/PlantDetailCard'
-import { PreviewCard } from '../../components/Cards/shared/PrewiewCard'
-import { DeleteDialog } from '../../components/DeleteDialog'
-import { useDialog } from '../../hooks'
-import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
-import { useMe } from '../../lib/ctx'
-import { getCatalogPageRoute, getInstanceDetailRoute, PlantDetailRouteParams } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
+import { DetailCard } from '../../../components/Cards/DetailCard'
+import { CardsCollection } from '../../../components/CardsCollection/CardsCollection'
+import { DeleteDialog } from '../../../components/DeleteDialog'
+import { useDialog } from '../../../hooks'
+import { useMe } from '../../../lib/ctx'
+import {
+  getCatalogPageRoute,
+  getEditPlantInstanceRoute,
+  getEditPlantRoute,
+  getInstanceDetailRoute,
+  PlantDetailRouteParams,
+} from '../../../lib/routes'
+import { trpc } from '../../../lib/trpc'
 
 export const PlantDetailPage = () => {
   const { plantId } = useParams() as PlantDetailRouteParams
   const navigate = useNavigate()
 
-  const { data, isLoading, isError, error } = trpc.getPlant.useQuery({ plantId: plantId }, { enabled: !!plantId })
+  const { data, isLoading, isError, error } = trpc.getPlant.useQuery(
+    { plantId: plantId },
+    { enabled: !!plantId },
+  )
   const deletePlant = trpc.deletePlant.useMutation()
   const deleteInstance = trpc.deletePlantInstance.useMutation()
   const trpcUtils = trpc.useUtils()
@@ -31,7 +39,14 @@ export const PlantDetailPage = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '80vh',
+        }}
+      >
         <Typography variant="h5">Загрузка...</Typography>
       </Box>
     )
@@ -39,7 +54,14 @@ export const PlantDetailPage = () => {
 
   if (isError) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '80vh',
+        }}
+      >
         <Typography variant="h5" color="error">
           Ошибка: {error?.message || 'Не удалось загрузить растение'}
         </Typography>
@@ -49,11 +71,24 @@ export const PlantDetailPage = () => {
 
   if (!data?.plant) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '80vh',
+        }}
+      >
         <Typography variant="h5">Растение не найдено</Typography>
       </Box>
     )
   }
+
+  const instances = data.plant.plantInstances.map(({ Id, ...rest }) => ({
+    ...rest,
+    id: Id,
+    name: data.plant.name,
+  }))
 
   const onDeleteInstanceClick = (id: string, inventoryNumber: string) => {
     setCurrentDeleteData({ type: 'instance', id, inventoryNumber })
@@ -94,6 +129,22 @@ export const PlantDetailPage = () => {
     }
   }
 
+  const navigateToEditPlantPage = () => {
+    void navigate(getEditPlantRoute({ plantId }))
+  }
+
+  const navigateToEditPlantInstance = (id: string) => {
+    void navigate(getEditPlantInstanceRoute({ instanceId: id }))
+  }
+
+  const navigateToPlantInstance = (id: string) => {
+    void navigate(getInstanceDetailRoute({ instanceId: id }))
+  }
+
+  const onDeletePlantInstanceClick = (id: string, inventoryNumber: string) => {
+    onDeleteInstanceClick(id, inventoryNumber)
+  }
+
   return (
     <Box
       sx={{
@@ -103,40 +154,31 @@ export const PlantDetailPage = () => {
         minHeight: '80vh',
       }}
     >
-      <PlantDetailCard
+      <DetailCard
+        type="reference"
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        showDeleteButton={isAdmin}
-        onDelete={handleDeleteClick}
-        deleteButtonLoading={deletePlant.isPending}
+        onDeleteClick={handleDeleteClick}
+        onEditClick={navigateToEditPlantPage}
       />
 
       <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
         ← Назад к каталогу
       </Button>
 
-      <Grid container spacing={{ xs: 2, sm: 2.5, xl: 3 }}>
-        {data?.plant.plantInstances.map((instance) => {
-          const { createdAt, description, inventoryNumber, imagesUrl, price } = instance
-          const imageUrl = getCloudinaryUrl(imagesUrl[0], 'thumbnail')
-          return (
-            <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={instance.Id} sx={{ marginTop: 3 }}>
-              <PreviewCard
-                onDeleteClick={isAdmin ? () => onDeleteInstanceClick(instance.Id, instance.inventoryNumber) : null}
-                onCardClick={() => void navigate(getInstanceDetailRoute({ instanceId: instance.Id }))}
-                type="instance"
-                createdAt={createdAt}
-                description={description}
-                imageUrl={imageUrl}
-                inventoryNumber={inventoryNumber}
-                name={name}
-                price={price}
-              />
-            </Grid>
-          )
-        })}
-      </Grid>
+      {instances && instances.length > 0 && (
+        <Box marginTop={3}>
+          <CardsCollection
+            type="instance"
+            onCardEdit={navigateToEditPlantInstance}
+            data={instances}
+            title={`растения рода ${name}`}
+            onCardClick={navigateToPlantInstance}
+            onCardDelete={isAdmin ? onDeletePlantInstanceClick : null}
+          />
+        </Box>
+      )}
 
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}

@@ -27,6 +27,7 @@ export const ImagesInput = ({
               setFileArray(null)
               const files = e.target.files
               const fileArray = Array.from(files)
+
               setFileArray(fileArray)
               e.target.files = null
             }

@@ -1,6 +1,7 @@
 import { FormikHelpers, useFormik } from 'formik'
 import { withZodSchema } from 'formik-validator-zod'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
 import { AlertProps } from '../components/Alert/Alert'
@@ -9,6 +10,7 @@ import { ButtonProps } from '../components/Button/Button'
 export const useForm = <TZodSchema extends z.ZodTypeAny>({
   successMessage = false,
   resetOnSuccess = true,
+  redirectOnSuccess,
   showValidationAlert = false,
   initialValues = {},
   validationSchema,
@@ -16,13 +18,19 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
 }: {
   successMessage?: string | false
   resetOnSuccess?: boolean
+  redirectOnSuccess?: string
   showValidationAlert?: boolean
   initialValues?: z.infer<TZodSchema>
   validationSchema?: TZodSchema
-  onSubmit: (values: z.infer<TZodSchema>, actions: FormikHelpers<z.infer<TZodSchema>>) => Promise<void>
+  onSubmit: (
+    values: z.infer<TZodSchema>,
+    actions: FormikHelpers<z.infer<TZodSchema>>,
+  ) => Promise<void>
 }) => {
   const [successMessageVisible, setSuccessMessageVisible] = useState(false)
   const [submittingError, setSubmittingError] = useState<Error | null>(null)
+
+  const navigate = useNavigate()
 
   const formik = useFormik<z.infer<TZodSchema>>({
     initialValues,
@@ -34,6 +42,11 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
         if (resetOnSuccess) {
           formik.resetForm()
         }
+        if (redirectOnSuccess) {
+          void navigate(redirectOnSuccess)
+          return
+        }
+
         setSuccessMessageVisible(true)
         setTimeout(() => {
           setSuccessMessageVisible(false)
@@ -71,7 +84,14 @@ export const useForm = <TZodSchema extends z.ZodTypeAny>({
       hidden: true,
       children: null,
     }
-  }, [submittingError, formik.isValid, formik.submitCount, successMessageVisible, successMessage, showValidationAlert])
+  }, [
+    submittingError,
+    formik.isValid,
+    formik.submitCount,
+    successMessageVisible,
+    successMessage,
+    showValidationAlert,
+  ])
 
   const buttonProps = useMemo<Omit<ButtonProps, 'children'>>(() => {
     return {

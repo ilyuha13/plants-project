@@ -2,7 +2,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import { Button, Grid, Stack, Typography } from '@mui/material'
 
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
-import { PreviewCard } from '../Cards/shared/PrewiewCard'
+import { PreviewCard } from '../Cards/PrewiewCard'
 
 interface DataFromCards {
   name: string
@@ -21,21 +21,19 @@ interface СardsCollection {
   type: TType
   data: DataFromCards[]
   onCardClick: (id: string, type?: TType) => void
-  onCardDelete:
-    | ((id: string, name: string, type?: TType, inventoryNumber?: string) => void)
-    | null
-  isFullView: boolean | null
+  onCardDelete: ((id: string, name: string, type?: TType) => void) | null
+  onCardEdit?: (id: string) => void
+  isFullView?: boolean
   togleIsFullView?: () => void
-  isAdmin?: boolean
   wrapperStyle?: React.CSSProperties
 }
 
 export const CardsCollection = ({
-  isAdmin = false,
   title,
   data,
   onCardClick,
   onCardDelete,
+  onCardEdit,
   type,
   isFullView = true,
   togleIsFullView,
@@ -75,8 +73,9 @@ export const CardsCollection = ({
         spacing={{ xs: 2, sm: 2.5, xl: 3 }}
       >
         {data.map((item) => {
-          const imageUrl = getCloudinaryUrl(item.imagesUrl[0], 'thumbnail')
-
+          const imagesUrl = item.imagesUrl.map((url) =>
+            getCloudinaryUrl(url, 'thumbnail'),
+          )
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}
@@ -88,16 +87,16 @@ export const CardsCollection = ({
                   type="instance"
                   onCardClick={() => onCardClick(item.id, type)}
                   onDeleteClick={
-                    onCardDelete &&
-                    (() =>
-                      onCardDelete(item.id, item.name, undefined, item.inventoryNumber))
+                    onCardDelete && (() => onCardDelete(item.id, item.name, type))
                   }
-                  imageUrl={imageUrl}
+                  onEditClick={onCardEdit && (() => onCardEdit(item.id))}
+                  imagesUrl={imagesUrl}
                   name={item.name}
                   description={item.description}
-                  inventoryNumber={isAdmin ? item.inventoryNumber : undefined}
-                  price={item.price || null}
-                  createdAt={item.createdAt || null}
+                  inventoryNumber={item.inventoryNumber || ''}
+                  price={item.price || ''}
+                  createdAt={item.createdAt}
+                  key={item.id}
                 />
               ) : (
                 <PreviewCard
@@ -106,7 +105,8 @@ export const CardsCollection = ({
                   onDeleteClick={
                     onCardDelete && (() => onCardDelete(item.id, item.name, type))
                   }
-                  imageUrl={imageUrl}
+                  onEditClick={onCardEdit && (() => onCardEdit(item.id))}
+                  imagesUrl={imagesUrl}
                   name={item.name}
                   description={item.description}
                   key={item.id}

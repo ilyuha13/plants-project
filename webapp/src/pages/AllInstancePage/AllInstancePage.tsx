@@ -65,7 +65,6 @@ export const AllInstancePage = () => {
         isFullView={true}
         onCardClick={navigateToInsatnceDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
-        isAdmin={isAdmin}
       />
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}

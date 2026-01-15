@@ -1,9 +1,16 @@
-import { Box, ImageList, ImageListItem, Stack } from '@mui/material'
+import { Box, Button, ImageList, ImageListItem, Stack } from '@mui/material'
 import { useState } from 'react'
 
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 
-export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string }) => {
+interface GaleryProps {
+  imageUrls: string[]
+  alt: string
+  setBaseImage?: (imageIndex: number) => void
+  removeImage?: (imageIndex: number) => void
+}
+
+export const Galery = ({ imageUrls, alt, setBaseImage, removeImage }: GaleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const cloudinaryUrls: { mediumUrl: string; smallUrl: string }[] = []
   imageUrls.map((iamgeId) => {
@@ -77,6 +84,35 @@ export const Galery = ({ imageUrls, alt }: { imageUrls: string[]; alt: string })
           ))}
         </ImageList>
       )}
+      <Box
+        flex="1"
+        display="flex"
+        flexDirection={{ xs: 'column', md: 'row' }}
+        gap={2}
+        justifyContent="space-between"
+        sx={{ mt: 2 }}
+      >
+        {setBaseImage && imageUrls.length > 1 && (
+          <Button
+            onClick={() => {
+              setBaseImage(selectedImageIndex)
+            }}
+          >
+            Сделать главным
+          </Button>
+        )}
+        {removeImage && (
+          <Button
+            color="error"
+            onClick={() => {
+              removeImage(selectedImageIndex)
+              setSelectedImageIndex(0)
+            }}
+          >
+            Удалить изображение
+          </Button>
+        )}
+      </Box>
     </Stack>
   )
 }

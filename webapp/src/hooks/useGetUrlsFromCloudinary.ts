@@ -4,7 +4,7 @@ import { trpc } from '../lib/trpc'
 
 export const useGetUrlsFromCloudinary = (fileArray: File[] | null) => {
   const signatureMutation = trpc.getUploadSignature.useMutation()
-  const [urlArray, setUrlArray] = useState<string[] | null>([])
+  const [urlArray, setUrlArray] = useState<string[] | null>(null)
 
   useEffect(() => {
     if (!fileArray) {
@@ -23,10 +23,13 @@ export const useGetUrlsFromCloudinary = (fileArray: File[] | null) => {
           formData.append('api_key', signature.apiKey)
           formData.append('folder', signature.folder)
 
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`, {
-            method: 'POST',
-            body: formData,
-          })
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`,
+            {
+              method: 'POST',
+              body: formData,
+            },
+          )
 
           const result = (await response.json()) as { public_id: string }
 
