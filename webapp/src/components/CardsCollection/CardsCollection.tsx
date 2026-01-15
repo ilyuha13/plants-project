@@ -26,6 +26,7 @@ interface СardsCollection {
   isFullView?: boolean
   togleIsFullView?: () => void
   wrapperStyle?: React.CSSProperties
+  onAddToCart?: (id: string) => Promise<void>
 }
 
 export const CardsCollection = ({
@@ -38,6 +39,7 @@ export const CardsCollection = ({
   isFullView = true,
   togleIsFullView,
   wrapperStyle,
+  onAddToCart,
 }: СardsCollection) => {
   return (
     <Stack sx={wrapperStyle}>
@@ -97,6 +99,7 @@ export const CardsCollection = ({
                   price={item.price || ''}
                   createdAt={item.createdAt}
                   key={item.id}
+                  onAddToCart={onAddToCart && (() => onAddToCart(item.id))}
                 />
               ) : (
                 <PreviewCard

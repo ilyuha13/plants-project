@@ -1,3 +1,4 @@
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import CreateIcon from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import {
@@ -25,6 +26,8 @@ type PreviewCard = ReferencePreviewCard | InstancePreviewCard
 export const PreviewCard = (props: PreviewCard) => {
   const { onCardClick, onDeleteClick, onEditClick, imagesUrl, name, description, type } =
     props
+
+  const onAddToCart = type === 'instance' ? props.onAddToCart : undefined
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardActionArea onClick={onCardClick}>
@@ -83,6 +86,11 @@ export const PreviewCard = (props: PreviewCard) => {
         {onEditClick && (
           <IconButton color="primary" onClick={() => onEditClick()}>
             <CreateIcon color="primary" />
+          </IconButton>
+        )}
+        {type === 'instance' && onAddToCart && (
+          <IconButton color="primary" onClick={() => void onAddToCart()}>
+            <AddShoppingCartIcon color="primary" />
           </IconButton>
         )}
       </CardActions>

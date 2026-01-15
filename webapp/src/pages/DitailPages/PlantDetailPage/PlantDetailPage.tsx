@@ -27,6 +27,9 @@ export const PlantDetailPage = () => {
   const deletePlant = trpc.deletePlant.useMutation()
   const deleteInstance = trpc.deletePlantInstance.useMutation()
   const trpcUtils = trpc.useUtils()
+
+  const addToCart = trpc.addToCart.useMutation()
+
   const [currentDeleteData, setCurrentDeleteData] = useState<{
     type: 'instance' | 'plant'
     id: string
@@ -149,6 +152,21 @@ export const PlantDetailPage = () => {
     void navigate(getCatalogPageRoute())
   }
 
+  const handleAddToCart = async (instanceId: string) => {
+    if (!me) {
+      console.error('User not authenticated')
+      return
+    }
+
+    try {
+      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
+      await trpcUtils.getCart.invalidate()
+      await trpcUtils.getPlantInstance.invalidate()
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -180,6 +198,7 @@ export const PlantDetailPage = () => {
             title={`растения рода ${name}`}
             onCardClick={navigateToPlantInstance}
             onCardDelete={isAdmin ? onDeletePlantInstanceClick : null}
+            onAddToCart={handleAddToCart}
           />
         </Box>
       )}
