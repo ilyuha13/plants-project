@@ -87,10 +87,11 @@ export const PlantDetailPage = () => {
     )
   }
 
-  const instances = data.plant.plantInstances.map(({ Id, ...rest }) => ({
+  const instances = data.plant.plantInstances.map(({ Id, inventoryNumber, ...rest }) => ({
     ...rest,
     id: Id,
     name: data.plant.name,
+    ...(isAdmin && { inventoryNumber }),
   }))
 
   const onDeleteInstanceClick = (id: string, inventoryNumber: string) => {

@@ -146,7 +146,7 @@ export const InstanceDetailPage = () => {
         imagesUrl={imagesUrl}
         description={description}
         price={price}
-        inventoryNumber={inventoryNumber}
+        inventoryNumber={isAdmin ? inventoryNumber : null}
         createdAt={createdAt}
         addButtonText={getAddButtonText()}
         onAddToCart={me ? handleAddToCart : undefined}
