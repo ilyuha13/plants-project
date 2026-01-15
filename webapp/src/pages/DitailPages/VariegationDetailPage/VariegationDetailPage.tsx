@@ -160,7 +160,7 @@ export const VariegationDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        onDeleteClick={handleDeleteClick}
+        onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? () => navigateToEditVariegation(variegationId) : undefined}
       />
 

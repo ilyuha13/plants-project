@@ -181,8 +181,8 @@ export const PlantDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        onDeleteClick={handleDeleteClick}
-        onEditClick={navigateToEditPlantPage}
+        onDeleteClick={isAdmin ? handleDeleteClick : null}
+        onEditClick={isAdmin ? navigateToEditPlantPage : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
@@ -198,7 +198,7 @@ export const PlantDetailPage = () => {
             title={`растения рода ${name}`}
             onCardClick={navigateToPlantInstance}
             onCardDelete={isAdmin ? onDeletePlantInstanceClick : null}
-            onAddToCart={handleAddToCart}
+            onAddToCart={me ? handleAddToCart : undefined}
           />
         </Box>
       )}

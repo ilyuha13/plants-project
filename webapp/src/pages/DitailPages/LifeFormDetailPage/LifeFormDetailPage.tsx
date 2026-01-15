@@ -162,8 +162,8 @@ export const LifeFormDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        onDeleteClick={handleDeleteClick}
-        onEditClick={navigateToEditLifeForm}
+        onDeleteClick={isAdmin ? handleDeleteClick : null}
+        onEditClick={isAdmin ? navigateToEditLifeForm : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>

@@ -149,7 +149,7 @@ export const InstanceDetailPage = () => {
         inventoryNumber={inventoryNumber}
         createdAt={createdAt}
         addButtonText={getAddButtonText()}
-        onAddToCart={handleAddToCart}
+        onAddToCart={me ? handleAddToCart : undefined}
         onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? navigateToEditInstance : undefined}
       />

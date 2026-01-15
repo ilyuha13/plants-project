@@ -16,6 +16,10 @@ export const AllInstancePage = () => {
   const { data, isLoading, isError, error } = trpc.getAllInstances.useQuery()
   const deleteInstance = trpc.deletePlantInstance.useMutation()
 
+  const addToCart = trpc.addToCart.useMutation()
+
+  const trpcUtils = trpc.useUtils()
+
   const [currentDeleteData, setCurrentDeleteData] = useState<{
     id: string
     name: string
@@ -60,6 +64,21 @@ export const AllInstancePage = () => {
     void navigate(getEditPlantInstanceRoute({ instanceId }))
   }
 
+  const handleAddToCart = async (instanceId: string) => {
+    if (!me) {
+      console.error('User not authenticated')
+      return
+    }
+
+    try {
+      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
+      await trpcUtils.getCart.invalidate()
+      await trpcUtils.getPlantInstance.invalidate()
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+    }
+  }
+
   return (
     <Box>
       <CardsCollection
@@ -70,6 +89,7 @@ export const AllInstancePage = () => {
         onCardClick={navigateToInsatnceDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
         onCardEdit={isAdmin ? navigateToEditPlantInstance : undefined}
+        onAddToCart={me ? handleAddToCart : undefined}
       />
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}
