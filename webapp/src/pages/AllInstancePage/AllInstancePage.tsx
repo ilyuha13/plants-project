@@ -79,12 +79,17 @@ export const AllInstancePage = () => {
     }
   }
 
+  const instances = data.instances.map(({ inventoryNumber, ...rest }) => ({
+    ...rest,
+    ...(isAdmin && { inventoryNumber }),
+  }))
+
   return (
     <Box>
       <CardsCollection
         type="instance"
         title="Все экземпляры"
-        data={data.instances}
+        data={instances}
         isFullView={true}
         onCardClick={navigateToInsatnceDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
