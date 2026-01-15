@@ -6,7 +6,7 @@ import { CardsCollection } from '../../components/CardsCollection/CardsCollectio
 import { DeleteDialog } from '../../components/DeleteDialog'
 import { useDialog } from '../../hooks'
 import { useMe } from '../../lib/ctx'
-import { getInstanceDetailRoute } from '../../lib/routes'
+import { getEditPlantInstanceRoute, getInstanceDetailRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 export const AllInstancePage = () => {
@@ -56,6 +56,10 @@ export const AllInstancePage = () => {
     return <div>No instances found.</div>
   }
 
+  const navigateToEditPlantInstance = (instanceId: string) => {
+    void navigate(getEditPlantInstanceRoute({ instanceId }))
+  }
+
   return (
     <Box>
       <CardsCollection
@@ -65,6 +69,7 @@ export const AllInstancePage = () => {
         isFullView={true}
         onCardClick={navigateToInsatnceDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
+        onCardEdit={navigateToEditPlantInstance}
       />
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}
