@@ -12,6 +12,7 @@ import {
   InstanceDetailRouteParams,
 } from '../../../lib/routes'
 import { trpc } from '../../../lib/trpc'
+import { useCartStore } from '../../../stores/cartStore'
 
 export const InstanceDetailPage = () => {
   const { instanceId } = useParams() as InstanceDetailRouteParams
@@ -25,6 +26,7 @@ export const InstanceDetailPage = () => {
   const deleteInstance = trpc.deletePlantInstance.useMutation()
   const addToCart = trpc.addToCart.useMutation()
   const utils = trpc.useUtils()
+  const openCart = useCartStore((state) => state.openCart)
 
   const me = useMe()
 
@@ -52,6 +54,7 @@ export const InstanceDetailPage = () => {
       await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
       await utils.getCart.invalidate()
       await utils.getPlantInstance.invalidate()
+      openCart()
     } catch (error) {
       console.error('Failed to add to cart:', error)
     }
