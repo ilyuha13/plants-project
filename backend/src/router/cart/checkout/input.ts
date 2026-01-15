@@ -1,10 +1,11 @@
+import { zNonemptyString } from '@plants-project/shared'
 import { z } from 'zod'
 
 export const checkoutInput = z.object({
-  userId: z.string(),
+  userId: zNonemptyString,
   contactInfo: z.object({
-    name: z.string(),
-    phone: z.string(),
-    telegram: z.string().optional(),
+    name: zNonemptyString,
+    phone: zNonemptyString,
+    telegram: zNonemptyString,
   }),
 })
