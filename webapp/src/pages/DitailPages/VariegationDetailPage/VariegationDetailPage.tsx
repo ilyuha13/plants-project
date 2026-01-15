@@ -8,6 +8,7 @@ import { DeleteDialog } from '../../../components/DeleteDialog'
 import { useDialog } from '../../../hooks'
 import { useMe } from '../../../lib/ctx'
 import {
+  getCatalogPageRoute,
   getEditPlantRoute,
   getEditVariegationRoute,
   getPlantDetailRoute,
@@ -141,6 +142,10 @@ export const VariegationDetailPage = () => {
     void navigate(getEditPlantRoute({ plantId: id }))
   }
 
+  const navigateToCatalog = () => {
+    void navigate(getCatalogPageRoute())
+  }
+
   return (
     <Box
       sx={{
@@ -159,8 +164,8 @@ export const VariegationDetailPage = () => {
         onEditClick={isAdmin ? () => navigateToEditVariegation(variegationId) : undefined}
       />
 
-      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад
+      <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
+        ← Назад к каталогу
       </Button>
 
       {plants && plants.length > 0 && (

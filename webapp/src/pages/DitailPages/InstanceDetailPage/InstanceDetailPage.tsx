@@ -7,6 +7,7 @@ import { useDialog } from '../../../hooks'
 import { useMe } from '../../../lib/ctx'
 import {
   getEditPlantInstanceRoute,
+  getPlantDetailRoute,
   getPlantsListRoute,
   InstanceDetailRouteParams,
 } from '../../../lib/routes'
@@ -106,6 +107,7 @@ export const InstanceDetailPage = () => {
   const { plant, description, price, inventoryNumber, status, imagesUrl, createdAt } =
     data.instance
   const name = plant.name
+  const plantId = plant.plantId
 
   const getAddButtonText = () => {
     if (status === 'IN_CART') {
@@ -119,6 +121,10 @@ export const InstanceDetailPage = () => {
 
   const navigateToEditInstance = () => {
     void navigate(getEditPlantInstanceRoute({ instanceId: instanceId }))
+  }
+
+  const navigateToPlant = () => {
+    void navigate(getPlantDetailRoute({ plantId: plantId }))
   }
 
   return (
@@ -144,8 +150,8 @@ export const InstanceDetailPage = () => {
         onEditClick={navigateToEditInstance}
       />
 
-      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к каталогу
+      <Button onClick={navigateToPlant} fullWidth sx={{ marginTop: 3 }}>
+        ← Назад к сорту
       </Button>
 
       <DeleteDialog

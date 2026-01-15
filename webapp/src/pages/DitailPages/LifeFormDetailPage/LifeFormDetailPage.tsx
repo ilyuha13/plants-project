@@ -8,6 +8,7 @@ import { DeleteDialog } from '../../../components/DeleteDialog'
 import { useDialog } from '../../../hooks'
 import { useMe } from '../../../lib/ctx'
 import {
+  getCatalogPageRoute,
   getEditLifeFormRoute,
   getEditPlantRoute,
   getPlantDetailRoute,
@@ -143,6 +144,10 @@ export const LifeFormDetailPage = () => {
     void navigate(getEditPlantRoute({ plantId: id }))
   }
 
+  const navigateToCatalog = () => {
+    void navigate(getCatalogPageRoute())
+  }
+
   return (
     <Box
       sx={{
@@ -161,7 +166,7 @@ export const LifeFormDetailPage = () => {
         onEditClick={navigateToEditLifeForm}
       />
 
-      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
+      <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
         ← Назад
       </Button>
 

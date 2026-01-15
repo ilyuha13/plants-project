@@ -145,6 +145,10 @@ export const PlantDetailPage = () => {
     onDeleteInstanceClick(id, inventoryNumber)
   }
 
+  const navigateToCatalog = () => {
+    void navigate(getCatalogPageRoute())
+  }
+
   return (
     <Box
       sx={{
@@ -163,7 +167,7 @@ export const PlantDetailPage = () => {
         onEditClick={navigateToEditPlantPage}
       />
 
-      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
+      <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
         ← Назад к каталогу
       </Button>
 

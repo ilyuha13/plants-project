@@ -9,6 +9,7 @@ import { useDialog } from '../../../hooks'
 import { useMe } from '../../../lib/ctx'
 import {
   GenusDetailRouteParams,
+  getCatalogPageRoute,
   getEditGenusRoute,
   getEditPlantRoute,
   getPlantDetailRoute,
@@ -142,6 +143,10 @@ export const GenusDetailPage = () => {
     void navigate(getEditGenusRoute({ genusId: id }))
   }
 
+  const navigateToCatalog = () => {
+    void navigate(getCatalogPageRoute())
+  }
+
   return (
     <Box
       sx={{
@@ -160,7 +165,7 @@ export const GenusDetailPage = () => {
         onEditClick={isAdmin ? () => navigateToEditGenus(genusId) : undefined}
       />
 
-      <Button onClick={() => void navigate(-1)} fullWidth sx={{ marginTop: 3 }}>
+      <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
         ← Назад
       </Button>
 
