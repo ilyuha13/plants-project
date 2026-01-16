@@ -7,6 +7,11 @@ export const getLifeFormTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
       name: true,
       description: true,
       imagesUrl: true,
+      plants: {
+        select: {
+          plantId: true,
+        },
+      },
     },
   })
 

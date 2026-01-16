@@ -28,6 +28,7 @@ export const PreviewCard = (props: PreviewCard) => {
     props
 
   const onAddToCart = type === 'instance' ? props.onAddToCart : undefined
+  const quantity = type === 'reference' ? props.quantity : undefined
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardActionArea onClick={onCardClick}>
@@ -40,7 +41,7 @@ export const PreviewCard = (props: PreviewCard) => {
 
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="h6" gutterBottom>
-            {name}
+            {name + (quantity ? ` (${quantity})` : '')}
           </Typography>
           {description && (
             <Typography variant="body2" color="text.secondary" noWrap>

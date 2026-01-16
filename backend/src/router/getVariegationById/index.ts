@@ -15,6 +15,11 @@ export const getVariegationByIdTrpcRoute = trpc.procedure
             name: true,
             imagesUrl: true,
             description: true,
+            plantInstances: {
+              select: {
+                Id: true,
+              },
+            },
           },
         },
       },

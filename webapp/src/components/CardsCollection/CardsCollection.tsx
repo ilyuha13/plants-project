@@ -12,6 +12,8 @@ interface DataFromCards {
   inventoryNumber?: string
   price?: string
   createdAt?: Date
+  plants?: { plantId: string }[]
+  plantInstances?: { Id: string }[]
 }
 
 export type TType = 'genus' | 'lifeForm' | 'variegation' | 'plant' | 'instance'
@@ -78,6 +80,13 @@ export const CardsCollection = ({
           const imagesUrl = item.imagesUrl.map((url) =>
             getCloudinaryUrl(url, 'thumbnail'),
           )
+          const quantity =
+            (type === 'genus' || type === 'lifeForm' || type === 'variegation') &&
+            item.plants
+              ? item.plants.length
+              : type === 'plant' && item.plantInstances
+                ? item.plantInstances.length
+                : 0
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}
@@ -112,6 +121,7 @@ export const CardsCollection = ({
                   imagesUrl={imagesUrl}
                   name={item.name}
                   description={item.description}
+                  quantity={quantity}
                   key={item.id}
                 />
               )}

@@ -10,6 +10,11 @@ export const getPlantsTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
       name: true,
       description: true,
       imagesUrl: true,
+      plantInstances: {
+        select: {
+          Id: true,
+        },
+      },
     },
   })
 
