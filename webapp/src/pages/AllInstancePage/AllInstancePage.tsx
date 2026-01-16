@@ -88,7 +88,7 @@ export const AllInstancePage = () => {
     <Box>
       <CardsCollection
         type="instance"
-        title="Все экземпляры"
+        title={`Все экземпляры${data.instances.length > 0 ? ` (${data.instances.length})` : ''}`}
         data={instances}
         isFullView={true}
         onCardClick={navigateToInsatnceDetail}

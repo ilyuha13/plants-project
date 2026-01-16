@@ -60,7 +60,7 @@ export const AllPlantsPage = () => {
     <Box>
       <CardsCollection
         type="plant"
-        title="Все растения"
+        title={`Все растения${data.plants.length > 0 ? ` (${data.plants.length})` : ''}`}
         data={data.plants}
         isFullView={true}
         onCardClick={navigateToPlantDetail}
