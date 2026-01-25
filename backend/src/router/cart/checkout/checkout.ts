@@ -103,7 +103,20 @@ export async function checkout(
   }, 0)
 
   // 4. Создать заказ (опционально, можно добавить модель Order позже)
-  const orderId = `ORDER-${Date.now()}`
+  const order = await prisma.order.create({
+    data: {
+      customerName: contactInfo.name,
+      totalAmount: total + '',
+      customerPhone: contactInfo.phone,
+      userId: userId,
+      items: {
+        createMany: {
+          data: cart.items.map((item) => ({ plantInstanceId: item.plantInstanceId })),
+        },
+      },
+    },
+  })
+  const orderId = order.id
 
   // 5. Отправить уведомление в Telegram
   const orderMessage = formatOrderMessage({

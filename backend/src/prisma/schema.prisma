@@ -38,7 +38,7 @@ enum Role {
 }
 
 model PasswordResetToken {
-        id        String   @id @default(uuid())
+    id        String   @id @default(uuid())
     token     String   @unique @default(uuid())
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -189,7 +189,7 @@ model Order {
 
     customerName String
     customerPhone String
-    customerAddress String
+    customerAddress String?
 
     vkContact String?
     telegramContact String?
@@ -208,7 +208,11 @@ model Order {
 
 enum OrderStatus {
     PENDING
-    CONFIRMED
+    AWAITING_PAYMENT
+    COLLECTING
+    PACKED
+    SHIPPED
+    DELIVERED
     CANCELLED
 }
 
@@ -219,11 +223,6 @@ model OrderItem {
 
     plantInstanceId String
     plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [Id])
-
-    priceAtPurchase String
-    plantNameSnapshot String
-    plantGenusSnapshot String
-    inventoryNumberSnapshot String
 
     @@index([orderId])
     @@index([plantInstanceId])

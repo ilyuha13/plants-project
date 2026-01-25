@@ -27,6 +27,7 @@ import { EditPlantInstancePage } from './pages/EditPlantInstancePage/EditPlantIn
 import { EditPlantPage } from './pages/EditPlantPage/EditPlantPage'
 import { EditVariegationPage } from './pages/EditVariegationPage/EditVariegationPage'
 import { NotFoundPage } from './pages/NotFoundPage/NotFoundPage'
+import { OrderDetailPage } from './pages/OrderDetailPage/OrderDetailPage'
 import { PlantsListPage } from './pages/PlantsListPage/PlantsListPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage/ResetPasswordPage'
 import { SignUpPage } from './pages/SignUp/SignUpPage'
@@ -109,6 +110,11 @@ export const App = () => {
         <Route
           path={routes.getEditLifeFormRoute(routes.editLifeFormRouteParams)}
           element={<EditLifeFormPage />}
+        />
+
+        <Route
+          path={routes.getOrderDetailRoute(routes.orderDetailRouteParams)}
+          element={<OrderDetailPage />}
         />
 
         <Route path="*" element={<NotFoundPage />} />

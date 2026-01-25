@@ -31,6 +31,8 @@ import { getGenusByIdTrpcRoute } from './getGenusById'
 import { getLifeFormTrpcRoute } from './getLifeForm'
 import { getLifeFormByIdTrpcRoute } from './getLifeFormById'
 import { getMeTrpcRoute } from './getMe'
+import { getOrderTrpcRoute } from './getOrder'
+import { getOrdersTrpcRoute } from './getOrders'
 import { getPlantTrpcRoute } from './getPlant'
 import { getPlantInstanceTrpcRoute } from './getPlantInstance'
 import { getPlantInstancesTrpcRoute } from './getPlantInstances'
@@ -66,17 +68,19 @@ export const trpcRouter = trpc.router({
   deletePlant: deletePlantTrpcRoute,
   deletePlantInstance: deletePlantInstanceTrpcRoute,
   deleteVariegation: deleteVariegationTrpcRoute,
-  getAllInstances: getAllInstancesTrpcRoute,
   editGenus: editGenusTrpcRoute,
   editLifeForm: editLifeFormTrpcRoute,
   editPlant: editPlantTrpcRoute,
   editPlantInstance: editPlantInstanceTrpcRoute,
   editVariegation: editVariegationTrpcRoute,
+  getAllInstances: getAllInstancesTrpcRoute,
   getGenus: getGenusTrpcRoute,
   getGenusById: getGenusByIdTrpcRoute,
   getLifeForm: getLifeFormTrpcRoute,
   getLifeFormById: getLifeFormByIdTrpcRoute,
   getMe: getMeTrpcRoute,
+  getOrder: getOrderTrpcRoute,
+  getOrders: getOrdersTrpcRoute,
   getPlant: getPlantTrpcRoute,
   getPlantInstance: getPlantInstanceTrpcRoute,
   getPlantInstances: getPlantInstancesTrpcRoute,

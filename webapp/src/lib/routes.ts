@@ -46,6 +46,11 @@ export const getVariegationDetailRoute = ({
   variegationId,
 }: VariegationDatailRouteParams) => `/variegation/${variegationId}`
 
+export const orderDetailRouteParams = getRouteParams({ orderId: true })
+export type OrderDetailRouteParams = typeof orderDetailRouteParams
+export const getOrderDetailRoute = ({ orderId }: OrderDetailRouteParams) =>
+  `/order/${orderId}`
+
 export const getAddLifeFormPageRoute = () => '/lifeForm/add'
 export const lifeFormDetailRouteParams = getRouteParams({ lifeFormId: true })
 export type LifeFormDetailRouteParams = typeof lifeFormDetailRouteParams
