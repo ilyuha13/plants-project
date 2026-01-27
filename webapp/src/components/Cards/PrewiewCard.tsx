@@ -50,6 +50,11 @@ export const PreviewCard = (props: PreviewCard) => {
           )}
           {type === 'instance' && (
             <>
+              {props.status && (
+                <Typography variant="body2" fontWeight="medium" color="primary">
+                  #{props.status}
+                </Typography>
+              )}
               {props.inventoryNumber && (
                 <Typography variant="body2" fontWeight="medium" color="primary">
                   #{props.inventoryNumber}

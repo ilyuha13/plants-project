@@ -1,26 +1,25 @@
 import { trpc } from '../../lib/trpc'
 
 export const getAllInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+  const isAdmin = ctx.me?.role === 'ADMIN'
   const instances = await ctx.prisma.plantInstance.findMany({
-    select: {
-      status: true,
-      orderItems: true,
-      plantId: true,
-      reservedUntil: true,
-      cartItems: true,
-      Id: true,
-      price: true,
-      inventoryNumber: true,
-      createdAt: true,
-      updatedAt: true,
+    where: isAdmin
+      ? {}
+      : {
+          status: 'AVAILABLE',
+        },
+    include: {
       plant: {
         select: {
           name: true,
         },
       },
-      description: true,
-      imagesUrl: true,
     },
+    omit: isAdmin
+      ? {}
+      : {
+          status: true,
+        },
   })
 
   return {

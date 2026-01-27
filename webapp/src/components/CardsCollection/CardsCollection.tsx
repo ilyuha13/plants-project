@@ -14,6 +14,7 @@ interface DataFromCards {
   createdAt?: Date
   plants?: { plantId: string }[]
   plantInstances?: { Id: string }[]
+  status?: 'AVAILABLE' | 'IN_CART' | 'SOLD'
 }
 
 export type TType = 'genus' | 'lifeForm' | 'variegation' | 'plant' | 'instance'
@@ -109,6 +110,7 @@ export const CardsCollection = ({
                   createdAt={item.createdAt}
                   key={item.id}
                   onAddToCart={onAddToCart && (() => onAddToCart(item.id))}
+                  status={item.status}
                 />
               ) : (
                 <PreviewCard

@@ -11,6 +11,7 @@ export interface InstanceCard extends Card {
   inventoryNumber: string | null
   price: string | null
   createdAt?: Date
+  status?: 'AVAILABLE' | 'IN_CART' | 'SOLD'
   onAddToCart?: () => Promise<void>
 }
 
