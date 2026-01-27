@@ -5,11 +5,11 @@ export interface TCartItem {
   id: string
   plantInstanceId: string
   plantInstance: {
-    Id: string
+    id: string
     price: string
     imagesUrl: string[]
     plant: {
-      plantId: string
+      id: string
       name: string
     }
   }

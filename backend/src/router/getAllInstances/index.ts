@@ -25,7 +25,6 @@ export const getAllInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) => 
   return {
     instances: instances.map((instance) => {
       return {
-        id: instance.Id,
         name: instance.plant.name,
         ...instance,
       }

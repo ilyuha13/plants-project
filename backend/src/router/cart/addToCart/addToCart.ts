@@ -9,7 +9,7 @@ export async function addToCart(
   const plantInstanceResult = await dbOperation(
     () =>
       prisma.plantInstance.findUnique({
-        where: { Id: plantInstanceId },
+        where: { id: plantInstanceId },
       }),
     'addToCart - find plantInstance',
   )
@@ -24,7 +24,11 @@ export async function addToCart(
   const plantInstance = plantInstanceResult.data
 
   if (plantInstance.status !== 'AVAILABLE') {
-    return { success: false, error: 'PLANT_NOT_AVAILABLE', message: 'Растение недоступно' }
+    return {
+      success: false,
+      error: 'PLANT_NOT_AVAILABLE',
+      message: 'Растение недоступно',
+    }
   }
 
   const cartResult = await dbOperation(
@@ -77,7 +81,7 @@ export async function addToCart(
   const reservResult = await dbOperation(
     () =>
       prisma.plantInstance.update({
-        where: { Id: plantInstanceId },
+        where: { id: plantInstanceId },
         data: {
           status: 'IN_CART',
           reservedUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -106,7 +110,7 @@ export async function addToCart(
     await dbOperation(
       () =>
         prisma.plantInstance.update({
-          where: { Id: plantInstanceId },
+          where: { id: plantInstanceId },
           data: {
             status: 'AVAILABLE',
             reservedUntil: null,

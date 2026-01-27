@@ -19,7 +19,20 @@ export function useCartSync() {
 
   useEffect(() => {
     if (cart?.items) {
-      setItems(cart.items)
+      const items = cart.items.map((item) => {
+        const { plantInstance, ...restItem } = item
+        const { price, ...restPlantInstance } = plantInstance
+        const newPrice = String(price)
+        const newPlantInstance = {
+          price: newPrice,
+          ...restPlantInstance,
+        }
+        return {
+          plantInstance: newPlantInstance,
+          ...restItem,
+        }
+      })
+      setItems(items)
     }
   }, [cart?.items, setItems])
 

@@ -24,7 +24,7 @@ export const EditPlantPage = () => {
   const { plantId } = useParams() as PlantDetailRouteParams
 
   const { data, isLoading, isError, error } = trpc.getPlant.useQuery(
-    { plantId: plantId },
+    { id: plantId },
     { enabled: !!plantId },
   )
 

@@ -6,7 +6,7 @@ export const editPlantInstanceTrpcRoute = trpc.procedure
   .mutation(async ({ input, ctx }) => {
     const plantInstance = await ctx.prisma.plantInstance.findUnique({
       where: {
-        Id: input.instanceId,
+        id: input.id,
       },
     })
 
@@ -16,7 +16,7 @@ export const editPlantInstanceTrpcRoute = trpc.procedure
     try {
       const updatedPlantInstance = await ctx.prisma.plantInstance.update({
         where: {
-          Id: input.instanceId,
+          id: input.id,
         },
         data: {
           plantId: input.plantId,

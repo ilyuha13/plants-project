@@ -23,10 +23,10 @@ export const PlantsListPage = () => {
       </Typography>
       <Grid container spacing={{ xs: 2, sm: 2.5, xl: 3 }}>
         {data?.plants.map((plant) => (
-          <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={plant.plantId}>
+          <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2.4, xl: 2 }} key={plant.id}>
             <PlantCard
               type="plant"
-              onClick={() => void navigate(getPlantDetailRoute({ plantId: plant.plantId }))}
+              onClick={() => void navigate(getPlantDetailRoute({ plantId: plant.id }))}
               data={plant}
             />
           </Grid>

@@ -3,7 +3,7 @@ import { trpc } from '../../lib/trpc'
 export const getPlantsTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
   const plants = await ctx.prisma.plant.findMany({
     select: {
-      plantId: true,
+      id: true,
       genus: true,
       lifeForm: true,
       variegation: true,
@@ -12,16 +12,11 @@ export const getPlantsTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
       imagesUrl: true,
       plantInstances: {
         select: {
-          Id: true,
+          id: true,
         },
       },
     },
   })
 
-  return {
-    plants: plants.map((plant) => ({
-      id: plant.plantId,
-      ...plant,
-    })),
-  }
+  return { plants }
 })

@@ -9,7 +9,7 @@ export const getVariegationTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
       imagesUrl: true,
       plants: {
         select: {
-          plantId: true,
+          id: true,
         },
       },
     },

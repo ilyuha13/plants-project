@@ -1,27 +1,21 @@
-import { z } from 'zod'
-
+import { zGetPlantInstanceTrpcInput } from './input'
 import { trpc } from '../../lib/trpc'
 
 export const getPlantInstanceTrpcRoute = trpc.procedure
-  .input(
-    z.object({
-      Id: z.string(),
-    }),
-  )
+  .input(zGetPlantInstanceTrpcInput)
   .query(async ({ ctx, input }) => {
     const instance = await ctx.prisma.plantInstance.findUnique({
       where: {
-        Id: input.Id,
+        id: input.id,
       },
-      select: {
-        Id: true,
-        inventoryNumber: true,
-        plant: true,
-        price: true,
-        createdAt: true,
-        description: true,
-        imagesUrl: true,
-        status: true,
+      include: {
+        plant: {
+          select: {
+            id: true,
+            name: true,
+            genus: true,
+          },
+        },
       },
     })
 

@@ -49,7 +49,7 @@ export async function clearCart({ userId }: { userId: string }, prisma: PrismaCl
       () =>
         prisma.plantInstance.updateMany({
           where: {
-            Id: {
+            id: {
               in: plantInstanceIds,
             },
           },

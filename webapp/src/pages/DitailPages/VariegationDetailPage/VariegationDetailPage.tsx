@@ -87,10 +87,7 @@ export const VariegationDetailPage = () => {
 
   const { name, description, imagesUrl } = data.variegation
 
-  const plants = data.variegation.plants.map(({ plantId, ...rest }) => ({
-    ...rest,
-    id: plantId,
-  }))
+  const plants = data.variegation.plants
 
   const handleDeleteClick = () => {
     confirmDeleteDialog.open()
@@ -105,7 +102,7 @@ export const VariegationDetailPage = () => {
           void navigate(-1)
           break
         case 'plant':
-          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await deletePlant.mutateAsync({ id: currentDeleteData.id })
           await trpcUtils.getVariegationById.invalidate()
           confirmDeleteDialog.close()
           setCurrentDeleteData({ type: 'variegation', id: variegationId, name: 'any' })

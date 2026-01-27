@@ -100,7 +100,7 @@ export const LifeFormDetailPage = () => {
           void navigate(-1)
           break
         case 'plant':
-          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await deletePlant.mutateAsync({ id: currentDeleteData.id })
           await trpcUtils.getGenusById.invalidate()
           confirmDeleteDialog.close()
           setCurrentDeleteData({ type: 'lifeForm', id: lifeFormId, name: 'any' })
@@ -113,10 +113,7 @@ export const LifeFormDetailPage = () => {
 
   const { name, description, imagesUrl } = data.lifeForm
 
-  const plants = data.lifeForm.plants.map(({ plantId, ...rest }) => ({
-    ...rest,
-    id: plantId,
-  }))
+  const plants = data.lifeForm.plants
 
   const navigateToPlant = (id: string) => {
     void navigate(getPlantDetailRoute({ plantId: id }))

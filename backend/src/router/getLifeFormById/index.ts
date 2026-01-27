@@ -11,13 +11,13 @@ export const getLifeFormByIdTrpcRoute = trpc.procedure
       include: {
         plants: {
           select: {
-            plantId: true,
+            id: true,
             name: true,
             imagesUrl: true,
             description: true,
             plantInstances: {
               select: {
-                Id: true,
+                id: true,
               },
             },
           },

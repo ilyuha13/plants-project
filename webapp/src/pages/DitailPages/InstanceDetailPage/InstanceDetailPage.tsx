@@ -20,7 +20,7 @@ export const InstanceDetailPage = () => {
   const confirmDeleteDialog = useDialog()
 
   const { data, isLoading, isError, error } = trpc.getPlantInstance.useQuery(
-    { Id: instanceId },
+    { id: instanceId },
     { enabled: !!instanceId },
   )
   const deleteInstance = trpc.deletePlantInstance.useMutation()
@@ -37,7 +37,7 @@ export const InstanceDetailPage = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteInstance.mutateAsync({ Id: instanceId })
+      await deleteInstance.mutateAsync({ id: instanceId })
       confirmDeleteDialog.close()
       void navigate(getPlantsListRoute())
     } catch (error) {
@@ -111,7 +111,8 @@ export const InstanceDetailPage = () => {
   const { plant, description, price, inventoryNumber, status, imagesUrl, createdAt } =
     data.instance
   const name = plant.name
-  const plantId = plant.plantId
+  const plantId = plant.id
+  const stringPrice = String(price)
 
   const getAddButtonText = () => {
     if (status === 'IN_CART') {
@@ -145,7 +146,7 @@ export const InstanceDetailPage = () => {
         name={name}
         imagesUrl={imagesUrl}
         description={description}
-        price={price}
+        price={stringPrice}
         inventoryNumber={isAdmin ? inventoryNumber : null}
         createdAt={createdAt}
         addButtonText={getAddButtonText()}

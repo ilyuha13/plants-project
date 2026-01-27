@@ -21,7 +21,7 @@ export const PlantDetailPage = () => {
   const navigate = useNavigate()
 
   const { data, isLoading, isError, error } = trpc.getPlant.useQuery(
-    { plantId: plantId },
+    { id: plantId },
     { enabled: !!plantId },
   )
   const deletePlant = trpc.deletePlant.useMutation()
@@ -87,12 +87,14 @@ export const PlantDetailPage = () => {
     )
   }
 
-  const instances = data.plant.plantInstances.map(({ Id, inventoryNumber, ...rest }) => ({
-    ...rest,
-    id: Id,
-    name: data.plant.name,
-    ...(isAdmin && { inventoryNumber }),
-  }))
+  const instances = data.plant.plantInstances.map(
+    ({ price, inventoryNumber, ...rest }) => ({
+      price: String(price),
+      ...rest,
+      name: data.plant.name,
+      ...(isAdmin && { inventoryNumber }),
+    }),
+  )
 
   const onDeleteInstanceClick = (id: string, inventoryNumber: string) => {
     setCurrentDeleteData({ type: 'instance', id, inventoryNumber })
@@ -107,12 +109,12 @@ export const PlantDetailPage = () => {
     try {
       switch (currentDeleteData.type) {
         case 'plant':
-          await deletePlant.mutateAsync({ plantId })
+          await deletePlant.mutateAsync({ id: plantId })
           confirmDeleteDialog.close()
           void navigate(getCatalogPageRoute())
           break
         case 'instance':
-          await deleteInstance.mutateAsync({ Id: currentDeleteData.id })
+          await deleteInstance.mutateAsync({ id: currentDeleteData.id })
           await trpcUtils.getPlant.invalidate()
           confirmDeleteDialog.close()
           setCurrentDeleteData({ type: 'plant', id: plantId, inventoryNumber: '' })

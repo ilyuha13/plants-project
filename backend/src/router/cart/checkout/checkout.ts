@@ -81,7 +81,7 @@ export async function checkout(
     () =>
       prisma.plantInstance.updateMany({
         where: {
-          Id: {
+          id: {
             in: plantInstanceIds,
           },
         },
@@ -99,7 +99,7 @@ export async function checkout(
 
   // 3. Посчитать итоговую сумму
   const total = cart.items.reduce((sum, item) => {
-    return sum + parseInt(item.plantInstance.price || '0', 10)
+    return sum + Number(item.plantInstance.price)
   }, 0)
 
   // 4. Создать заказ (опционально, можно добавить модель Order позже)
@@ -126,7 +126,7 @@ export async function checkout(
     customerTelegram: contactInfo.telegram,
     items: cart.items.map((item) => ({
       name: item.plantInstance.plant.name,
-      price: item.plantInstance.price,
+      price: String(item.plantInstance.price),
     })),
     total,
   })

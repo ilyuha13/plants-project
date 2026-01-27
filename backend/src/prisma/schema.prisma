@@ -92,7 +92,7 @@ model LifeForm {
 // ============================================
 
 model Plant {
-    plantId String @unique @id @default(uuid())
+    id String @id @default(uuid())
 
     genusId String
     genus Genus @relation(fields: [genusId], references: [id])
@@ -118,15 +118,15 @@ model Plant {
 }
 
 model PlantInstance {
-    Id String @unique @id @default(uuid())
+    id String @id @default(uuid())
     inventoryNumber String @unique
 
     plantId String
-    plant Plant @relation(fields: [plantId], references: [plantId], onDelete: Cascade)
+    plant Plant @relation(fields: [plantId], references: [id], onDelete: Cascade)
 
     description String?
     imagesUrl String[]
-    price String
+    price Decimal
     status PlantStatus @default(AVAILABLE)
 
     reservedUntil DateTime?
@@ -166,7 +166,7 @@ model CartItem {
     cartId String
     cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
     plantInstanceId String
-    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [Id], onDelete: Cascade)
+    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [id], onDelete: Cascade)
     addedAt DateTime @default(now())
 
     @@unique([cartId, plantInstanceId])
@@ -196,7 +196,7 @@ model Order {
 
     customerNotes String?
 
-    totalAmount String
+    totalAmount Decimal
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -222,7 +222,7 @@ model OrderItem {
     order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
     plantInstanceId String
-    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [Id])
+    plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [id])
 
     @@index([orderId])
     @@index([plantInstanceId])

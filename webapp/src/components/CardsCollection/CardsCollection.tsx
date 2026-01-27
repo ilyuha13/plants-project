@@ -12,8 +12,8 @@ interface DataFromCards {
   inventoryNumber?: string
   price?: string
   createdAt?: Date
-  plants?: { plantId: string }[]
-  plantInstances?: { Id: string }[]
+  plants?: { id: string }[]
+  plantInstances?: { id: string }[]
   status?: 'AVAILABLE' | 'IN_CART' | 'SOLD'
 }
 

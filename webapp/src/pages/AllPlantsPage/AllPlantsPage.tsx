@@ -28,7 +28,7 @@ export const AllPlantsPage = () => {
   }
 
   const handleConfirmDelete = async () => {
-    await deletePlant.mutateAsync({ plantId: currentDeleteData!.id })
+    await deletePlant.mutateAsync({ id: currentDeleteData!.id })
     confirmDeleteDialog.close()
   }
 

@@ -16,7 +16,7 @@ export const EditPlantInstancePage = () => {
   const { instanceId } = useParams() as EditPlantInstanceRouteParams
 
   const { data, isLoading, isError, error } = trpc.getPlantInstance.useQuery(
-    { Id: instanceId },
+    { id: instanceId },
     { enabled: !!instanceId },
   )
 
@@ -45,7 +45,7 @@ export const EditPlantInstancePage = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      instanceId: instanceId,
+      id: instanceId,
       plantId: '',
       inventoryNumber: '',
       description: '',
@@ -110,12 +110,12 @@ export const EditPlantInstancePage = () => {
 
   const initialisation = async () => {
     await formik.setValues({
-      instanceId: data.instance.Id,
+      id: data.instance.id,
       description: data.instance.description || '',
       imagesUrl: data.instance.imagesUrl,
       inventoryNumber: data.instance.inventoryNumber,
-      plantId: data.instance.plant.plantId,
-      price: data.instance.price,
+      plantId: data.instance.plant.id,
+      price: String(data.instance.price),
     })
   }
 

@@ -31,8 +31,8 @@ export const OrderDetailPage = () => {
     imagesUrl: item.plantInstance.imagesUrl,
     status: item.plantInstance.status,
     inventoryNumber: item.plantInstance.inventoryNumber,
-    price: item.plantInstance.price,
-    id: item.plantInstance.Id,
+    price: String(item.plantInstance.price),
+    id: item.plantInstance.id,
     name: item.plantInstance.plant.name,
   }))
 

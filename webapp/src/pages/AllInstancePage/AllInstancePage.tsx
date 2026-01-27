@@ -33,7 +33,7 @@ export const AllInstancePage = () => {
   }
 
   const handleConfirmDelete = async () => {
-    await deleteInstance.mutateAsync({ Id: currentDeleteData!.id })
+    await deleteInstance.mutateAsync({ id: currentDeleteData!.id })
     confirmDeleteDialog.close()
   }
 
@@ -79,7 +79,8 @@ export const AllInstancePage = () => {
     }
   }
 
-  const instances = data.instances.map(({ inventoryNumber, ...rest }) => ({
+  const instances = data.instances.map(({ inventoryNumber, price, ...rest }) => ({
+    price: String(price),
     ...rest,
     ...(isAdmin && { inventoryNumber }),
   }))

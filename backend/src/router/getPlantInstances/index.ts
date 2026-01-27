@@ -6,7 +6,7 @@ export const getPlantInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) =
       status: 'AVAILABLE',
     },
     select: {
-      Id: true,
+      id: true,
       inventoryNumber: true,
       plant: true,
       price: true,

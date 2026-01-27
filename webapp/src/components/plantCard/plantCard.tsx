@@ -11,7 +11,7 @@ interface BaseCardProps {
 type PlantCardProps = BaseCardProps & {
   type: 'plant'
   data: {
-    plantId: string
+    id: string
     name: string
     description: string
     imagesUrl: string[]
@@ -21,7 +21,7 @@ type PlantCardProps = BaseCardProps & {
 type PlantInstanceCardProps = BaseCardProps & {
   type: 'instance'
   data: {
-    Id: string
+    id: string
     inventoryNumber: string
     plantName?: string
     price: string
@@ -41,7 +41,12 @@ export const PlantCard = (props: TPlantCardProps) => {
   if (type === 'plant') {
     return (
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <CardMedia component="img" image={imageUrl} alt={data.name} sx={{ width: '100%', objectFit: 'cover' }} />
+        <CardMedia
+          component="img"
+          image={imageUrl}
+          alt={data.name}
+          sx={{ width: '100%', objectFit: 'cover' }}
+        />
         <CardActions>
           <Button type={'button'} variant="text" onClick={onClick}>
             <Typography variant="h6" gutterBottom>
@@ -93,7 +98,11 @@ export const PlantCard = (props: TPlantCardProps) => {
             </Typography>
           )}
           {me?.role === 'ADMIN' && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: 'block', mt: 1 }}
+            >
               Добавлено:{' '}
               {data.createdAt.toLocaleDateString('ru-RU', {
                 day: '2-digit',

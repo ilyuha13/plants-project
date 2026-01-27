@@ -88,10 +88,7 @@ export const GenusDetailPage = () => {
 
   const { name, description, imagesUrl } = data.genus
 
-  const plants = data.genus.plants.map(({ plantId, ...rest }) => ({
-    ...rest,
-    id: plantId,
-  }))
+  const plants = data.genus.plants
 
   const handleDeleteClick = () => {
     confirmDeleteDialog.open()
@@ -106,7 +103,7 @@ export const GenusDetailPage = () => {
           void navigate(-1)
           break
         case 'plant':
-          await deletePlant.mutateAsync({ plantId: currentDeleteData.id })
+          await deletePlant.mutateAsync({ id: currentDeleteData.id })
           await trpcUtils.getGenusById.invalidate()
           confirmDeleteDialog.close()
           setCurrentDeleteData({ type: 'genus', id: genusId, name: 'any' })

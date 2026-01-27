@@ -6,8 +6,6 @@ import { trpc } from '../../lib/trpc'
 export const deletePlantInstanceTrpcRoute = trpc.procedure
   .input(zDeletePlantInstanceTrpcInput)
   .mutation(async ({ ctx, input }) => {
-    const { Id } = input
-
     // Check if user is authenticated
     if (!ctx.me) {
       throw new TRPCError({
@@ -26,7 +24,7 @@ export const deletePlantInstanceTrpcRoute = trpc.procedure
 
     // Delete plant
     await ctx.prisma.plantInstance.delete({
-      where: { Id },
+      where: { id: input.id },
     })
 
     return { success: true }
