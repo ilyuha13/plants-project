@@ -10,10 +10,13 @@ import { deleteUserTrpcRoute } from './admin/deleteUser'
 import { generatePasswordResetTokenTrpcRoute } from './admin/generatePasswordResetToken'
 import { getAllUsersTrpcRoute } from './admin/getAllUsers'
 import { resetUserPasswordTrpcRoute } from './admin/resetUserPassword'
+import { cancelOrderTrpcRoute } from './cancelOrder'
 import { addToCartTrpcRoute } from './cart/addToCart'
 import { checkoutTrpcRoute } from './cart/checkout'
 import { getCartTrpcRoute } from './cart/getCart'
 import { removeFromCartTrpcRoute } from './cart/removeFromCart'
+import { confirmOrderTrpcRoute } from './confirmOrder'
+import { confirmPrepaidPaymentTrpcRoute } from './confirmPrepaidPayment'
 import { deleteGenusTrpcRoute } from './deleteGenus'
 import { deleteLifeFormTrpcRoute } from './deleteLifeForm'
 import { deletePlantTrpcRoute } from './deletePlant'
@@ -32,6 +35,7 @@ import { getLifeFormByIdTrpcRoute } from './getLifeFormById'
 import { getMeTrpcRoute } from './getMe'
 import { getOrderTrpcRoute } from './getOrder'
 import { getOrdersTrpcRoute } from './getOrders'
+import { getPendingReservationRequestsTrpcRoute } from './getPendingReservationRequests'
 import { getPlantTrpcRoute } from './getPlant'
 import { getPlantInstanceTrpcRoute } from './getPlantInstance'
 import { getPlantInstancesTrpcRoute } from './getPlantInstances'
@@ -39,7 +43,10 @@ import { getPlantsTrpcRoute } from './getPlants'
 import { getUploadSignatureTrpcRoute } from './getUploadSignature'
 import { getVariegationTrpcRoute } from './getVariegation'
 import { getVariegationByIdTrpcRoute } from './getVariegationById'
+import { rejectReservationRequestTrpcRoute } from './rejectReservationRequest'
 import { requestPasswordResetTrpcRoute } from './requestPasswordReset'
+import { requestReservationNoPrepaidTrpcRoute } from './requestReservationNoPrepaid'
+import { requestReservationPrepaidTrpcRoute } from './requestReservationPrepaid'
 import { resetPasswordWithTokenTrpcRoute } from './resetPasswordWithToken'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
@@ -57,10 +64,13 @@ export const trpcRouter = createTrpcRouter({
   generatePasswordResetToken: generatePasswordResetTokenTrpcRoute,
   getAllUsers: getAllUsersTrpcRoute,
   resetUserPassword: resetUserPasswordTrpcRoute,
+  cancelOrder: cancelOrderTrpcRoute,
   addToCart: addToCartTrpcRoute,
   checkout: checkoutTrpcRoute,
   getCart: getCartTrpcRoute,
   removeFromCart: removeFromCartTrpcRoute,
+  confirmOrder: confirmOrderTrpcRoute,
+  confirmPrepaidPayment: confirmPrepaidPaymentTrpcRoute,
   deleteGenus: deleteGenusTrpcRoute,
   deleteLifeForm: deleteLifeFormTrpcRoute,
   deletePlant: deletePlantTrpcRoute,
@@ -79,6 +89,7 @@ export const trpcRouter = createTrpcRouter({
   getMe: getMeTrpcRoute,
   getOrder: getOrderTrpcRoute,
   getOrders: getOrdersTrpcRoute,
+  getPendingReservationRequests: getPendingReservationRequestsTrpcRoute,
   getPlant: getPlantTrpcRoute,
   getPlantInstance: getPlantInstanceTrpcRoute,
   getPlantInstances: getPlantInstancesTrpcRoute,
@@ -86,7 +97,10 @@ export const trpcRouter = createTrpcRouter({
   getUploadSignature: getUploadSignatureTrpcRoute,
   getVariegation: getVariegationTrpcRoute,
   getVariegationById: getVariegationByIdTrpcRoute,
+  rejectReservationRequest: rejectReservationRequestTrpcRoute,
   requestPasswordReset: requestPasswordResetTrpcRoute,
+  requestReservationNoPrepaid: requestReservationNoPrepaidTrpcRoute,
+  requestReservationPrepaid: requestReservationPrepaidTrpcRoute,
   resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
   signIn: signInTrpcRoute,
   signUp: signUpTrpcRoute,
