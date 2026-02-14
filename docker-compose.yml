@@ -29,7 +29,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-plants_user} -d ${POSTGRES_DB:-plants_db}']
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-plants_user} -d ${POSTGRES_DB:-plants_db}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -74,6 +78,8 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN is required}
       TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:?TELEGRAM_BOT_USERNAME is required}
       TELEGRAM_ADMIN_CHAT_ID: ${TELEGRAM_ADMIN_CHAT_ID:?TELEGRAM_ADMIN_CHAT_ID is required}
+
+      DEBUG: ${DEBUG:?DEBUG is required}
 
     depends_on:
       postgres:
