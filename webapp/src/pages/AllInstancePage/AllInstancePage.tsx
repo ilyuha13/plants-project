@@ -74,6 +74,7 @@ export const AllInstancePage = () => {
       await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
       await trpcUtils.getCart.invalidate()
       await trpcUtils.getPlantInstance.invalidate()
+      await trpcUtils.getAllInstances.invalidate()
     } catch (error) {
       console.error('Failed to add to cart:', error)
     }

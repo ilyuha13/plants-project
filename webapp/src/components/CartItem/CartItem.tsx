@@ -1,5 +1,13 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import { Box, Card, CardContent, CardMedia, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material'
 
 import { useMe } from '../../lib/ctx'
 import { trpc } from '../../lib/trpc'
@@ -27,7 +35,7 @@ export const CartItem = ({
     try {
       await removeItem.mutateAsync({ userId: me.id, cartItemId: id })
       await utils.getCart.invalidate()
-      await utils.getPlantInstance.invalidate()
+      await utils.getAllInstances.invalidate()
     } catch (error) {
       console.error('Failed to remove item:', error)
       // Можно добавить toast/notification

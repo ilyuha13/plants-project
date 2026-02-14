@@ -72,6 +72,7 @@ export default eslintTs.config(
     rules: {
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/await-thenable': 'error',
+      'no-console': 'error',
     },
   },
 
@@ -81,6 +82,7 @@ export default eslintTs.config(
     rules: {
       'react/react-in-jsx-scope': 'off', // React 19
       'react/prop-types': 'off', // TypeScript handles this
+      'no-console': ['error', { allow: ['info', 'error', 'warn'] }],
     },
   },
 
@@ -97,7 +99,7 @@ export default eslintTs.config(
       'jsx-a11y/anchor-is-valid': 'off',
       curly: ['error', 'all'],
       'no-irregular-whitespace': ['error', { skipTemplates: true, skipStrings: true }],
-      'no-console': ['error', { allow: ['info', 'error', 'warn'] }],
+
       'import/order': [
         'error',
         {

@@ -3,6 +3,7 @@ import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
 
+import { applyClearCartCronJobs } from './lib/cron'
 import { AppContext, createAppContext } from './lib/ctx'
 import { env } from './lib/env'
 import { logger } from './lib/logger'
@@ -42,6 +43,7 @@ void (async () => {
 
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
+    applyClearCartCronJobs(ctx)
 
     expressApp.use(
       (

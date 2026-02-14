@@ -129,7 +129,7 @@ model PlantInstance {
     price Decimal
     status PlantStatus @default(AVAILABLE)
 
-    reservedUntil DateTime?
+    
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -139,7 +139,7 @@ model PlantInstance {
 
     @@index([status])
     @@index([plantId])
-    @@index([reservedUntil])
+
 }
 
 enum PlantStatus {
@@ -159,6 +159,18 @@ model Cart {
     items CartItem[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    reservedUntil DateTime?
+    reservationType ReservationType @default(AUTOMATIC)
+    requestedAt DateTime?
+    prepaidAmount Decimal?
+}
+
+enum ReservationType {
+    AUTOMATIC
+    RESERVED_NO_PREPAID
+    RESERVED_PREPAID_REQUEST
+    RESERVED_PREPAID_CONFIRMED
+
 }
 
 model CartItem {

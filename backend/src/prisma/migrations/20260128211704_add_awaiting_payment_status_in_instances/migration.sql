@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "PlantStatus" ADD VALUE 'AWAITING_PAYMENT';
