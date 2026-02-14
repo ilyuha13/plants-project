@@ -1,12 +1,79 @@
-import { addToCart } from './addToCart'
-import { addToCartInput } from './input'
-import { trpc } from '../../../lib/trpc'
+import { TRPCError } from '@trpc/server'
 
-export const addToCartTrpcRoute = trpc.procedure.input(addToCartInput).mutation(async ({ ctx, input }) => {
-  try {
-    const result = await addToCart({ userId: input.userId, plantInstanceId: input.plantInstanceId }, ctx.prisma)
-    return result
-  } catch {
-    console.error('addToCart error')
-  }
-})
+import { addToCartInput } from './input'
+import { publicProcedure } from '../../../lib/trpc'
+
+export const addToCartTrpcRoute = publicProcedure
+  .input(addToCartInput)
+  .mutation(async ({ ctx, input }) => {
+    const prisma = ctx.prisma
+    const plantInstance = await prisma.plantInstance.findUnique({
+      where: {
+        id: input.plantInstanceId,
+      },
+    })
+
+    if (!plantInstance) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'не найден экземпляр растения',
+      })
+    }
+
+    if (plantInstance.status !== 'AVAILABLE') {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'растение недоступно',
+      })
+    }
+
+    await prisma.$transaction(async (tx) => {
+      let cart = await tx.cart.findUnique({
+        where: {
+          userId: input.userId,
+        },
+      })
+
+      if (!cart) {
+        cart = await tx.cart.create({
+          data: {
+            userId: input.userId,
+          },
+        })
+      }
+
+      await tx.plantInstance.update({
+        where: {
+          id: input.plantInstanceId,
+        },
+        data: {
+          status: 'IN_CART',
+        },
+      })
+
+      await tx.cartItem.create({
+        data: {
+          cartId: cart.id,
+          plantInstanceId: input.plantInstanceId,
+        },
+      })
+
+      const now = new Date()
+      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
+
+      if (
+        cart.reservationType === 'AUTOMATIC' ||
+        !cart.reservedUntil ||
+        cart.reservedUntil < oneHourLater
+      ) {
+        await tx.cart.update({
+          where: {
+            id: cart.id,
+          },
+          data: {
+            reservedUntil: oneHourLater,
+          },
+        })
+      }
+    })
+  })

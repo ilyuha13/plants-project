@@ -1,9 +1,11 @@
+import './lib/loadEnv.js'
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
 
 import { AppContext, createAppContext } from './lib/ctx'
 import { env } from './lib/env'
+import { logger } from './lib/logger'
 import { applyPassportToExpressApp } from './lib/pasport'
 import { applyTrpcToExpressApp } from './lib/trpc'
 import { trpcRouter } from './router'
@@ -14,8 +16,11 @@ void (async () => {
     ctx = createAppContext()
     const expressApp = express()
     expressApp.use((req, res, next) => {
-      // eslint-disable-next-line no-console
-      console.log(`${req.method} ${req.url}`) // Log the HTTP method and URL
+      logger.info('http', `${req.method} ${req.path}`, {
+        method: req.method,
+        path: req.path,
+        query: req.query,
+      })
       next()
     })
     expressApp.use(helmet())
@@ -38,34 +43,54 @@ void (async () => {
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
 
+    expressApp.use(
+      (
+        err: unknown,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ) => {
+        logger.error('express', err)
+        if (res.headersSent) {
+          next(err)
+          return
+        }
+        res.status(500).json({ error: 'Internal Server Error' })
+      },
+    )
+
     const server = expressApp.listen(env.PORT, () => {
-      console.info(`Listening at http://localhost:${env.PORT}`)
+      logger.info('express', `Listening at http://localhost:${env.PORT}`)
     })
 
     // Graceful shutdown handler
     const shutdown = (signal: string) => {
-      console.info(`${signal} received, starting graceful shutdown...`)
+      logger.info(
+        'GracefulShutdownHandler',
+        `${signal} received, starting graceful shutdown...`,
+      )
 
       // Stop accepting new connections
       server.close(() => {
-        console.info('HTTP server closed')
-
+        logger.info('GracefulShutdownHandler', 'HTTP server closed')
         // Close database connections and cleanup
         ctx
           ?.stop()
           .then(() => {
-            console.info('Database connections closed')
+            logger.info('GracefulShutdownHandler', 'Database connections closed')
             process.exit(0)
           })
           .catch((error) => {
-            console.error('Error during shutdown:', error)
+            logger.error('GracefulShutdownHandler', error, {
+              message: 'Error during shutdown:',
+            })
             process.exit(1)
           })
       })
 
       // Force shutdown after 30 seconds if graceful shutdown fails
       setTimeout(() => {
-        console.error('Graceful shutdown timeout, forcing exit')
+        logger.error('GracefulShutdownHandler', 'Graceful shutdown timeout, forcing exit')
         process.exit(1)
       }, 30000)
     }
@@ -78,7 +103,7 @@ void (async () => {
       shutdown('SIGINT')
     })
   } catch (error) {
-    console.error(error)
+    logger.error('app', error)
     await ctx?.stop()
     process.exit(1)
   }

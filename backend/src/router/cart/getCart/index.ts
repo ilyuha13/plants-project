@@ -1,8 +1,17 @@
-import { getCart } from './getCart'
-import { getCartInput } from './input'
-import { trpc } from '../../../lib/trpc'
+import { getCartTRPCInput } from './input'
+import { publicProcedure } from '../../../lib/trpc'
 
-export const getCartTrpcRoute = trpc.procedure.input(getCartInput).query(async ({ ctx, input }) => {
-  const cart = await getCart({ userId: input.userId }, ctx.prisma)
-  return cart
-})
+export const getCartTrpcRoute = publicProcedure
+  .input(getCartTRPCInput)
+  .query(async ({ ctx, input }) => {
+    const prisma = ctx.prisma
+    const cart = await prisma.cart.findUnique({
+      where: { userId: input.userId },
+      include: {
+        items: {
+          include: { plantInstance: { include: { plant: true } } },
+        },
+      },
+    })
+    return cart
+  })

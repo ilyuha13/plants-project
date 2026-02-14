@@ -12,7 +12,6 @@ import { getAllUsersTrpcRoute } from './admin/getAllUsers'
 import { resetUserPasswordTrpcRoute } from './admin/resetUserPassword'
 import { addToCartTrpcRoute } from './cart/addToCart'
 import { checkoutTrpcRoute } from './cart/checkout'
-import { clearCartTrpcRoute } from './cart/clearCart'
 import { getCartTrpcRoute } from './cart/getCart'
 import { removeFromCartTrpcRoute } from './cart/removeFromCart'
 import { deleteGenusTrpcRoute } from './deleteGenus'
@@ -45,9 +44,9 @@ import { resetPasswordWithTokenTrpcRoute } from './resetPasswordWithToken'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
 // @endindex
-import { trpc } from '../lib/trpc'
+import { createTrpcRouter } from '../lib/trpc'
 
-export const trpcRouter = trpc.router({
+export const trpcRouter = createTrpcRouter({
   //@index('./**/index.ts', f => `${f.path.split('/').slice(0, -1).pop()}: ${f.path.split('/').slice(0, -1).pop()}TrpcRoute,`)
   addGenus: addGenusTrpcRoute,
   addLifeForm: addLifeFormTrpcRoute,
@@ -60,7 +59,6 @@ export const trpcRouter = trpc.router({
   resetUserPassword: resetUserPasswordTrpcRoute,
   addToCart: addToCartTrpcRoute,
   checkout: checkoutTrpcRoute,
-  clearCart: clearCartTrpcRoute,
   getCart: getCartTrpcRoute,
   removeFromCart: removeFromCartTrpcRoute,
   deleteGenus: deleteGenusTrpcRoute,

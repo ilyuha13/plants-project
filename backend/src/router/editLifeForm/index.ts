@@ -1,27 +1,29 @@
-import { zEditLifeFormTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { TRPCError } from '@trpc/server'
 
-export const editLifeFormTrpcRoute = trpc.procedure
+import { zEditLifeFormTrpcInput } from './input'
+import { adminProcedure } from '../../lib/trpc'
+
+export const editLifeFormTrpcRoute = adminProcedure
   .input(zEditLifeFormTrpcInput)
   .mutation(async ({ input, ctx }) => {
+    const { id, ...updateData } = input
     const lifeForm = await ctx.prisma.lifeForm.findUnique({
       where: {
-        id: input.id,
+        id,
       },
     })
 
     if (!lifeForm) {
-      throw new Error('LifeForm not found')
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Форма жизни не найдена',
+      })
     }
     const updatedLifeForm = await ctx.prisma.lifeForm.update({
       where: {
-        id: input.id,
+        id,
       },
-      data: {
-        name: input.name,
-        description: input.description,
-        imagesUrl: input.imagesUrl,
-      },
+      data: updateData,
     })
 
     return updatedLifeForm

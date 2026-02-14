@@ -1,12 +1,6 @@
-import { TRPCError } from '@trpc/server'
+import { adminProcedure } from '../../lib/trpc'
 
-import { trpc } from '../../lib/trpc'
-
-export const getOrdersTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
-  if (ctx.me?.role !== 'ADMIN') {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-
+export const getOrdersTrpcRoute = adminProcedure.query(async ({ ctx }) => {
   const orders = await ctx.prisma.order.findMany({
     select: {
       customerName: true,

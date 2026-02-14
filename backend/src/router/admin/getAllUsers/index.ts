@@ -1,33 +1,44 @@
-import { TRPCError } from '@trpc/server'
+import { adminProcedure } from '../../../lib/trpc'
 
-import { trpc } from '../../../lib/trpc'
-
-export const getAllUsersTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
-  // Проверка что пользователь - админ
-  if (!ctx.me || ctx.me.role !== 'ADMIN') {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'Доступ запрещён. Требуется роль администратора.',
-    })
-  }
-
+export const getAllUsersTrpcRoute = adminProcedure.query(async ({ ctx }) => {
   // Получаем всех пользователей
   const users = await ctx.prisma.user.findMany({
-    select: {
-      id: true,
-      nick: true,
-      role: true,
-      createdAt: true,
-      // Пароль НЕ возвращаем (безопасность!)
-      _count: {
-        select: {
-          orders: true,
+    include: {
+      _count: { select: { orders: true } },
+      cart: {
+        include: {
+          items: {
+            include: {
+              plantInstance: {
+                include: {
+                  plant: true,
+                },
+              },
+            },
+          },
         },
       },
+      // cart: {
+      //   select: {
+      //     id: true,
+      //     reservationType: true,
+      //     reservedUntil: true,
+      //     requestedAt: true,
+      //     prepaidAmount: true,
+      //     items: {
+      //       include: {
+      //         plantInstance: {
+      //           select: { price: true },
+      //           include: {
+      //             plant: { select: { name: true } },
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      //},
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: { createdAt: 'desc' },
   })
 
   return users

@@ -1,20 +1,16 @@
 import { TRPCError } from '@trpc/server'
 
 import { zGetGenusByIdTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getGenusByIdTrpcRoute = trpc.procedure
+export const getGenusByIdTrpcRoute = publicProcedure
   .input(zGetGenusByIdTrpcInput)
   .query(async ({ ctx, input }) => {
     const genus = await ctx.prisma.genus.findUnique({
       where: { id: input.genusId },
       include: {
         plants: {
-          select: {
-            id: true,
-            name: true,
-            imagesUrl: true,
-            description: true,
+          include: {
             plantInstances: {
               select: {
                 id: true,

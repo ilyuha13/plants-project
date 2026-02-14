@@ -1,12 +1,8 @@
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getLifeFormTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+export const getLifeFormTrpcRoute = publicProcedure.query(async ({ ctx }) => {
   const lifeForm = await ctx.prisma.lifeForm.findMany({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      imagesUrl: true,
+    include: {
       plants: {
         select: {
           id: true,

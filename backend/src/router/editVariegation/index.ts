@@ -1,27 +1,29 @@
-import { zEditVariegationTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { TRPCError } from '@trpc/server'
 
-export const editVariegationTrpcRoute = trpc.procedure
+import { zEditVariegationTrpcInput } from './input'
+import { adminProcedure } from '../../lib/trpc'
+
+export const editVariegationTrpcRoute = adminProcedure
   .input(zEditVariegationTrpcInput)
   .mutation(async ({ input, ctx }) => {
+    const { id, ...updateData } = input
     const varegation = await ctx.prisma.variegation.findUnique({
       where: {
-        id: input.id,
+        id,
       },
     })
 
     if (!varegation) {
-      throw new Error('Variegation not found')
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Вариегатность не найдена',
+      })
     }
     const updatedVariegation = await ctx.prisma.variegation.update({
       where: {
-        id: input.id,
+        id,
       },
-      data: {
-        name: input.name,
-        description: input.description,
-        imagesUrl: input.imagesUrl,
-      },
+      data: updateData,
     })
 
     return updatedVariegation

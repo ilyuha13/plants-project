@@ -4,20 +4,11 @@ import { TRPCError } from '@trpc/server'
 
 import { zGeneratePasswordResetTokenTrpcInput } from './input'
 import { env } from '../../../lib/env'
-import { trpc } from '../../../lib/trpc'
+import { adminProcedure } from '../../../lib/trpc'
 
-export const generatePasswordResetTokenTrpcRoute = trpc.procedure
+export const generatePasswordResetTokenTrpcRoute = adminProcedure
   .input(zGeneratePasswordResetTokenTrpcInput)
   .mutation(async ({ ctx, input }) => {
-    // Проверка что пользователь - админ
-    if (!ctx.me || ctx.me.role !== 'ADMIN') {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Доступ запрещён. Требуется роль администратора.',
-      })
-    }
-
-    // Проверяем что пользователь существует
     const user = await ctx.prisma.user.findUnique({
       where: { id: input.userId },
     })

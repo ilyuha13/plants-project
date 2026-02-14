@@ -1,12 +1,8 @@
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getVariegationTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+export const getVariegationTrpcRoute = publicProcedure.query(async ({ ctx }) => {
   const variegation = await ctx.prisma.variegation.findMany({
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      imagesUrl: true,
+    include: {
       plants: {
         select: {
           id: true,

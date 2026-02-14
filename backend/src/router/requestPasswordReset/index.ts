@@ -2,10 +2,10 @@ import { TRPCError } from '@trpc/server'
 
 import { zRequestPasswordResetInput } from './input'
 import { sendTelegramMessage } from '../../lib/telegram'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
 // Это PUBLIC роут - пользователь не авторизован (забыл пароль)
-export const requestPasswordResetTrpcRoute = trpc.procedure
+export const requestPasswordResetTrpcRoute = publicProcedure
   .input(zRequestPasswordResetInput)
   .mutation(async ({ ctx, input }) => {
     // Проверяем что пользователь с таким ником существует
@@ -47,12 +47,14 @@ ${input.contactInfo}
     if (!sent) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Не удалось отправить запрос администратору. Попробуйте позже или свяжитесь с нами напрямую.',
+        message:
+          'Не удалось отправить запрос администратору. Попробуйте позже или свяжитесь с нами напрямую.',
       })
     }
 
     return {
       success: true,
-      message: 'Запрос отправлен администратору. Мы свяжемся с вами в ближайшее время по указанным контактным данным.',
+      message:
+        'Запрос отправлен администратору. Мы свяжемся с вами в ближайшее время по указанным контактным данным.',
     }
   })

@@ -1,20 +1,16 @@
 import { TRPCError } from '@trpc/server'
 
 import { zGetVariegationByIdTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getVariegationByIdTrpcRoute = trpc.procedure
+export const getVariegationByIdTrpcRoute = publicProcedure
   .input(zGetVariegationByIdTrpcInput)
   .query(async ({ ctx, input }) => {
     const variegation = await ctx.prisma.variegation.findUnique({
       where: { id: input.variegationId },
       include: {
         plants: {
-          select: {
-            id: true,
-            name: true,
-            imagesUrl: true,
-            description: true,
+          include: {
             plantInstances: {
               select: {
                 id: true,

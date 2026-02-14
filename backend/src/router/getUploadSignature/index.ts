@@ -1,13 +1,15 @@
+import { TRPCError } from '@trpc/server'
+
 import { cloudinary } from '../../lib/cloudinary'
 import { env } from '../../lib/env'
-import { trpc } from '../../lib/trpc'
+import { adminProcedure } from '../../lib/trpc'
 
-export const getUploadSignatureTrpcRoute = trpc.procedure.mutation(({ ctx }) => {
-  if (!(ctx.me?.role === 'ADMIN')) {
-    throw new Error('нет доступа к получению подписи')
-  }
+export const getUploadSignatureTrpcRoute = adminProcedure.mutation(() => {
   if (!(env.CLOUDINARY_API_SECRET && env.CLOUDINARY_API_KEY)) {
-    throw new Error('не установлены переменные окружения для работы с cloudinary')
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'не установлены переменные окружения для работы с cloudinary',
+    })
   }
   const timestamp = Date.now()
 
@@ -16,7 +18,10 @@ export const getUploadSignatureTrpcRoute = trpc.procedure.mutation(({ ctx }) => 
     folder: 'plants',
   }
 
-  const signature = cloudinary.utils.api_sign_request(uploadParams, env.CLOUDINARY_API_SECRET)
+  const signature = cloudinary.utils.api_sign_request(
+    uploadParams,
+    env.CLOUDINARY_API_SECRET,
+  )
 
   return {
     signature,

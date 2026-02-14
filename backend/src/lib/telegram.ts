@@ -1,20 +1,19 @@
-/**
- * Утилита для отправки сообщений в Telegram
- */
+import { getOrderDetailRoute } from '@plants-project/webapp/src/lib/routes'
 
-import { logger } from '../utils/logger'
-
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID
+import { env } from './env'
+import { logger } from './logger'
 
 export async function sendTelegramMessage(message: string): Promise<boolean> {
-  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) {
-    logger.warn('Telegram credentials not configured. Skipping notification.')
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ADMIN_CHAT_ID) {
+    logger.error(
+      'Telegram',
+      'Telegram credentials not configured. Skipping notification.',
+    )
     return false
   }
 
   try {
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`
+    const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`
 
     const response = await fetch(url, {
       method: 'POST',
@@ -22,7 +21,7 @@ export async function sendTelegramMessage(message: string): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        chat_id: TELEGRAM_ADMIN_CHAT_ID,
+        chat_id: env.TELEGRAM_ADMIN_CHAT_ID,
         text: message,
         parse_mode: 'HTML',
       }),
@@ -30,14 +29,14 @@ export async function sendTelegramMessage(message: string): Promise<boolean> {
 
     if (!response.ok) {
       const error = await response.text()
-      logger.error(`Telegram API error: ${error}`)
+      logger.error('Telegram', `Telegram API error: ${error}`)
       return false
     }
 
     return true
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    logger.error(`Failed to send Telegram message: ${errorMessage}`)
+    logger.error('Telegram', `Failed to send Telegram message: ${errorMessage}`)
     return false
   }
 }
@@ -45,15 +44,22 @@ export async function sendTelegramMessage(message: string): Promise<boolean> {
 /**
  * Форматирует сообщение о новом заказе
  */
-export function formatOrderMessage(order: {
+export function formatCheckoutOrderMessage(order: {
   orderId: string
   customerName: string
   customerPhone: string
   customerTelegram?: string
   items: { name: string; price: string }[]
   total: number
+  prepaidAmount?: number
 }): string {
-  const itemsList = order.items.map((item) => `  • ${item.name} - ${item.price}₽`).join('\n')
+  const itemsList = order.items
+    .map((item) => `  • ${item.name} - ${item.price}₽`)
+    .join('\n')
+
+  const hasPrepaid = order.prepaidAmount && order.prepaidAmount > 0
+  const remaining =
+    hasPrepaid && order.prepaidAmount ? order.total - order.prepaidAmount : order.total
 
   return `
 🌱 <b>Новый заказ #${order.orderId}</b>
@@ -65,6 +71,29 @@ export function formatOrderMessage(order: {
 📦 <b>Товары:</b>
 ${itemsList}
 
-💰 <b>Итого: ${order.total}₽</b>
+💰 <b>Итого: ${order.total}₽</b>${hasPrepaid ? `\n✅ <b>Внесена предоплата: ${order.prepaidAmount}₽</b>\n💵 <b>К оплате: ${remaining}₽</b>` : ''}
+
+<a href="${env.FRONTEND_URL}${getOrderDetailRoute({ orderId: order.orderId })}">Перейти к заказу</a>
   `.trim()
+}
+
+export const formatReservationRequestMessage = (
+  type: 'prepaid' | 'no-prepaid',
+  request: {
+    cartId: string
+    userId: string
+    customerName: string
+    customerPhone: string
+    customerTelegram?: string
+  },
+) => {
+  return `
+⏳ <b>Запрос на бронирование ${type === 'prepaid' ? 'с предоплатой' : 'без предоплаты'}</b>
+
+👤 <b>Клиент:</b>
+   Имя: ${request.customerName} (${request.userId})
+   📱 Телефон: ${request.customerPhone}${request.customerTelegram ? `\n   💬 Telegram: @${request.customerTelegram}` : ''}
+${type === 'prepaid' ? `\n   ⚠️ Требуется подтверждение предоплаты в админке` : ''}
+     
+   `.trim()
 }

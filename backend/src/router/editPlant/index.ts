@@ -1,35 +1,30 @@
-import { zEditPlantTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { TRPCError } from '@trpc/server'
 
-export const editPlantTrpcRoute = trpc.procedure
+import { zEditPlantTrpcInput } from './input'
+import { adminProcedure } from '../../lib/trpc'
+
+export const editPlantTrpcRoute = adminProcedure
   .input(zEditPlantTrpcInput)
   .mutation(async ({ input, ctx }) => {
+    const { id, ...updateData } = input
     const plant = await ctx.prisma.plant.findUnique({
       where: {
-        id: input.id,
+        id,
       },
     })
 
     if (!plant) {
-      throw new Error('Plant not found')
-    }
-    try {
-      const updatedPlant = await ctx.prisma.plant.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          genusId: input.genusId,
-          variegationId: input.variegationId,
-          lifeFormId: input.lifeFormId,
-          name: input.name,
-          description: input.description,
-          imagesUrl: input.imagesUrl,
-        },
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Растение не найдено',
       })
-      return updatedPlant
-    } catch (error) {
-      console.error('Error updating plant:', error)
-      throw new Error('Failed to update plant')
     }
+
+    const updatedPlant = await ctx.prisma.plant.update({
+      where: {
+        id,
+      },
+      data: updateData,
+    })
+    return updatedPlant
   })

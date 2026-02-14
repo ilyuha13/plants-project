@@ -1,6 +1,6 @@
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getPlantInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+export const getPlantInstancesTrpcRoute = publicProcedure.query(async ({ ctx }) => {
   const instances = await ctx.prisma.plantInstance.findMany({
     where: {
       status: 'AVAILABLE',

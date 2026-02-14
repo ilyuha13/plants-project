@@ -1,6 +1,6 @@
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getAllInstancesTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+export const getAllInstancesTrpcRoute = publicProcedure.query(async ({ ctx }) => {
   const isAdmin = ctx.me?.role === 'ADMIN'
   const instances = await ctx.prisma.plantInstance.findMany({
     where: isAdmin

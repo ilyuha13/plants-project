@@ -1,20 +1,16 @@
 import { TRPCError } from '@trpc/server'
 
 import { zGetLifeFormByIdTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getLifeFormByIdTrpcRoute = trpc.procedure
+export const getLifeFormByIdTrpcRoute = publicProcedure
   .input(zGetLifeFormByIdTrpcInput)
   .query(async ({ ctx, input }) => {
     const lifeForm = await ctx.prisma.lifeForm.findUnique({
       where: { id: input.lifeFormId },
       include: {
         plants: {
-          select: {
-            id: true,
-            name: true,
-            imagesUrl: true,
-            description: true,
+          include: {
             plantInstances: {
               select: {
                 id: true,

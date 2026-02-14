@@ -1,7 +1,9 @@
-import { zGetPlantInstanceTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { TRPCError } from '@trpc/server'
 
-export const getPlantInstanceTrpcRoute = trpc.procedure
+import { zGetPlantInstanceTrpcInput } from './input'
+import { publicProcedure } from '../../lib/trpc'
+
+export const getPlantInstanceTrpcRoute = publicProcedure
   .input(zGetPlantInstanceTrpcInput)
   .query(async ({ ctx, input }) => {
     const instance = await ctx.prisma.plantInstance.findUnique({
@@ -20,7 +22,10 @@ export const getPlantInstanceTrpcRoute = trpc.procedure
     })
 
     if (!instance) {
-      throw new Error('plant not found')
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Экземпляр растения не найден',
+      })
     }
 
     return { instance }

@@ -1,5 +1,5 @@
 import { z } from 'zod'
 
-export const getCartInput = z.object({
+export const getCartTRPCInput = z.object({
   userId: z.string(),
 })

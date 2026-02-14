@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server'
 
 import { zResetPasswordWithTokenInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 import { getPasswordHash } from '../../utils/getPasswordHash'
 
 // Это ПУБЛИЧНЫЙ роут - он не требует авторизации (ctx.me может быть null)
 // Пользователь переходит по ссылке из email/мессенджера и сам меняет пароль
-export const resetPasswordWithTokenTrpcRoute = trpc.procedure
+export const resetPasswordWithTokenTrpcRoute = publicProcedure
   .input(zResetPasswordWithTokenInput)
   .mutation(async ({ ctx, input }) => {
     // Ищем токен в базе данных

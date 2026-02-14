@@ -1,7 +1,7 @@
 import { zGetOrderTrpcInput } from './input'
-import { trpc } from '../../lib/trpc'
+import { publicProcedure } from '../../lib/trpc'
 
-export const getOrderTrpcRoute = trpc.procedure
+export const getOrderTrpcRoute = publicProcedure
   .input(zGetOrderTrpcInput)
   .query(async ({ ctx, input }) => {
     const order = await ctx.prisma.order.findUnique({
