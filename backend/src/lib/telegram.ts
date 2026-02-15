@@ -1,5 +1,3 @@
-import { getOrderDetailRoute } from '@plants-project/webapp/src/lib/routes'
-
 import { env } from './env'
 import { logger } from './logger'
 
@@ -73,7 +71,7 @@ ${itemsList}
 
 💰 <b>Итого: ${order.total}₽</b>${hasPrepaid ? `\n✅ <b>Внесена предоплата: ${order.prepaidAmount}₽</b>\n💵 <b>К оплате: ${remaining}₽</b>` : ''}
 
-<a href="${env.FRONTEND_URL}${getOrderDetailRoute({ orderId: order.orderId })}">Перейти к заказу</a>
+<a href="${env.FRONTEND_URL}${`/order/${order.orderId}`}">Перейти к заказу</a>
   `.trim()
 }
 
