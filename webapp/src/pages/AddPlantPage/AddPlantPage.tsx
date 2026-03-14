@@ -1,6 +1,7 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
 import { zAddPlantTrpcInput } from '@plants-project/backend/src/router/addPlant/input'
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { Alert } from '../../components/Alert/Alert'
 import { Button } from '../../components/Button/Button'
@@ -18,6 +19,8 @@ export const AddPlantPage = () => {
   const addPlant = trpc.addPlant.useMutation()
   const [arrayFromImagesInput, setArrayFromImagesInput] = useState<File[] | null>(null)
   const imagesUrl = useGetUrlsFromCloudinary(arrayFromImagesInput)
+  const [searchParams] = useSearchParams()
+  const genusId = searchParams.get('genusId')
 
   useEffect(() => {
     if (imagesUrl) {
@@ -31,7 +34,7 @@ export const AddPlantPage = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      genusId: '',
+      genusId: genusId ? genusId : '',
       variegationId: '',
       lifeFormId: '',
       name: '',
@@ -60,11 +63,19 @@ export const AddPlantPage = () => {
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
               <Typography variant="h2">Добавить растение</Typography>
               <GenusSelect name="genusId" label="род" formik={formik} />
-              <VariegationSelect name="variegationId" label="вариегатность" formik={formik} />
+              <VariegationSelect
+                name="variegationId"
+                label="вариегатность"
+                formik={formik}
+              />
               <LifeFormSelect name="lifeFormId" label="жизненная форма" formik={formik} />
               <TextInput name="name" label="название" formik={formik} />
               <TextInput name="description" label="описание" formik={formik} />
-              <ImagesInput name="imagesUrl" formik={formik} setFileArray={setArrayFromImagesInput} />
+              <ImagesInput
+                name="imagesUrl"
+                formik={formik}
+                setFileArray={setArrayFromImagesInput}
+              />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>

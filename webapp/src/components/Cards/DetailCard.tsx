@@ -12,6 +12,7 @@ type DetailCard = ReferenceCard | InstanceDetailCard
 export const DetailCard = (props: DetailCard) => {
   const { onDeleteClick, onEditClick, imagesUrl, name, description, type } = props
   const onAddToCart = type === 'instance' ? props.onAddToCart : undefined
+  const onAddEntityClick = type === 'reference' ? props.onAddEntityClick : undefined
   const addButtonText = type === 'instance' ? props.addButtonText : undefined
   return (
     <Paper
@@ -71,6 +72,16 @@ export const DetailCard = (props: DetailCard) => {
                 sx={{ mt: 2 }}
               >
                 Редактировать
+              </Button>
+            )}
+            {type === 'reference' && onAddEntityClick && (
+              <Button
+                variant="contained"
+                onClick={() => onAddEntityClick()}
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                добавить растение
               </Button>
             )}
           </Stack>

@@ -9,7 +9,14 @@ export const getCatalogPageRoute = () => '/'
 
 export const getPlantsListRoute = () => '/plantsList'
 
+export const addPlantPageRouteParams = getRouteParams({ genusId: true })
+interface AddPlantPageRouteParams {
+  genusId?: string
+  variegationId?: string
+}
 export const getAddPlantPageRoute = () => '/plants/add'
+export const getAddPlantPageWithParamsRoute = ({ genusId }: AddPlantPageRouteParams) =>
+  `/plants/add?genusId=${genusId}`
 
 export const plantDetailRouteParams = getRouteParams({ plantId: true })
 export type PlantDetailRouteParams = typeof plantDetailRouteParams

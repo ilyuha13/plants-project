@@ -9,6 +9,7 @@ import { useDialog } from '../../../hooks'
 import { useMe } from '../../../lib/ctx'
 import {
   GenusDetailRouteParams,
+  getAddPlantPageWithParamsRoute,
   getCatalogPageRoute,
   getEditGenusRoute,
   getEditPlantRoute,
@@ -144,6 +145,10 @@ export const GenusDetailPage = () => {
     void navigate(getCatalogPageRoute())
   }
 
+  const navigateToAddPlantPage = (id: string) => {
+    void navigate(getAddPlantPageWithParamsRoute({ genusId: id }))
+  }
+
   return (
     <Box
       sx={{
@@ -160,6 +165,7 @@ export const GenusDetailPage = () => {
         imagesUrl={imagesUrl}
         onDeleteClick={handleDeleteClick}
         onEditClick={isAdmin ? () => navigateToEditGenus(genusId) : undefined}
+        onAddEntityClick={isAdmin ? () => navigateToAddPlantPage(genusId) : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>

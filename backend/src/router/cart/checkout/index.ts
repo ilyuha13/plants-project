@@ -68,6 +68,7 @@ export const checkoutTrpcRoute = publicProcedure
         (sum, item) => sum + Number(item.plantInstance.price),
         0,
       )
+
       const order = await tx.order.create({
         data: {
           userId: input.userId,
