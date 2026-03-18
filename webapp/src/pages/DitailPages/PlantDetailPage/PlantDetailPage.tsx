@@ -11,6 +11,7 @@ import {
   getCatalogPageRoute,
   getEditPlantInstanceRoute,
   getEditPlantRoute,
+  getGenusDetailRoute,
   getInstanceDetailRoute,
   PlantDetailRouteParams,
 } from '../../../lib/routes'
@@ -24,6 +25,7 @@ export const PlantDetailPage = () => {
     { id: plantId },
     { enabled: !!plantId },
   )
+
   const deletePlant = trpc.deletePlant.useMutation()
   const deleteInstance = trpc.deletePlantInstance.useMutation()
   const trpcUtils = trpc.useUtils()
@@ -124,7 +126,7 @@ export const PlantDetailPage = () => {
     }
   }
 
-  const { name, description, imagesUrl } = data.plant
+  const { name, description, imagesUrl, genusId } = data.plant
 
   const getDeleteMassage = (): string => {
     switch (currentDeleteData.type) {
@@ -151,8 +153,8 @@ export const PlantDetailPage = () => {
     onDeleteInstanceClick(id, inventoryNumber)
   }
 
-  const navigateToCatalog = () => {
-    void navigate(getCatalogPageRoute())
+  const navigateToGenus = () => {
+    void navigate(getGenusDetailRoute({ genusId }))
   }
 
   const handleAddToCart = async (instanceId: string) => {
@@ -188,8 +190,8 @@ export const PlantDetailPage = () => {
         onEditClick={isAdmin ? navigateToEditPlantPage : undefined}
       />
 
-      <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к каталогу
+      <Button onClick={navigateToGenus} fullWidth sx={{ marginTop: 3 }}>
+        ← Назад к роду
       </Button>
 
       {instances && instances.length > 0 && (

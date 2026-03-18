@@ -169,7 +169,7 @@ export const GenusDetailPage = () => {
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад
+        ← Назад к каталогу
       </Button>
 
       {plants && plants.length > 0 && (
