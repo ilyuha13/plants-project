@@ -22,6 +22,29 @@ export const AddGenusPage = () => {
     }
   }, [imagesUrl])
 
+  const onSetBaseImageClick = (imageIndex: number) => {
+    if (imageIndex === undefined) {
+      return
+    }
+    const imagesUrl = formik.values.imagesUrl
+    if (imagesUrl.length <= 1) {
+      return
+    }
+    const baseImage = imagesUrl[imageIndex]
+    imagesUrl.splice(imageIndex, 1)
+    imagesUrl.unshift(baseImage)
+    void formik.setFieldValue('imagesUrl', imagesUrl)
+  }
+
+  const onRemoveImageClick = (imageIndex: number) => {
+    if (imageIndex === undefined) {
+      return
+    }
+    const imagesUrl = formik.values.imagesUrl
+    imagesUrl.splice(imageIndex, 1)
+    void formik.setFieldValue('imagesUrl', imagesUrl)
+  }
+
   const {
     formik,
     buttonProps,
@@ -55,13 +78,22 @@ export const AddGenusPage = () => {
               <Typography variant="h2">Добавить род</Typography>
               <TextInput name="name" label="название" formik={formik} />
               <TextInput name="description" label="описание" formik={formik} />
-              <ImagesInput name="imagesUrl" formik={formik} setFileArray={setArrayFromImagesInput} />
+              <ImagesInput
+                name="imagesUrl"
+                formik={formik}
+                setFileArray={setArrayFromImagesInput}
+              />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Galery imageUrls={formik.values.imagesUrl} alt="addedImage" />
+            <Galery
+              imageUrls={formik.values.imagesUrl}
+              removeImage={onRemoveImageClick}
+              setBaseImage={onSetBaseImageClick}
+              alt="addedImage"
+            />
           </Grid>
         </Grid>
       </Paper>

@@ -23,6 +23,29 @@ export const AddPlantInstancePage = () => {
     }
   }, [imagesUrl])
 
+  const onSetBaseImageClick = (imageIndex: number) => {
+    if (imageIndex === undefined) {
+      return
+    }
+    const imagesUrl = formik.values.imagesUrl
+    if (imagesUrl.length <= 1) {
+      return
+    }
+    const baseImage = imagesUrl[imageIndex]
+    imagesUrl.splice(imageIndex, 1)
+    imagesUrl.unshift(baseImage)
+    void formik.setFieldValue('imagesUrl', imagesUrl)
+  }
+
+  const onRemoveImageClick = (imageIndex: number) => {
+    if (imageIndex === undefined) {
+      return
+    }
+    const imagesUrl = formik.values.imagesUrl
+    imagesUrl.splice(imageIndex, 1)
+    void formik.setFieldValue('imagesUrl', imagesUrl)
+  }
+
   const {
     formik,
     buttonProps,
@@ -57,16 +80,33 @@ export const AddPlantInstancePage = () => {
             <Stack component="form" onSubmit={formik.handleSubmit} sx={{ p: 2 }}>
               <Typography variant="h2">Добавить экземпляр растения</Typography>
               <PlantSelect name="plantId" label="Растение" formik={formik} />
-              <TextInput name="inventoryNumber" label="Инвентарный номер" formik={formik} />
+              <TextInput
+                name="inventoryNumber"
+                label="Инвентарный номер"
+                formik={formik}
+              />
               <TextInput name="price" label="Цена (₽)" formik={formik} />
-              <TextInput name="description" label="Описание (опционально)" formik={formik} />
-              <ImagesInput name="imagesUrl" formik={formik} setFileArray={setArrayFromImagesInput} />
+              <TextInput
+                name="description"
+                label="Описание (опционально)"
+                formik={formik}
+              />
+              <ImagesInput
+                name="imagesUrl"
+                formik={formik}
+                setFileArray={setArrayFromImagesInput}
+              />
               <Button {...buttonProps}>отправить</Button>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Galery imageUrls={formik.values.imagesUrl} alt="addedImage" />
+            <Galery
+              imageUrls={formik.values.imagesUrl}
+              removeImage={onRemoveImageClick}
+              setBaseImage={onSetBaseImageClick}
+              alt="addedImage"
+            />
           </Grid>
         </Grid>
       </Paper>
