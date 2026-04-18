@@ -1,4 +1,4 @@
-import { zNonemptyString, zNonemtyImagesArray } from '@plants-project/shared'
+import { zNonemptyString } from '@plants-project/shared'
 import { z } from 'zod'
 
 export const zAddPlantTrpcInput = z.object({
@@ -7,5 +7,5 @@ export const zAddPlantTrpcInput = z.object({
   lifeFormId: zNonemptyString,
   name: z.string().min(1, 'название обязательно для заполнения'),
   description: z.string(),
-  imagesUrl: zNonemtyImagesArray,
+  imagesUrl: z.string().array(),
 })

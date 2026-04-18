@@ -34,7 +34,7 @@ export const PreviewCard = (props: PreviewCard) => {
       <CardActionArea onClick={onCardClick}>
         <CardMedia
           component="img"
-          image={imagesUrl[0]}
+          image={imagesUrl[0] || '/favicon-96x96.png'}
           alt={name}
           sx={{ width: '100%', objectFit: 'cover' }}
         />
