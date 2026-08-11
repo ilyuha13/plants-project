@@ -96,7 +96,7 @@ export const AllInstancePage = () => {
         onCardClick={navigateToInsatnceDetail}
         onCardDelete={isAdmin ? handleDeleteClick : null}
         onCardEdit={isAdmin ? navigateToEditPlantInstance : undefined}
-        onAddToCart={me ? handleAddToCart : undefined}
+        onAddToCart={handleAddToCart}
       />
       <DeleteDialog
         open={confirmDeleteDialog.isOpen}
