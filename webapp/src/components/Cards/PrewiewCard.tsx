@@ -30,7 +30,14 @@ export const PreviewCard = (props: PreviewCard) => {
   const onAddToCart = type === 'instance' ? props.onAddToCart : undefined
   const quantity = type === 'reference' ? props.quantity : undefined
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
       <CardActionArea onClick={onCardClick}>
         <CardMedia
           component="img"
@@ -83,7 +90,7 @@ export const PreviewCard = (props: PreviewCard) => {
           )}
         </CardContent>
       </CardActionArea>
-      <CardActions>
+      <CardActions sx={{ display: 'flex', justifyContent: 'space-around' }}>
         {onDeleteClick && (
           <IconButton color="error" onClick={() => onDeleteClick()}>
             <DeleteOutlineIcon color="error" />
