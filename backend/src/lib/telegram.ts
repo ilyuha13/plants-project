@@ -2,7 +2,7 @@ import { env } from './env'
 import { logger } from './logger'
 
 export async function sendTelegramMessage(message: string): Promise<boolean> {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_ADMIN_CHAT_ID) {
+  if (!env.TELEGRAM_PROXY_URL || !env.TELEGRAM_PROXY_SECRET) {
     logger.error(
       'Telegram',
       'Telegram credentials not configured. Skipping notification.',
@@ -11,17 +11,16 @@ export async function sendTelegramMessage(message: string): Promise<boolean> {
   }
 
   try {
-    const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`
+    const url = env.TELEGRAM_PROXY_URL
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${env.TELEGRAM_PROXY_SECRET}`,
       },
       body: JSON.stringify({
-        chat_id: env.TELEGRAM_ADMIN_CHAT_ID,
         text: message,
-        parse_mode: 'HTML',
       }),
     })
 
@@ -39,9 +38,6 @@ export async function sendTelegramMessage(message: string): Promise<boolean> {
   }
 }
 
-/**
- * Форматирует сообщение о новом заказе
- */
 export function formatCheckoutOrderMessage(order: {
   orderId: string
   customerName: string

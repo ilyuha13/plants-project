@@ -14,8 +14,7 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: zNonemptyTrimmedRequiredOnNotLocal,
   CLOUDINARY_CLOUD_NAME: zNonemptyTrimmed,
   DEBUG: zNonemptyTrimmed,
-  TELEGRAM_BOT_USERNAME: zNonemptyTrimmed.optional(),
-  TELEGRAM_BOT_TOKEN: zNonemptyTrimmed.optional(),
-  TELEGRAM_ADMIN_CHAT_ID: zNonemptyTrimmed.optional(),
+  TELEGRAM_PROXY_URL: zNonemptyTrimmed.optional(),
+  TELEGRAM_PROXY_SECRET: zNonemptyTrimmed.optional(),
 })
 export const env = envSchema.parse(process.env)
