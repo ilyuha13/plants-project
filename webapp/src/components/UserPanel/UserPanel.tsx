@@ -11,23 +11,25 @@ import { CartButton } from '../CartButton/CartButton'
 export const UserPanel = () => {
   const me = useMe()
   const isAdmin: boolean = me?.role === 'ADMIN'
-  return !me ? (
-    <Toolbar disableGutters>
-      <Tooltip title="войти">
-        <IconButton component={Link} to={getSignInRoute()} color="primary">
-          <LoginIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
-    </Toolbar>
-  ) : (
+
+  return (
     <Toolbar disableGutters>
       {isAdmin && <AdminButton />}
       <CartButton />
-      <Tooltip title="выйти">
-        <IconButton component={Link} to={getSignOutRoute()} color="primary">
-          <LogoutIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
+
+      {me ? (
+        <Tooltip title="выйти">
+          <IconButton component={Link} to={getSignOutRoute()} color="primary">
+            <LogoutIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="войти">
+          <IconButton component={Link} to={getSignInRoute()} color="primary">
+            <LoginIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
+      )}
     </Toolbar>
   )
 }
