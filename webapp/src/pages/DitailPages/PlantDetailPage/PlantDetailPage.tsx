@@ -200,7 +200,7 @@ export const PlantDetailPage = () => {
             type="instance"
             onCardEdit={isAdmin ? navigateToEditPlantInstance : undefined}
             data={instances}
-            title={`растения рода ${name}`}
+            title="Экземпляры"
             onCardClick={navigateToPlantInstance}
             onCardDelete={isAdmin ? onDeletePlantInstanceClick : null}
             onAddToCart={me ? handleAddToCart : undefined}
