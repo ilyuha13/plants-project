@@ -156,7 +156,7 @@ export const InstanceDetailPage = () => {
       />
 
       <Button onClick={navigateToPlant} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к сорту
+        покажите еще растений этого сорта
       </Button>
 
       <DeleteDialog

@@ -186,12 +186,13 @@ export const PlantDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
+        quantity={null}
         onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? navigateToEditPlantPage : undefined}
       />
 
       <Button onClick={navigateToGenus} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к роду
+        покажите еще сортов этого рода
       </Button>
 
       {instances && instances.length > 0 && (

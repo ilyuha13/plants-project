@@ -13,7 +13,7 @@ interface DataFromCards {
   price?: string
   createdAt?: Date
   plants?: { id: string }[]
-  plantInstances?: { id: string }[]
+  plantInstances?: { id: string; status: 'AVAILABLE' | 'IN_CART' | 'SOLD' }[]
   status?: 'AVAILABLE' | 'IN_CART' | 'SOLD'
 }
 
@@ -81,13 +81,21 @@ export const CardsCollection = ({
           const imagesUrl = item.imagesUrl.map((url) =>
             getCloudinaryUrl(url, 'thumbnail'),
           )
-          const quantity =
+          let quantity: null | number = null
+
+          if (
             (type === 'genus' || type === 'lifeForm' || type === 'variegation') &&
             item.plants
-              ? item.plants.length
-              : type === 'plant' && item.plantInstances
-                ? item.plantInstances.length
-                : 0
+          ) {
+            quantity = item.plants.length
+          }
+
+          if (type === 'plant' && item.plantInstances) {
+            quantity = item.plantInstances.filter(
+              (instance) => instance.status === 'AVAILABLE',
+            ).length
+          }
+
           return (
             <Grid
               sx={!isFullView ? { flexShrink: 0 } : null}

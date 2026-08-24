@@ -14,6 +14,7 @@ export const getVariegationByIdTrpcRoute = publicProcedure
             plantInstances: {
               select: {
                 id: true,
+                status: true,
               },
             },
           },

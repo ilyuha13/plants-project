@@ -14,6 +14,7 @@ export const getLifeFormByIdTrpcRoute = publicProcedure
             plantInstances: {
               select: {
                 id: true,
+                status: true,
               },
             },
           },

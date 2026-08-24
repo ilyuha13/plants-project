@@ -14,6 +14,7 @@ export const getGenusByIdTrpcRoute = publicProcedure
             plantInstances: {
               select: {
                 id: true,
+                status: true,
               },
             },
           },

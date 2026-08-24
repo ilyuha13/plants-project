@@ -159,12 +159,13 @@ export const LifeFormDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
+        quantity={null}
         onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? navigateToEditLifeForm : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад
+        каталог
       </Button>
 
       {plants && plants.length > 0 && (

@@ -17,6 +17,6 @@ export interface InstanceCard extends Card {
 
 export interface ReferenceCard extends Card {
   type: 'reference'
-  quantity?: number
+  quantity: number | null
   onAddEntityClick?: () => void
 }

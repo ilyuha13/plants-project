@@ -163,13 +163,14 @@ export const GenusDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
-        onDeleteClick={handleDeleteClick}
+        quantity={null}
+        onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? () => navigateToEditGenus(genusId) : undefined}
         onAddEntityClick={isAdmin ? () => navigateToAddPlantPage(genusId) : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к каталогу
+        каталог
       </Button>
 
       {plants && plants.length > 0 && (

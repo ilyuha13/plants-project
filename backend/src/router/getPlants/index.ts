@@ -6,6 +6,7 @@ export const getPlantsTrpcRoute = publicProcedure.query(async ({ ctx }) => {
       plantInstances: {
         select: {
           id: true,
+          status: true,
         },
       },
     },
