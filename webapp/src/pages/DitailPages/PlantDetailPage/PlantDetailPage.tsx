@@ -90,11 +90,12 @@ export const PlantDetailPage = () => {
   }
 
   const instances = data.plant.plantInstances.map(
-    ({ price, inventoryNumber, ...rest }) => ({
+    ({ price, inventoryNumber, status, ...rest }) => ({
       price: String(price),
       ...rest,
       name: data.plant.name,
       ...(isAdmin && { inventoryNumber }),
+      ...(isAdmin && { status }),
     }),
   )
 
