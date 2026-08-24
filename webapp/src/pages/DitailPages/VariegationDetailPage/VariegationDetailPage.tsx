@@ -157,12 +157,13 @@ export const VariegationDetailPage = () => {
         name={name}
         description={description}
         imagesUrl={imagesUrl}
+        quantity={null}
         onDeleteClick={isAdmin ? handleDeleteClick : null}
         onEditClick={isAdmin ? () => navigateToEditVariegation(variegationId) : undefined}
       />
 
       <Button onClick={navigateToCatalog} fullWidth sx={{ marginTop: 3 }}>
-        ← Назад к каталогу
+        каталог
       </Button>
 
       {plants && plants.length > 0 && (
