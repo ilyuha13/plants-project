@@ -33,7 +33,7 @@ export const CartItem = ({
 
   const handleRemove = async () => {
     try {
-      await removeItem.mutateAsync({ userId: me.id, cartItemId: id })
+      await removeItem.mutateAsync({ cartItemId: id })
       await utils.getCart.invalidate()
       await utils.getAllInstances.invalidate()
     } catch (error) {

@@ -1,10 +1,9 @@
 import { TRPCError } from '@trpc/server'
 
 import { addToCartInput } from './input'
-import { publicProcedure } from '../../../lib/trpc'
-import { signJWT } from '../../../utils/signJWT'
+import { protectedProcedure } from '../../../lib/trpc'
 
-export const addToCartTrpcRoute = publicProcedure
+export const addToCartTrpcRoute = protectedProcedure
   .input(addToCartInput)
   .mutation(async ({ ctx, input }) => {
     const prisma = ctx.prisma
@@ -29,7 +28,6 @@ export const addToCartTrpcRoute = publicProcedure
     }
 
     return prisma.$transaction(async (tx) => {
-      // Проверка доступности и резервирование выполняются одним запросом.
       const reserved = await tx.plantInstance.updateMany({
         where: {
           id: input.plantInstanceId,
@@ -47,21 +45,7 @@ export const addToCartTrpcRoute = publicProcedure
         })
       }
 
-      let userId = ctx.me?.id
-      let token = ''
-
-      if (!userId) {
-        const randomNick = Math.random().toString(36).substring(2, 15)
-        const user = await tx.user.create({
-          data: {
-            nick: randomNick,
-            password: 'password',
-            isGuest: true,
-          },
-        })
-        userId = user.id
-        token = signJWT(userId)
-      }
+      const userId = ctx.me?.id
 
       let cart = await tx.cart.findUnique({
         where: {
@@ -101,6 +85,5 @@ export const addToCartTrpcRoute = publicProcedure
           },
         })
       }
-      return { token }
     })
   })

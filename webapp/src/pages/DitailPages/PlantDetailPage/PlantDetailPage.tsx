@@ -165,7 +165,7 @@ export const PlantDetailPage = () => {
     }
 
     try {
-      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
+      await addToCart.mutateAsync({ plantInstanceId: instanceId })
       await trpcUtils.getCart.invalidate()
       await trpcUtils.getPlantInstance.invalidate()
     } catch (error) {

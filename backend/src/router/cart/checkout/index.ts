@@ -3,14 +3,14 @@ import { TRPCError } from '@trpc/server'
 import { checkoutInput } from './input'
 import { logger } from '../../../lib/logger'
 import { formatCheckoutOrderMessage, sendTelegramMessage } from '../../../lib/telegram'
-import { publicProcedure } from '../../../lib/trpc'
+import { protectedProcedure } from '../../../lib/trpc'
 
-export const checkoutTrpcRoute = publicProcedure
+export const checkoutTrpcRoute = protectedProcedure
   .input(checkoutInput)
   .mutation(async ({ ctx, input }) => {
     const prisma = ctx.prisma
     const cart = await prisma.cart.findUnique({
-      where: { userId: input.userId },
+      where: { userId: ctx.me.id },
       include: { items: { include: { plantInstance: { include: { plant: true } } } } },
     })
     if (!cart || cart.items.length === 0) {
@@ -71,7 +71,7 @@ export const checkoutTrpcRoute = publicProcedure
 
       const order = await tx.order.create({
         data: {
-          userId: input.userId,
+          userId: ctx.me.id,
           customerName: input.contactInfo.name,
           totalAmount: total.toString(),
           customerPhone: input.contactInfo.phone,

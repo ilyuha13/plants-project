@@ -52,7 +52,7 @@ export const InstanceDetailPage = () => {
     }
 
     try {
-      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
+      await addToCart.mutateAsync({ plantInstanceId: instanceId })
       await utils.getCart.invalidate()
       await utils.getPlantInstance.invalidate()
       openCart()

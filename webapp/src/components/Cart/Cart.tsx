@@ -41,10 +41,9 @@ export const Cart = () => {
   const requestReservation = trpc.requestReservationNoPrepaid.useMutation()
   const requestPrepaidReservation = trpc.requestReservationPrepaid.useMutation()
 
-  const { data: cartData } = trpc.getCart.useQuery(
-    { userId: me?.id || '' },
-    { enabled: !!me?.id && isOpen },
-  )
+  const { data: cartData } = trpc.getCart.useQuery(undefined, {
+    enabled: !!me?.id && isOpen,
+  })
 
   const {
     formik,
@@ -52,7 +51,6 @@ export const Cart = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
-      userId: me?.id || '',
       contactInfo: {
         name: '',
         phone: '',

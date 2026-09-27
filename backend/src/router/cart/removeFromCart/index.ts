@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 
 import { removeFromCartInput } from './input'
-import { publicProcedure } from '../../../lib/trpc'
+import { protectedProcedure } from '../../../lib/trpc'
 
-export const removeFromCartTrpcRoute = publicProcedure
+export const removeFromCartTrpcRoute = protectedProcedure
   .input(removeFromCartInput)
   .mutation(async ({ ctx, input }) => {
     const prisma = ctx.prisma
@@ -21,7 +21,7 @@ export const removeFromCartTrpcRoute = publicProcedure
         })
       }
 
-      if (cartItem.cart.userId !== input.userId) {
+      if (cartItem.cart.userId !== ctx.me.id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'элемент корзины не принадлежит пользователю',

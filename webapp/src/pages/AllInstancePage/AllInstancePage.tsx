@@ -65,13 +65,12 @@ export const AllInstancePage = () => {
   }
 
   const handleAddToCart = async (instanceId: string) => {
-    if (!me) {
-      console.error('User not authenticated')
-      return
-    }
-
     try {
-      await addToCart.mutateAsync({ userId: me.id, plantInstanceId: instanceId })
+      await addToCart.mutateAsync({
+        plantInstanceId: instanceId,
+      })
+
+      await trpcUtils.getMe.invalidate()
       await trpcUtils.getCart.invalidate()
       await trpcUtils.getPlantInstance.invalidate()
       await trpcUtils.getAllInstances.invalidate()
