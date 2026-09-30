@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server'
 
 import { addToCartInput } from './input'
 import { publicProcedure } from '../../../lib/trpc'
+import { signJWT } from '../../../utils/signJWT'
 
 export const addToCartTrpcRoute = publicProcedure
   .input(addToCartInput)
@@ -27,29 +28,54 @@ export const addToCartTrpcRoute = publicProcedure
       })
     }
 
-    await prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx) => {
+      // Проверка доступности и резервирование выполняются одним запросом.
+      const reserved = await tx.plantInstance.updateMany({
+        where: {
+          id: input.plantInstanceId,
+          status: 'AVAILABLE',
+        },
+        data: {
+          status: 'IN_CART',
+        },
+      })
+
+      if (reserved.count !== 1) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'растение уже недоступно',
+        })
+      }
+
+      let userId = ctx.me?.id
+      let token = ''
+
+      if (!userId) {
+        const randomNick = Math.random().toString(36).substring(2, 15)
+        const user = await tx.user.create({
+          data: {
+            nick: randomNick,
+            password: 'password',
+            isGuest: true,
+          },
+        })
+        userId = user.id
+        token = signJWT(userId)
+      }
+
       let cart = await tx.cart.findUnique({
         where: {
-          userId: input.userId,
+          userId,
         },
       })
 
       if (!cart) {
         cart = await tx.cart.create({
           data: {
-            userId: input.userId,
+            userId,
           },
         })
       }
-
-      await tx.plantInstance.update({
-        where: {
-          id: input.plantInstanceId,
-        },
-        data: {
-          status: 'IN_CART',
-        },
-      })
 
       await tx.cartItem.create({
         data: {
@@ -75,5 +101,6 @@ export const addToCartTrpcRoute = publicProcedure
           },
         })
       }
+      return { token }
     })
   })
