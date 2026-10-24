@@ -15,6 +15,10 @@ export function useCartSync() {
   })
 
   useEffect(() => {
+    if (!me?.id) {
+      setItems([])
+      return
+    }
     if (cart?.items) {
       const items = cart.items.map((item) => {
         const { plantInstance, ...restItem } = item
@@ -31,7 +35,7 @@ export function useCartSync() {
       })
       setItems(items)
     }
-  }, [cart?.items, setItems])
+  }, [me?.id, cart?.items, setItems])
 
   useEffect(() => {
     setLoading(isLoading)
