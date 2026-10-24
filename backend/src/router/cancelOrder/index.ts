@@ -42,14 +42,24 @@ export const cancelOrderTrpcRoute = adminProcedure
     const plantInstanceIds = order.items.map((item) => item.plantInstanceId)
 
     await ctx.prisma.$transaction(async (tx) => {
-      await tx.plantInstance.updateMany({
-        where: { id: { in: plantInstanceIds } },
-        data: { status: 'AVAILABLE' },
-      })
-
       await tx.order.update({
         where: { id: input.orderId },
         data: { status: 'CANCELLED' },
+      })
+
+      await tx.plantInstance.updateMany({
+        where: {
+          id: { in: plantInstanceIds },
+          cartItems: { none: {} },
+          orderItems: {
+            none: {
+              order: {
+                status: { not: 'CANCELLED' },
+              },
+            },
+          },
+        },
+        data: { status: 'AVAILABLE' },
       })
     })
   })

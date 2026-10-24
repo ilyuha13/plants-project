@@ -35,6 +35,7 @@ export const AllInstancePage = () => {
   const handleConfirmDelete = async () => {
     await deleteInstance.mutateAsync({ id: currentDeleteData!.id })
     confirmDeleteDialog.close()
+    await trpcUtils.getAllInstances.invalidate()
   }
 
   const handleDeleteClick = (id: string, name: string, inventoryNumber?: string) => {

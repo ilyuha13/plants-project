@@ -1,4 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material'
 import { useState } from 'react'
 
 interface DeleteDialogProps {
@@ -21,26 +29,40 @@ export const DeleteDialog = ({
   cancelButtonText = 'Отмена',
 }: DeleteDialogProps) => {
   const [isDeleting, setIsDeleting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const handleClose = () => {
+    setErrorMessage(null)
+    onClose()
+  }
 
   const handleConfirm = async () => {
     setIsDeleting(true)
+    setErrorMessage(null)
     try {
       await onDelete()
-      onClose()
+      handleClose()
     } catch (error) {
-      console.error('Deleting failed:', error)
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Не удалось выполнить удаление',
+      )
     } finally {
       setIsDeleting(false)
     }
   }
   return (
-    <Dialog open={open} onClose={isDeleting ? undefined : onClose}>
+    <Dialog open={open} onClose={isDeleting ? undefined : handleClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Typography>{message}</Typography>
+        {errorMessage && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={isDeleting}>
+        <Button onClick={handleClose} disabled={isDeleting}>
           {cancelButtonText}
         </Button>
         <Button onClick={() => void handleConfirm()} color="error" disabled={isDeleting}>

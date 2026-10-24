@@ -109,21 +109,17 @@ export const PlantDetailPage = () => {
   }
 
   const handleConfirmDelete = async () => {
-    try {
-      switch (currentDeleteData.type) {
-        case 'plant':
-          await deletePlant.mutateAsync({ id: plantId })
-          confirmDeleteDialog.close()
-          void navigate(getCatalogPageRoute())
-          break
-        case 'instance':
-          await deleteInstance.mutateAsync({ id: currentDeleteData.id })
-          await trpcUtils.getPlant.invalidate()
-          confirmDeleteDialog.close()
-          setCurrentDeleteData({ type: 'plant', id: plantId, inventoryNumber: '' })
-      }
-    } catch (error) {
-      console.error('Failed to delete plant:', error)
+    switch (currentDeleteData.type) {
+      case 'plant':
+        await deletePlant.mutateAsync({ id: plantId })
+        confirmDeleteDialog.close()
+        void navigate(getCatalogPageRoute())
+        break
+      case 'instance':
+        await deleteInstance.mutateAsync({ id: currentDeleteData.id })
+        await trpcUtils.getPlant.invalidate()
+        confirmDeleteDialog.close()
+        setCurrentDeleteData({ type: 'plant', id: plantId, inventoryNumber: '' })
     }
   }
 

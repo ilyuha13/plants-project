@@ -54,16 +54,25 @@ export const checkoutTrpcRoute = protectedProcedure
     }
 
     const result = await ctx.prisma.$transaction(async (tx) => {
-      await tx.plantInstance.updateMany({
+      const soldInstances = await tx.plantInstance.updateMany({
         where: {
           id: {
             in: plantInstanceIds,
           },
+          status: 'IN_CART',
         },
         data: {
           status: 'SOLD',
         },
       })
+
+      if (soldInstances.count !== plantInstanceIds.length) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Некоторые экземпляры уже недоступны для оформления',
+        })
+      }
+
       const total = cart.items.reduce(
         (sum, item) => sum + Number(item.plantInstance.price),
         0,

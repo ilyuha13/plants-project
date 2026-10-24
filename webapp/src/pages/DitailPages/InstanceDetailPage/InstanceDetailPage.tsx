@@ -36,13 +36,9 @@ export const InstanceDetailPage = () => {
   }
 
   const handleConfirmDelete = async () => {
-    try {
-      await deleteInstance.mutateAsync({ id: instanceId })
-      confirmDeleteDialog.close()
-      void navigate(getPlantsListRoute())
-    } catch (error) {
-      console.error('Failed to delete instance:', error)
-    }
+    await deleteInstance.mutateAsync({ id: instanceId })
+    confirmDeleteDialog.close()
+    void navigate(getPlantsListRoute())
   }
 
   const handleAddToCart = async () => {
