@@ -10,9 +10,19 @@ import { checkoutTrpcRoute } from '../router/cart/checkout'
 import { getCartTrpcRoute } from '../router/cart/getCart'
 import { removeFromCartTrpcRoute } from '../router/cart/removeFromCart'
 import { deletePlantInstanceTrpcRoute } from '../router/deletePlantInstance'
+import {
+  requestReservationTrpcRoute,
+  confirmReservationTrpcRoute,
+  releaseReservationTrpcRoute,
+  getReservationsTrpcRoute,
+} from '../router/reservations'
 
 export const prisma = createPrismaClient()
 const router = createTrpcRouter({
+  requestReservation: requestReservationTrpcRoute,
+  confirmReservation: confirmReservationTrpcRoute,
+  releaseReservation: releaseReservationTrpcRoute,
+  getReservations: getReservationsTrpcRoute,
   addToCart: addToCartTrpcRoute,
   checkout: checkoutTrpcRoute,
   getCart: getCartTrpcRoute,

@@ -163,6 +163,13 @@ model Cart {
     reservationType ReservationType @default(AUTOMATIC)
     requestedAt DateTime?
     prepaidAmount Decimal?
+    customerName String?
+    customerContact String?
+    customerComment String?
+    adminComment String?
+    reviewAt DateTime?
+
+    @@index([reservationType, reviewAt])
 }
 
 enum ReservationType {

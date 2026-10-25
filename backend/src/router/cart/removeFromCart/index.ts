@@ -8,6 +8,10 @@ export const removeFromCartTrpcRoute = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const prisma = ctx.prisma
     await prisma.$transaction(async (tx) => {
+      await tx.cart.updateMany({
+        where: { userId: ctx.me.id },
+        data: { updatedAt: new Date() },
+      })
       const cartItem = await tx.cartItem.findUnique({
         where: {
           id: input.cartItemId,

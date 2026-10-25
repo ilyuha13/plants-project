@@ -15,9 +15,8 @@ import {
   Typography,
 } from '@mui/material'
 import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
-import { requestReservationNoPrepaidTRPCInput } from '@plants-project/backend/src/router/requestReservationNoPrepaid/input'
-import { requestReservationPrepaidTRPCInput } from '@plants-project/backend/src/router/requestReservationPrepaid/input'
-import { useEffect, useState } from 'react'
+import { requestReservationInput } from '@plants-project/backend/src/router/reservations/input'
+import { useState } from 'react'
 
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
@@ -35,11 +34,9 @@ export const Cart = () => {
 
   const [showCheckoutForm, setShowCheckoutForm] = useState(false)
   const [showReservationForm, setShowReservationForm] = useState(false)
-  const [showPrepaidReservationForm, setShowPrepaidReservationForm] = useState(false)
   const utils = trpc.useUtils()
   const checkout = trpc.checkout.useMutation()
-  const requestReservation = trpc.requestReservationNoPrepaid.useMutation()
-  const requestPrepaidReservation = trpc.requestReservationPrepaid.useMutation()
+  const requestReservation = trpc.requestReservation.useMutation()
 
   const { data: cartData } = trpc.getCart.useQuery(undefined, {
     enabled: !!me?.id && isOpen,
@@ -77,12 +74,11 @@ export const Cart = () => {
     alertOptions: { hidden: reservationAlertHidden, ...reservationAlertProps },
   } = useForm({
     initialValues: {
-      cartId: cartData?.id || '',
       name: '',
-      phone: '',
-      telegramm: '',
+      contact: '',
+      comment: '',
     },
-    validationSchema: requestReservationNoPrepaidTRPCInput,
+    validationSchema: requestReservationInput,
     onSubmit: async (values) => {
       await requestReservation.mutateAsync(values)
 
@@ -93,38 +89,9 @@ export const Cart = () => {
     },
   })
 
-  const {
-    formik: prepaidFormik,
-    buttonProps: prepaidButtonProps,
-    alertOptions: { hidden: prepaidAlertHidden, ...prepaidAlertProps },
-  } = useForm({
-    initialValues: {
-      cartId: cartData?.id || '',
-      name: '',
-      phone: '',
-      telegramm: '',
-    },
-    validationSchema: requestReservationPrepaidTRPCInput,
-    onSubmit: async (values) => {
-      await requestPrepaidReservation.mutateAsync(values)
-
-      await utils.getCart.invalidate()
-
-      setShowPrepaidReservationForm(false)
-      prepaidFormik.resetForm()
-    },
-  })
-
   const total = items.reduce((sum, item) => {
-    return sum + parseInt(item.plantInstance.price || '0', 10)
+    return sum + Number(item.plantInstance.price || '0')
   }, 0)
-
-  useEffect(() => {
-    if (cartData?.id) {
-      void reservationFormik.setFieldValue('cartId', cartData.id)
-      void prepaidFormik.setFieldValue('cartId', cartData.id)
-    }
-  }, [cartData?.id])
 
   return (
     <>
@@ -154,22 +121,6 @@ export const Cart = () => {
 
         <Divider />
 
-        {cartData?.reservationType === 'RESERVED_NO_PREPAID' &&
-          cartData?.reservedUntil && (
-            <Box sx={{ p: 2 }}>
-              <Alert severity="success">
-                Забронировано до{' '}
-                {new Date(cartData.reservedUntil).toLocaleString('ru-RU', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Alert>
-            </Box>
-          )}
-
         {cartData?.reservationType === 'AUTOMATIC' && cartData?.reservedUntil && (
           <Box sx={{ p: 2 }}>
             <Alert severity="info">
@@ -182,41 +133,40 @@ export const Cart = () => {
           </Box>
         )}
 
+        {cartData?.reservationType === 'AUTOMATIC' &&
+          Number(cartData.prepaidAmount || 0) > 0 && (
+            <Box sx={{ p: 2 }}>
+              <Alert severity="warning">
+                Сохранённая предоплата: {String(cartData.prepaidAmount)} ₽. После
+                освобождения брони расчёты согласуются с администратором.
+              </Alert>
+            </Box>
+          )}
         {cartData?.reservationType === 'RESERVED_PREPAID_REQUEST' && (
           <Box sx={{ p: 2 }}>
             <Alert severity="info">
-              Ожидается подтверждение предоплаты администратором
-              <br />
-              <Typography variant="caption">
-                Бронь истекает:{' '}
-                {cartData?.reservedUntil &&
-                  new Date(cartData.reservedUntil).toLocaleString('ru-RU', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-              </Typography>
+              Запрос отправлен. Растения удерживаются до решения администратора.
             </Alert>
           </Box>
         )}
-
         {cartData?.reservationType === 'RESERVED_PREPAID_CONFIRMED' && (
           <Box sx={{ p: 2 }}>
             <Alert severity="success">
-              Предоплата {String(cartData.prepaidAmount)} ₽ подтверждена
+              Бронь подтверждена{' '}
+              {cartData.reservedUntil
+                ? `до ${new Date(cartData.reservedUntil).toLocaleString('ru-RU')}`
+                : 'бессрочно'}
+              .
               <br />
-              Забронировано до{' '}
-              {cartData.reservedUntil &&
-                new Date(cartData.reservedUntil).toLocaleString('ru-RU', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+              Полученная предоплата: {String(cartData.prepaidAmount || 0)} ₽.
               <br />
-              <Typography variant="caption">
-                К оплате: {total - Number(cartData.prepaidAmount || 0)} ₽
-              </Typography>
+              Изменение состава не отменяет условия брони.
+              {total < Number(cartData.prepaidAmount || 0) && (
+                <Typography>
+                  Переплата: {Number(cartData.prepaidAmount) - total} ₽. Свяжитесь с
+                  администратором.
+                </Typography>
+              )}
             </Alert>
           </Box>
         )}
@@ -244,7 +194,7 @@ export const Cart = () => {
           )}
         </Stack>
 
-        {items.length > 0 && (
+        {me && (
           <>
             <Divider />
             <Box sx={{ p: 2 }}>
@@ -254,12 +204,13 @@ export const Cart = () => {
               <Stack spacing={1}>
                 <Button
                   fullWidth
+                  disabled={items.length === 0}
                   startIcon={<TelegramIcon />}
                   onClick={() => setShowCheckoutForm(true)}
                 >
                   Оформить заказ
                 </Button>
-                {cartData?.reservationType === 'AUTOMATIC' && (
+                {(!cartData || cartData.reservationType === 'AUTOMATIC') && (
                   <>
                     <Button
                       fullWidth
@@ -267,20 +218,7 @@ export const Cart = () => {
                       startIcon={<BookmarkIcon />}
                       onClick={() => setShowReservationForm(true)}
                     >
-                      Забронировать на сутки
-                    </Button>
-                  </>
-                )}
-                {(cartData?.reservationType === 'AUTOMATIC' ||
-                  cartData?.reservationType === 'RESERVED_NO_PREPAID') && (
-                  <>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<BookmarkIcon />}
-                      onClick={() => setShowPrepaidReservationForm(true)}
-                    >
-                      Забронировать с предоплатой
+                      Запросить бронирование
                     </Button>
                   </>
                 )}
@@ -330,19 +268,20 @@ export const Cart = () => {
         <form onSubmit={reservationFormik.handleSubmit}>
           <DialogContent>
             <Stack spacing={2} sx={{ minWidth: { xs: 300, sm: 400 } }}>
-              <Typography variant="h6">Бронирование на сутки</Typography>
+              <Typography variant="h6">Запрос бронирования</Typography>
               <Typography variant="body2" color="text.secondary">
-                Для бронирования корзины на 24 часа необходимо указать контактные данные
+                Сутки бесплатно после подтверждения администратора. Для долгой брони
+                согласуем срок и предоплату. До решения растения удерживаются за вами.
               </Typography>
               <TextInput name="name" label="Ваше имя" formik={reservationFormik} />
               <TextInput
-                name="phone"
-                label="Ваш номер телефона"
+                name="contact"
+                label="Телефон, Telegram или VK"
                 formik={reservationFormik}
               />
               <TextInput
-                name="telegramm"
-                label="Ссылка на ваш телеграм (необязательно)"
+                name="comment"
+                label="Пожелания к бронированию"
                 formik={reservationFormik}
               />
               {!reservationAlertHidden && <Alert {...reservationAlertProps} />}
@@ -351,35 +290,6 @@ export const Cart = () => {
           <DialogActions>
             <Button onClick={() => setShowReservationForm(false)}>Отмена</Button>
             <Button {...reservationButtonProps}>Забронировать</Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-
-      <Dialog
-        open={showPrepaidReservationForm}
-        onClose={() => setShowPrepaidReservationForm(false)}
-      >
-        <form onSubmit={prepaidFormik.handleSubmit}>
-          <DialogContent>
-            <Stack spacing={2} sx={{ minWidth: { xs: 300, sm: 400 } }}>
-              <Typography variant="h6">Бронирование с предоплатой</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Администратор свяжется с вами для согласования суммы предоплаты. После
-                внесения предоплаты корзина будет забронирована на 7 дней.
-              </Typography>
-              <TextInput name="name" label="Ваше имя" formik={prepaidFormik} />
-              <TextInput name="phone" label="Ваш номер телефона" formik={prepaidFormik} />
-              <TextInput
-                name="telegramm"
-                label="Ссылка на ваш телеграм (необязательно)"
-                formik={prepaidFormik}
-              />
-              {!prepaidAlertHidden && <Alert {...prepaidAlertProps} />}
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowPrepaidReservationForm(false)}>Отмена</Button>
-            <Button {...prepaidButtonProps}>Запросить</Button>
           </DialogActions>
         </form>
       </Dialog>

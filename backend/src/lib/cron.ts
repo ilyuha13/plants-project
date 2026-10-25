@@ -4,68 +4,50 @@ import { logger } from './logger'
 
 import type { AppContext } from './ctx'
 
+export const clearExpiredAutomaticCarts = async (
+  ctx: Pick<AppContext, 'prisma'>,
+  now = new Date(),
+) => {
+  const carts = await ctx.prisma.cart.findMany({
+    where: { reservationType: 'AUTOMATIC', reservedUntil: { lt: now } },
+    select: { id: true },
+  })
+  for (const { id } of carts) {
+    await ctx.prisma.$transaction(async (tx) => {
+      // Recheck and lock: a reservation request may have arrived after the initial scan.
+      const claimed = await tx.cart.updateMany({
+        where: { id, reservationType: 'AUTOMATIC', reservedUntil: { lt: now } },
+        data: { reservedUntil: null },
+      })
+      if (!claimed.count) {
+        return
+      }
+      const items = await tx.cartItem.findMany({ where: { cartId: id } })
+      await tx.cartItem.deleteMany({ where: { cartId: id } })
+      await tx.plantInstance.updateMany({
+        where: {
+          id: { in: items.map((item) => item.plantInstanceId) },
+          status: 'IN_CART',
+          cartItems: { none: {} },
+          orderItems: { none: { order: { status: { not: 'CANCELLED' } } } },
+        },
+        data: { status: 'AVAILABLE' },
+      })
+    })
+  }
+}
+
 export const applyClearCartCronJobs = (ctx: AppContext) => {
   new CronJob(
     '*/1 * * * *',
     async () => {
-      const startTime = new Date()
-      const expiredCarts = await ctx.prisma.cart.findMany({
-        where: {
-          reservedUntil: { lt: startTime },
-        },
-        include: {
-          items: true,
-        },
-      })
-      if (!expiredCarts || expiredCarts.length === 0) {
-        return
+      try {
+        await clearExpiredAutomaticCarts(ctx)
+      } catch (error) {
+        logger.error('cleanCarts', 'Ошибка очистки часовых корзин', {
+          error: String(error),
+        })
       }
-      let successCount = 0
-      let errorCount = 0
-      for (const cart of expiredCarts) {
-        const plantInstanceIds = cart.items.map((item) => item.plantInstanceId)
-        try {
-          await ctx.prisma.plantInstance.updateMany({
-            where: {
-              id: {
-                in: plantInstanceIds,
-              },
-            },
-            data: {
-              status: 'AVAILABLE',
-            },
-          })
-          await ctx.prisma.$transaction(async (tx) => {
-            await tx.cartItem.deleteMany({
-              where: { cartId: cart.id },
-            })
-            await tx.cart.update({
-              where: {
-                id: cart.id,
-              },
-              data: {
-                reservationType: 'AUTOMATIC',
-                reservedUntil: null,
-              },
-            })
-          })
-        } catch (error) {
-          errorCount++
-          logger.error('cleanCarts', 'Ошибка при очистке истекшей корзины', {
-            cartId: cart.id,
-            error: String(error),
-          })
-          continue
-        }
-
-        successCount++
-      }
-
-      logger.info('cleanCarts', 'Очистка истекших корзин выполнена', {
-        successCount,
-        errorCount,
-        totalCount: expiredCarts.length,
-      })
     },
     null,
     true,

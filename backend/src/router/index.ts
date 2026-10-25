@@ -16,7 +16,6 @@ import { checkoutTrpcRoute } from './cart/checkout'
 import { getCartTrpcRoute } from './cart/getCart'
 import { removeFromCartTrpcRoute } from './cart/removeFromCart'
 import { confirmOrderTrpcRoute } from './confirmOrder'
-import { confirmPrepaidPaymentTrpcRoute } from './confirmPrepaidPayment'
 import { deleteGenusTrpcRoute } from './deleteGenus'
 import { deleteLifeFormTrpcRoute } from './deleteLifeForm'
 import { deletePlantTrpcRoute } from './deletePlant'
@@ -43,10 +42,13 @@ import { getPlantsTrpcRoute } from './getPlants'
 import { getUploadSignatureTrpcRoute } from './getUploadSignature'
 import { getVariegationTrpcRoute } from './getVariegation'
 import { getVariegationByIdTrpcRoute } from './getVariegationById'
-import { rejectReservationRequestTrpcRoute } from './rejectReservationRequest'
 import { requestPasswordResetTrpcRoute } from './requestPasswordReset'
-import { requestReservationNoPrepaidTrpcRoute } from './requestReservationNoPrepaid'
-import { requestReservationPrepaidTrpcRoute } from './requestReservationPrepaid'
+import {
+  requestReservationTrpcRoute,
+  getReservationsTrpcRoute,
+  confirmReservationTrpcRoute,
+  releaseReservationTrpcRoute,
+} from './reservations'
 import { resetPasswordWithTokenTrpcRoute } from './resetPasswordWithToken'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
@@ -54,6 +56,10 @@ import { signUpTrpcRoute } from './signUp'
 import { createTrpcRouter } from '../lib/trpc'
 
 export const trpcRouter = createTrpcRouter({
+  requestReservation: requestReservationTrpcRoute,
+  getReservations: getReservationsTrpcRoute,
+  confirmReservation: confirmReservationTrpcRoute,
+  releaseReservation: releaseReservationTrpcRoute,
   //@index('./**/index.ts', f => `${f.path.split('/').slice(0, -1).pop()}: ${f.path.split('/').slice(0, -1).pop()}TrpcRoute,`)
   addGenus: addGenusTrpcRoute,
   addLifeForm: addLifeFormTrpcRoute,
@@ -70,7 +76,6 @@ export const trpcRouter = createTrpcRouter({
   getCart: getCartTrpcRoute,
   removeFromCart: removeFromCartTrpcRoute,
   confirmOrder: confirmOrderTrpcRoute,
-  confirmPrepaidPayment: confirmPrepaidPaymentTrpcRoute,
   deleteGenus: deleteGenusTrpcRoute,
   deleteLifeForm: deleteLifeFormTrpcRoute,
   deletePlant: deletePlantTrpcRoute,
@@ -97,10 +102,7 @@ export const trpcRouter = createTrpcRouter({
   getUploadSignature: getUploadSignatureTrpcRoute,
   getVariegation: getVariegationTrpcRoute,
   getVariegationById: getVariegationByIdTrpcRoute,
-  rejectReservationRequest: rejectReservationRequestTrpcRoute,
   requestPasswordReset: requestPasswordResetTrpcRoute,
-  requestReservationNoPrepaid: requestReservationNoPrepaidTrpcRoute,
-  requestReservationPrepaid: requestReservationPrepaidTrpcRoute,
   resetPasswordWithToken: resetPasswordWithTokenTrpcRoute,
   signIn: signInTrpcRoute,
   signUp: signUpTrpcRoute,

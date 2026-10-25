@@ -2,6 +2,7 @@ import { Box, Button, Paper, Stack } from '@mui/material'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import { OrdersMenagement } from '../../components/OrdersMenagement/OrdersMenagement'
+import { ReservationsManagement } from '../../components/ReservationsManagement/ReservationsManagement'
 import { UsersManagement } from '../../components/UsersManagement/UsersManagement'
 import {
   getAddGenusPageRoute,
@@ -88,6 +89,7 @@ export const AdminPage = () => {
           </Button>
         </Stack>
 
+        <ReservationsManagement />
         <UsersManagement />
         {ordersMenagementData && (
           <OrdersMenagement

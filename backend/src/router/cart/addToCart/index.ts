@@ -28,6 +28,12 @@ export const addToCartTrpcRoute = protectedProcedure
     }
 
     return prisma.$transaction(async (tx) => {
+      const cart = await tx.cart.upsert({
+        where: { userId: ctx.me.id },
+        create: { userId: ctx.me.id },
+        update: { updatedAt: new Date() },
+      })
+
       const reserved = await tx.plantInstance.updateMany({
         where: {
           id: input.plantInstanceId,
@@ -45,22 +51,6 @@ export const addToCartTrpcRoute = protectedProcedure
         })
       }
 
-      const userId = ctx.me?.id
-
-      let cart = await tx.cart.findUnique({
-        where: {
-          userId,
-        },
-      })
-
-      if (!cart) {
-        cart = await tx.cart.create({
-          data: {
-            userId,
-          },
-        })
-      }
-
       await tx.cartItem.create({
         data: {
           cartId: cart.id,
@@ -71,11 +61,7 @@ export const addToCartTrpcRoute = protectedProcedure
       const now = new Date()
       const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
 
-      if (
-        cart.reservationType === 'AUTOMATIC' ||
-        !cart.reservedUntil ||
-        cart.reservedUntil < oneHourLater
-      ) {
+      if (cart.reservationType === 'AUTOMATIC') {
         await tx.cart.update({
           where: {
             id: cart.id,

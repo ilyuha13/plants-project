@@ -8,52 +8,29 @@ import { protectedProcedure } from '../../../lib/trpc'
 export const checkoutTrpcRoute = protectedProcedure
   .input(checkoutInput)
   .mutation(async ({ ctx, input }) => {
-    const prisma = ctx.prisma
-    const cart = await prisma.cart.findUnique({
-      where: { userId: ctx.me.id },
-      include: { items: { include: { plantInstance: { include: { plant: true } } } } },
-    })
-    if (!cart || cart.items.length === 0) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Корзина пуста',
-      })
-    }
-    const plantInstanceIds = cart.items.map((item) => item.plantInstanceId)
-    if (cart.reservedUntil && cart.reservedUntil < new Date()) {
-      await prisma.plantInstance.updateMany({
-        where: {
-          id: {
-            in: plantInstanceIds,
-          },
-        },
-        data: {
-          status: 'AVAILABLE',
-        },
-      })
-      await prisma.cartItem.deleteMany({
-        where: {
-          cartId: cart.id,
-        },
-      })
-
-      await prisma.cart.update({
-        where: {
-          id: cart.id,
-        },
-        data: {
-          reservationType: 'AUTOMATIC',
-          reservedUntil: null,
-        },
-      })
-
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Срок резервации корзины истек',
-      })
-    }
-
     const result = await ctx.prisma.$transaction(async (tx) => {
+      await tx.cart.updateMany({
+        where: { userId: ctx.me.id },
+        data: { updatedAt: new Date() },
+      })
+      const cart = await tx.cart.findUnique({
+        where: { userId: ctx.me.id },
+        include: { items: { include: { plantInstance: { include: { plant: true } } } } },
+      })
+      if (!cart || cart.items.length === 0) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Корзина пуста' })
+      }
+      if (
+        cart.reservationType === 'AUTOMATIC' &&
+        cart.reservedUntil &&
+        cart.reservedUntil < new Date()
+      ) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Срок резервации корзины истек',
+        })
+      }
+      const plantInstanceIds = cart.items.map((item) => item.plantInstanceId)
       const soldInstances = await tx.plantInstance.updateMany({
         where: {
           id: {
@@ -109,14 +86,21 @@ export const checkoutTrpcRoute = protectedProcedure
           reservedUntil: null,
           prepaidAmount: null,
           requestedAt: null,
+          reviewAt: null,
+          customerName: null,
+          customerContact: null,
+          customerComment: null,
+          adminComment: null,
         },
       })
       return {
         order,
+        cart,
         total,
         prepaidAmount: cart.prepaidAmount,
       }
     })
+    const { cart } = result
     const orderMessage = formatCheckoutOrderMessage({
       orderId: result.order.id,
       customerName: input.contactInfo.name,
