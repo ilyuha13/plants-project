@@ -14,7 +14,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Включаем pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.7.0 --activate
 
 # ============================================
 # ОПТИМИЗАЦИЯ: Копируем только package.json файлы СНАЧАЛА
@@ -77,7 +77,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Включаем pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.7.0 --activate
 
 # Копируем workspace конфиги (нужны для pnpm workspace)
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
