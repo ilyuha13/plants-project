@@ -24,3 +24,5 @@ SCHEMA_PROPOSAL.prisma
 SCHEMA_FINAL.prisma
 REQUIREMENTS.md
 CAREER_PLAN.md
+# Local integration test credentials
+.env.test
