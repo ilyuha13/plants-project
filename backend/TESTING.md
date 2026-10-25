@@ -78,3 +78,8 @@ pnpm types
 pnpm lint
 pnpm --filter @plants-project/backend test:run
 ```
+
+Production-сборка `pnpm --filter @plants-project/backend build` очищает старый
+`backend/dist` и использует `tsconfig.build.json`, исключающий тесты и их helpers.
+Общая проверка `pnpm types` по-прежнему проверяет типы тестов.
+Docker также исключает тестовые исходники через `.dockerignore`.
