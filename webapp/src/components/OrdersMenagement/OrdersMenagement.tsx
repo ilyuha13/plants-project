@@ -1,4 +1,8 @@
 import {
+  Alert,
+  Box,
+  Button,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -6,81 +10,100 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
+  Typography,
 } from '@mui/material'
+import { deliveryLabel } from '@plants-project/backend/src/lib/deliveryOptions'
+import {
+  orderStatuses,
+  orderStatusLabel,
+} from '@plants-project/backend/src/lib/orderProcessing'
+import { useState } from 'react'
 
-interface OrderTable {
-  id: string
-  customerName: string
-  status:
-    | 'PENDING'
-    | 'AWAITING_PAYMENT'
-    | 'CANCELLED'
-    | 'COLLECTING'
-    | 'PACKED'
-    | 'SHIPPED'
-    | 'DELIVERED'
-  createdAt: Date
-}
+import { trpc } from '../../lib/trpc'
 
+type Filter = 'ACTIVE' | 'ALL' | (typeof orderStatuses)[number]
 export const OrdersMenagement = ({
-  orders,
   navigateToOrder,
 }: {
-  navigateToOrder: (orderId: string) => void
-  orders: OrderTable[]
+  navigateToOrder: (id: string) => void
 }) => {
+  const [filter, setFilter] = useState<Filter>('ACTIVE')
+  const { data, error, isLoading } = trpc.getOrders.useQuery(
+    { filter },
+    { refetchInterval: 60000 },
+  )
   return (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Дата создания</TableCell>
-            <TableCell>Имя покупателя</TableCell>
-            <TableCell>Статус заказа</TableCell>
-            <TableCell align="right">Действия</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow
-              component={'tr'}
-              key={order.id}
-              hover
-              sx={{ cursor: 'pointer' }}
-              onClick={() => navigateToOrder(order.id)}
-            >
-              <TableCell>
-                {order.createdAt.toLocaleDateString('ru-RU', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                })}
-              </TableCell>
-              <TableCell>{order.customerName}</TableCell>
-              <TableCell>{order.status}</TableCell>
-              <TableCell align="right">
-                что то
-                {/* <IconButton
-                  size="small"
-                  color="primary"
-                  onClick={() => handleGenerateResetLinkClick(user.id, user.nick)}
-                  title="Сгенерировать ссылку для сброса пароля"
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h5">Заказы</Typography>
+      <TextField
+        select
+        label="Показать"
+        value={filter}
+        onChange={(event) => setFilter(event.target.value as Filter)}
+        sx={{ my: 2, minWidth: 260 }}
+      >
+        <MenuItem value="ACTIVE">В работе</MenuItem>
+        {orderStatuses.map((status) => (
+          <MenuItem key={status} value={status}>
+            {orderStatusLabel[status]}
+          </MenuItem>
+        ))}
+        <MenuItem value="ALL">Все заказы</MenuItem>
+      </TextField>
+      {isLoading && <Typography>Загрузка заказов…</Typography>}
+      {error && <Alert severity="error">{error.message}</Alert>}
+      {data && (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Дата</TableCell>
+                <TableCell>Покупатель</TableCell>
+                <TableCell>Статус</TableCell>
+                <TableCell>Доставка</TableCell>
+                <TableCell>Трек-номер</TableCell>
+                <TableCell>Сумма</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {!data.orders.length && (
+                <TableRow>
+                  <TableCell colSpan={7}>Заказов в этом списке нет.</TableCell>
+                </TableRow>
+              )}
+              {data.orders.map((order) => (
+                <TableRow
+                  key={order.id}
+                  hover
+                  onClick={() => navigateToOrder(order.id)}
+                  sx={{ cursor: 'pointer' }}
                 >
-                  <KeyIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  color="error"
-                  onClick={() => handleDeleteClick(user.id, user.nick)}
-                  title="Удалить пользователя"
-                >
-                  <DeleteIcon />
-                </IconButton> */}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                  <TableCell>
+                    {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+                  </TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>{orderStatusLabel[order.status]}</TableCell>
+                  <TableCell>{deliveryLabel(order.deliveryType)}</TableCell>
+                  <TableCell>{order.trackingNumber || '—'}</TableCell>
+                  <TableCell>{String(order.totalAmount)} ₽</TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        navigateToOrder(order.id)
+                      }}
+                    >
+                      Открыть
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Box>
   )
 }

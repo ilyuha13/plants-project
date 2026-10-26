@@ -10,6 +10,7 @@ import { deleteUserTrpcRoute } from './admin/deleteUser'
 import { generatePasswordResetTokenTrpcRoute } from './admin/generatePasswordResetToken'
 import { getAllUsersTrpcRoute } from './admin/getAllUsers'
 import { resetUserPasswordTrpcRoute } from './admin/resetUserPassword'
+import { advanceOrderTrpcRoute } from './advanceOrder'
 import { cancelOrderTrpcRoute } from './cancelOrder'
 import { addToCartTrpcRoute } from './cart/addToCart'
 import { checkoutTrpcRoute } from './cart/checkout'
@@ -57,6 +58,7 @@ import { signUpTrpcRoute } from './signUp'
 import { createTrpcRouter } from '../lib/trpc'
 
 export const trpcRouter = createTrpcRouter({
+  advanceOrder: advanceOrderTrpcRoute,
   createPaidOrder: createPaidOrderTrpcRoute,
   getMyOrders: getMyOrdersTrpcRoute,
   requestReservation: requestReservationTrpcRoute,

@@ -22,6 +22,7 @@ import {
   deliveryNeedsRecipient,
   deliveryNeedsPickupPoint,
 } from '@plants-project/backend/src/lib/deliveryOptions'
+import { orderStatusLabel } from '@plants-project/backend/src/lib/orderProcessing'
 import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
 import { requestReservationInput } from '@plants-project/backend/src/router/reservations/input'
 import { useState } from 'react'
@@ -158,7 +159,7 @@ export const Cart = () => {
                 fullWidth
               >
                 {new Date(order.createdAt).toLocaleDateString('ru-RU')} ·{' '}
-                {String(order.totalAmount)} ₽ · {order.status}
+                {String(order.totalAmount)} ₽ · {orderStatusLabel[order.status]}
               </Button>
             ))}
           </Box>

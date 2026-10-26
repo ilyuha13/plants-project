@@ -17,30 +17,23 @@ import {
   Typography,
 } from '@mui/material'
 import { deliveryLabel } from '@plants-project/backend/src/lib/deliveryOptions'
+import { orderStatusLabel } from '@plants-project/backend/src/lib/orderProcessing'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { OrderProcessing } from '../../components/OrderProcessing/OrderProcessing'
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
 import { OrderDetailRouteParams } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
-const statuses: Record<string, string> = {
-  PENDING: 'Старая заявка',
-  AWAITING_PAYMENT: 'Ожидает оплаты',
-  COLLECTING: 'Сборка',
-  PACKED: 'Упакован',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Завершён',
-  CANCELLED: 'Отменён',
-}
 export const OrderDetailPage = () => {
   const isAdmin = useMe()?.role === 'ADMIN'
   const [photo, setPhoto] = useState<{ id: string; name: string } | null>(null)
   const { orderId } = useParams() as OrderDetailRouteParams
   const { data, isError, isLoading, error } = trpc.getOrder.useQuery(
     { orderId },
-    { enabled: !!orderId },
+    { enabled: !!orderId, refetchInterval: 60000 },
   )
   if (isError) {
     return <Alert severity="error">{error.message}</Alert>
@@ -59,8 +52,33 @@ export const OrderDetailPage = () => {
         <Stack spacing={2}>
           <Typography variant="h5">Заказ №{order.id}</Typography>
           <Typography>
-            {new Date(order.createdAt).toLocaleString('ru-RU')} · {statuses[order.status]}
+            {new Date(order.createdAt).toLocaleString('ru-RU')} ·{' '}
+            {orderStatusLabel[order.status]}
           </Typography>
+          {isAdmin && <OrderProcessing order={order} />}
+          {order.packedAt && (
+            <Typography>
+              Упакован: {new Date(order.packedAt).toLocaleString('ru-RU')}
+            </Typography>
+          )}
+          {order.shippedAt && (
+            <Typography>
+              Отправлен: {new Date(order.shippedAt).toLocaleString('ru-RU')}
+            </Typography>
+          )}
+          {order.trackingNumber && (
+            <Typography>
+              Трек-номер:{' '}
+              <Box component="span" sx={{ userSelect: 'all', fontWeight: 'bold' }}>
+                {order.trackingNumber}
+              </Box>
+            </Typography>
+          )}
+          {order.deliveredAt && (
+            <Typography>
+              Завершён: {new Date(order.deliveredAt).toLocaleString('ru-RU')}
+            </Typography>
+          )}
           <Typography>Покупатель: {order.customerName}</Typography>
           <Typography>Контакт: {order.customerContact || order.customerPhone}</Typography>
           {order.customerPhone &&

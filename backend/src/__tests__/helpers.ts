@@ -4,6 +4,7 @@ import { type PlantStatus, type Role, type User, type OrderStatus } from '@prism
 
 import { createPrismaClient } from '../lib/prisma'
 import { createTrpcRouter } from '../lib/trpc'
+import { advanceOrderTrpcRoute } from '../router/advanceOrder'
 import { cancelOrderTrpcRoute } from '../router/cancelOrder'
 import { addToCartTrpcRoute } from '../router/cart/addToCart'
 import { checkoutTrpcRoute } from '../router/cart/checkout'
@@ -12,6 +13,7 @@ import { removeFromCartTrpcRoute } from '../router/cart/removeFromCart'
 import { deletePlantInstanceTrpcRoute } from '../router/deletePlantInstance'
 import { getAllInstancesTrpcRoute } from '../router/getAllInstances'
 import { getOrderTrpcRoute } from '../router/getOrder'
+import { getOrdersTrpcRoute } from '../router/getOrders'
 import { getPlantTrpcRoute } from '../router/getPlant'
 import { getPlantInstanceTrpcRoute } from '../router/getPlantInstance'
 import { getPlantInstancesTrpcRoute } from '../router/getPlantInstances'
@@ -25,6 +27,8 @@ import {
 
 export const prisma = createPrismaClient()
 const router = createTrpcRouter({
+  advanceOrder: advanceOrderTrpcRoute,
+  getOrders: getOrdersTrpcRoute,
   getPlant: getPlantTrpcRoute,
   getPlantInstance: getPlantInstanceTrpcRoute,
   getPlantInstances: getPlantInstancesTrpcRoute,

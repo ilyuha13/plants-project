@@ -225,6 +225,10 @@ model Order {
     paidAmount Decimal?
     prepaidAmount Decimal?
     sourceCartId String?
+    trackingNumber String?
+    packedAt DateTime?
+    shippedAt DateTime?
+    deliveredAt DateTime?
     customerContact String?
     deliveryType DeliveryType?
     deliveryCost Decimal?

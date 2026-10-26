@@ -12,27 +12,9 @@ import {
   getAddVariegationPageRoute,
   getOrderDetailRoute,
 } from '../../lib/routes'
-import { trpc } from '../../lib/trpc'
 
 export const AdminPage = () => {
-  const { data, isLoading, isError } = trpc.getOrders.useQuery()
-
   const navigate = useNavigate()
-
-  if (isError) {
-    return <Box>error</Box>
-  }
-  if (isLoading) {
-    return <Box>...loading</Box>
-  }
-
-  const orders = data?.orders
-  const ordersMenagementData = orders?.map((order) => ({
-    id: order.id,
-    customerName: order.customerName,
-    status: order.status,
-    createdAt: order.createdAt,
-  }))
 
   const navigateToOrder = (orderId: string) => {
     void navigate(getOrderDetailRoute({ orderId: orderId }))
@@ -91,12 +73,7 @@ export const AdminPage = () => {
 
         <ReservationsManagement />
         <UsersManagement />
-        {ordersMenagementData && (
-          <OrdersMenagement
-            navigateToOrder={navigateToOrder}
-            orders={ordersMenagementData}
-          />
-        )}
+        <OrdersMenagement navigateToOrder={navigateToOrder} />
       </Paper>
     </Box>
   )
