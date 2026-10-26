@@ -14,9 +14,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { deliveryLabel } from '@plants-project/backend/src/lib/deliveryOptions'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { getOrderDetailRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
+import { PaidOrderDialog } from '../PaidOrderDialog/PaidOrderDialog'
 
 import type { TrpcRouterOutput } from '@plants-project/backend/src/router'
 
@@ -31,6 +35,8 @@ export const ReservationsManagement = () => {
     refetchInterval: 60000,
   })
   const utils = trpc.useUtils()
+  const navigate = useNavigate()
+  const [paidCart, setPaidCart] = useState<Reservation | null>(null)
   const confirm = trpc.confirmReservation.useMutation()
   const release = trpc.releaseReservation.useMutation()
   const [filter, setFilter] = useState('requests')
@@ -120,9 +126,11 @@ export const ReservationsManagement = () => {
       filter === 'all' ||
       (filter === 'requests'
         ? cart.reservationType === 'RESERVED_PREPAID_REQUEST'
-        : filter === 'attention'
-          ? due(cart)
-          : cart.reservationType !== 'RESERVED_PREPAID_REQUEST'),
+        : filter === 'purchase'
+          ? !!cart.purchaseRequestedAt
+          : filter === 'attention'
+            ? due(cart)
+            : cart.reservationType !== 'RESERVED_PREPAID_REQUEST'),
   )
 
   return (
@@ -136,6 +144,9 @@ export const ReservationsManagement = () => {
         sx={{ my: 2, minWidth: 260 }}
       >
         <MenuItem value="requests">Новые запросы ({requests.length})</MenuItem>
+        <MenuItem value="purchase">
+          Заявки на покупку ({carts.filter((cart) => cart.purchaseRequestedAt).length})
+        </MenuItem>
         <MenuItem value="attention">Требуют внимания ({attention.length})</MenuItem>
         <MenuItem value="confirmed">Подтверждённые</MenuItem>
         <MenuItem value="all">Все</MenuItem>
@@ -163,7 +174,18 @@ export const ReservationsManagement = () => {
                     ? new Date(cart.requestedAt).toLocaleString('ru-RU')
                     : 'старая бронь'}
                 </Typography>
+                {cart.purchaseRequestedAt && (
+                  <Alert severity="info">
+                    Заявка на покупку от{' '}
+                    {new Date(cart.purchaseRequestedAt).toLocaleString('ru-RU')}
+                  </Alert>
+                )}
                 <Typography>{cart.customerComment}</Typography>
+                <Typography>
+                  Доставка: {deliveryLabel(cart.deliveryType)} ·{' '}
+                  {cart.pickupPoint || cart.deliveryAddress || ''}
+                </Typography>
+                {cart.deliveryNotes && <Typography>{cart.deliveryNotes}</Typography>}
                 <Typography>
                   {cart.reservationType === 'RESERVED_PREPAID_REQUEST'
                     ? 'Ожидает решения'
@@ -218,6 +240,9 @@ export const ReservationsManagement = () => {
                     {cart.reservationType === 'RESERVED_PREPAID_REQUEST'
                       ? 'Подтвердить'
                       : 'Изменить условия'}
+                  </Button>
+                  <Button disabled={!cart.items.length} onClick={() => setPaidCart(cart)}>
+                    Создать оплаченный заказ
                   </Button>
                   <Button color="error" onClick={() => open(cart, 'release')}>
                     Отклонить / освободить
@@ -329,6 +354,21 @@ export const ReservationsManagement = () => {
           </DialogActions>
         </form>
       </Dialog>
+      {paidCart && (
+        <PaidOrderDialog
+          cart={paidCart}
+          onClose={() => setPaidCart(null)}
+          onCreated={async (orderId) => {
+            setPaidCart(null)
+            await Promise.all([
+              refresh(),
+              utils.getOrders.invalidate(),
+              utils.getMyOrders.invalidate(),
+            ])
+            void navigate(getOrderDetailRoute({ orderId }))
+          }}
+        />
+      )}
     </Box>
   )
 }

@@ -1,127 +1,67 @@
 import { TRPCError } from '@trpc/server'
 
 import { checkoutInput } from './input'
-import { logger } from '../../../lib/logger'
-import { formatCheckoutOrderMessage, sendTelegramMessage } from '../../../lib/telegram'
+import {
+  deliveryNeedsAddress,
+  deliveryNeedsPickupPoint,
+} from '../../../lib/deliveryOptions'
+import { sendTelegramMessage } from '../../../lib/telegram'
 import { protectedProcedure } from '../../../lib/trpc'
 
 export const checkoutTrpcRoute = protectedProcedure
   .input(checkoutInput)
   .mutation(async ({ ctx, input }) => {
-    const result = await ctx.prisma.$transaction(async (tx) => {
+    await ctx.prisma.$transaction(async (tx) => {
       await tx.cart.updateMany({
         where: { userId: ctx.me.id },
         data: { updatedAt: new Date() },
       })
       const cart = await tx.cart.findUnique({
         where: { userId: ctx.me.id },
-        include: { items: { include: { plantInstance: { include: { plant: true } } } } },
+        include: { items: true },
       })
-      if (!cart || cart.items.length === 0) {
+      if (!cart?.items.length) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Корзина пуста' })
+      }
+      if (cart.purchaseRequestedAt) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Заявка на покупку уже отправлена',
+        })
       }
       if (
         cart.reservationType === 'AUTOMATIC' &&
         cart.reservedUntil &&
         cart.reservedUntil < new Date()
       ) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Срок резервации корзины истек',
-        })
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Срок автоброни истёк' })
       }
-      const plantInstanceIds = cart.items.map((item) => item.plantInstanceId)
-      const soldInstances = await tx.plantInstance.updateMany({
-        where: {
-          id: {
-            in: plantInstanceIds,
-          },
-          status: 'IN_CART',
-        },
-        data: {
-          status: 'SOLD',
-        },
-      })
-
-      if (soldInstances.count !== plantInstanceIds.length) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Некоторые экземпляры уже недоступны для оформления',
-        })
-      }
-
-      const total = cart.items.reduce(
-        (sum, item) => sum + Number(item.plantInstance.price),
-        0,
-      )
-
-      const order = await tx.order.create({
-        data: {
-          userId: ctx.me.id,
-          customerName: input.contactInfo.name,
-          totalAmount: total.toString(),
-          customerPhone: input.contactInfo.phone,
-          items: {
-            createMany: {
-              data: cart.items.map((item) => ({
-                plantInstanceId: item.plantInstanceId,
-              })),
-            },
-          },
-        },
-      })
-
-      await tx.cartItem.deleteMany({
-        where: {
-          cartId: cart.id,
-        },
-      })
-
       await tx.cart.update({
-        where: {
-          id: cart.id,
-        },
+        where: { id: cart.id },
         data: {
-          reservationType: 'AUTOMATIC',
-          reservedUntil: null,
-          prepaidAmount: null,
-          requestedAt: null,
-          reviewAt: null,
-          customerName: null,
-          customerContact: null,
-          customerComment: null,
-          adminComment: null,
+          purchaseRequestedAt: new Date(),
+          requestedAt: cart.requestedAt || new Date(),
+          reservationType:
+            cart.reservationType === 'AUTOMATIC'
+              ? 'RESERVED_PREPAID_REQUEST'
+              : cart.reservationType,
+          reservedUntil: cart.reservationType === 'AUTOMATIC' ? null : cart.reservedUntil,
+          customerName: input.contactInfo.name,
+          customerContact: input.contactInfo.telegram || input.contactInfo.phone,
+          customerPhone: input.contactInfo.phone,
+          deliveryType: input.deliveryType,
+          deliveryAddress: deliveryNeedsAddress(input.deliveryType)
+            ? input.deliveryAddress
+            : '',
+          pickupPoint: deliveryNeedsPickupPoint(input.deliveryType)
+            ? input.pickupPoint
+            : '',
+          deliveryNotes: input.deliveryNotes,
         },
       })
-      return {
-        order,
-        cart,
-        total,
-        prepaidAmount: cart.prepaidAmount,
-      }
     })
-    const { cart } = result
-    const orderMessage = formatCheckoutOrderMessage({
-      orderId: result.order.id,
-      customerName: input.contactInfo.name,
-      customerPhone: input.contactInfo.phone,
-      customerTelegram: input.contactInfo.telegram,
-      items: cart.items.map((item) => ({
-        name: item.plantInstance.plant.name,
-        price: String(item.plantInstance.price),
-      })),
-      total: result.total,
-      prepaidAmount: result.prepaidAmount ? Number(result.prepaidAmount) : undefined,
-    })
-    const telegramSend = await sendTelegramMessage(orderMessage)
-
-    if (!telegramSend) {
-      logger.info(
-        'telegramm',
-        `не отправлено уведомление о заказе ${result.order.id} в телеграм`,
-      )
-    } else {
-      logger.info('telegramm', `отправлено уведомление о заказе `, { orderMessage })
-    }
-    return { orderId: result.order.id }
+    await sendTelegramMessage(
+      'Новая заявка на покупку. Согласуйте состав, доставку и оплату в разделе «Бронирования» в админке.',
+    )
+    return { success: true }
   })

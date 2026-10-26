@@ -10,6 +10,12 @@ import { checkoutTrpcRoute } from '../router/cart/checkout'
 import { getCartTrpcRoute } from '../router/cart/getCart'
 import { removeFromCartTrpcRoute } from '../router/cart/removeFromCart'
 import { deletePlantInstanceTrpcRoute } from '../router/deletePlantInstance'
+import { getAllInstancesTrpcRoute } from '../router/getAllInstances'
+import { getOrderTrpcRoute } from '../router/getOrder'
+import { getPlantTrpcRoute } from '../router/getPlant'
+import { getPlantInstanceTrpcRoute } from '../router/getPlantInstance'
+import { getPlantInstancesTrpcRoute } from '../router/getPlantInstances'
+import { createPaidOrderTrpcRoute, getMyOrdersTrpcRoute } from '../router/paidOrders'
 import {
   requestReservationTrpcRoute,
   confirmReservationTrpcRoute,
@@ -19,6 +25,14 @@ import {
 
 export const prisma = createPrismaClient()
 const router = createTrpcRouter({
+  getPlant: getPlantTrpcRoute,
+  getPlantInstance: getPlantInstanceTrpcRoute,
+  getPlantInstances: getPlantInstancesTrpcRoute,
+  getAllInstances: getAllInstancesTrpcRoute,
+
+  createPaidOrder: createPaidOrderTrpcRoute,
+  getMyOrders: getMyOrdersTrpcRoute,
+  getOrder: getOrderTrpcRoute,
   requestReservation: requestReservationTrpcRoute,
   confirmReservation: confirmReservationTrpcRoute,
   releaseReservation: releaseReservationTrpcRoute,

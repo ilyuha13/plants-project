@@ -7,6 +7,7 @@ export const getPendingReservationRequestsTrpcRoute = adminProcedure.query(
       where: {
         OR: [
           { reservationType: 'RESERVED_PREPAID_REQUEST' },
+          { purchaseRequestedAt: { not: null } },
           {
             reservationType: 'RESERVED_PREPAID_CONFIRMED',
             OR: [{ reviewAt: { lte: now } }, { reservedUntil: { lte: now } }],

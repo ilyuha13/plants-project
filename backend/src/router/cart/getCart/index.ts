@@ -1,3 +1,4 @@
+import { withInventoryVisibility } from '../../../lib/inventoryVisibility'
 import { protectedProcedure } from '../../../lib/trpc'
 
 export const getCartTrpcRoute = protectedProcedure.query(async ({ ctx }) => {
@@ -12,4 +13,15 @@ export const getCartTrpcRoute = protectedProcedure.query(async ({ ctx }) => {
     },
   })
   return cart
+    ? {
+        ...cart,
+        items: cart.items.map((item) => ({
+          ...item,
+          plantInstance: withInventoryVisibility(
+            item.plantInstance,
+            ctx.me.role === 'ADMIN',
+          ),
+        })),
+      }
+    : null
 })

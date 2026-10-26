@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 
 import { zGetPlantTrpcInput } from './input'
+import { withInventoryVisibility } from '../../lib/inventoryVisibility'
 import { publicProcedure } from '../../lib/trpc'
 
 export const getPlantTrpcRoute = publicProcedure
@@ -25,5 +26,12 @@ export const getPlantTrpcRoute = publicProcedure
       })
     }
 
-    return { plant }
+    return {
+      plant: {
+        ...plant,
+        plantInstances: plant.plantInstances.map((instance) =>
+          withInventoryVisibility(instance, isAdmin),
+        ),
+      },
+    }
   })

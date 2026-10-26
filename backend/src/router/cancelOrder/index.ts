@@ -18,6 +18,14 @@ export const cancelOrderTrpcRoute = adminProcedure
       })
     }
 
+    if (order.paidAmount !== null) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message:
+          'Для оплаченного заказа требуется отдельное оформление отмены и возврата',
+      })
+    }
+
     if (order.status === 'CANCELLED') {
       throw new TRPCError({
         code: 'BAD_REQUEST',

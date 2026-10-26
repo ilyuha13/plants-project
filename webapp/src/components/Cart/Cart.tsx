@@ -11,20 +11,32 @@ import {
   Divider,
   Drawer,
   IconButton,
+  MenuItem,
+  TextField,
   Stack,
   Typography,
 } from '@mui/material'
+import {
+  deliveryOptions,
+  deliveryNeedsAddress,
+  deliveryNeedsRecipient,
+  deliveryNeedsPickupPoint,
+} from '@plants-project/backend/src/lib/deliveryOptions'
 import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
 import { requestReservationInput } from '@plants-project/backend/src/router/reservations/input'
 import { useState } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
+import { getOrderDetailRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 import { useCartStore } from '../../stores/cartStore'
 import { CartItem } from '../CartItem/CartItem'
 import { TextInput } from '../TextInput/TextInput'
+
+import type { DeliveryCode } from '@plants-project/backend/src/lib/deliveryOptions'
 
 export const Cart = () => {
   const items = useCartStore((state) => state.items)
@@ -36,6 +48,9 @@ export const Cart = () => {
   const [showReservationForm, setShowReservationForm] = useState(false)
   const utils = trpc.useUtils()
   const checkout = trpc.checkout.useMutation()
+  const { data: myOrders } = trpc.getMyOrders.useQuery(undefined, {
+    enabled: !!me && isOpen,
+  })
   const requestReservation = trpc.requestReservation.useMutation()
 
   const { data: cartData } = trpc.getCart.useQuery(undefined, {
@@ -48,6 +63,10 @@ export const Cart = () => {
     alertOptions: { hidden: alertHidden, ...alertProps },
   } = useForm({
     initialValues: {
+      deliveryType: null as DeliveryCode | null,
+      deliveryAddress: '',
+      pickupPoint: '',
+      deliveryNotes: '',
       contactInfo: {
         name: '',
         phone: '',
@@ -62,7 +81,6 @@ export const Cart = () => {
       await utils.getPlants.invalidate()
 
       setShowCheckoutForm(false)
-      closeCart()
 
       formik.resetForm()
     },
@@ -120,6 +138,31 @@ export const Cart = () => {
         </Box>
 
         <Divider />
+        {cartData?.purchaseRequestedAt && (
+          <Box sx={{ p: 2 }}>
+            <Alert severity="success">
+              Заявка на покупку отправлена. Растения удерживаются; администратор согласует
+              состав, доставку и оплату. Заказ появится после подтверждения полной оплаты.
+            </Alert>
+          </Box>
+        )}
+        {!!myOrders?.orders.length && (
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6">Мои заказы</Typography>
+            {myOrders.orders.map((order) => (
+              <Button
+                key={order.id}
+                component={RouterLink}
+                to={getOrderDetailRoute({ orderId: order.id })}
+                onClick={closeCart}
+                fullWidth
+              >
+                {new Date(order.createdAt).toLocaleDateString('ru-RU')} ·{' '}
+                {String(order.totalAmount)} ₽ · {order.status}
+              </Button>
+            ))}
+          </Box>
+        )}
 
         {cartData?.reservationType === 'AUTOMATIC' && cartData?.reservedUntil && (
           <Box sx={{ p: 2 }}>
@@ -204,11 +247,11 @@ export const Cart = () => {
               <Stack spacing={1}>
                 <Button
                   fullWidth
-                  disabled={items.length === 0}
+                  disabled={items.length === 0 || !!cartData?.purchaseRequestedAt}
                   startIcon={<TelegramIcon />}
                   onClick={() => setShowCheckoutForm(true)}
                 >
-                  Оформить заказ
+                  Оформить покупку
                 </Button>
                 {(!cartData || cartData.reservationType === 'AUTOMATIC') && (
                   <>
@@ -231,7 +274,7 @@ export const Cart = () => {
         <form onSubmit={formik.handleSubmit}>
           <DialogContent>
             <Stack spacing={2} sx={{ minWidth: { xs: 300, sm: 400 } }}>
-              <Typography variant="h6">Оформление заказа</Typography>
+              <Typography variant="h6">Заявка на покупку</Typography>
               {cartData?.prepaidAmount && Number(cartData.prepaidAmount) > 0 && (
                 <Alert severity="info">
                   <Typography variant="body2">
@@ -243,10 +286,22 @@ export const Cart = () => {
                   </Typography>
                 </Alert>
               )}
-              <TextInput name="contactInfo.name" label="Ваше имя" formik={formik} />
+              <TextInput
+                name="contactInfo.name"
+                label={
+                  deliveryNeedsRecipient(formik.values.deliveryType)
+                    ? 'ФИО получателя (отчество при наличии)'
+                    : 'Ваше имя'
+                }
+                formik={formik}
+              />
               <TextInput
                 name="contactInfo.phone"
-                label="Ваш номер телефона"
+                label={
+                  deliveryNeedsRecipient(formik.values.deliveryType)
+                    ? 'Телефон получателя (обязательно)'
+                    : 'Ваш номер телефона'
+                }
                 formik={formik}
               />
               <TextInput
@@ -254,12 +309,51 @@ export const Cart = () => {
                 label="Ссылка на ваш телеграм (необязательно)"
                 formik={formik}
               />
+              <TextField
+                select
+                label="Способ получения"
+                value={formik.values.deliveryType || ''}
+                onChange={(event) =>
+                  void formik.setFieldValue('deliveryType', event.target.value || null)
+                }
+              >
+                <MenuItem value="">Согласуем лично</MenuItem>
+                {deliveryOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {deliveryNeedsPickupPoint(formik.values.deliveryType) && (
+                <TextInput
+                  name="pickupPoint"
+                  label="Адрес ПВЗ и номер пункта (если известен)"
+                  formik={formik}
+                />
+              )}
+              {deliveryNeedsAddress(formik.values.deliveryType) && (
+                <TextInput
+                  name="deliveryAddress"
+                  label={
+                    formik.values.deliveryType === 'POST'
+                      ? 'Почтовый адрес с индексом'
+                      : 'Адрес доставки по городу'
+                  }
+                  formik={formik}
+                />
+              )}
+              <TextInput
+                name="deliveryNotes"
+                label="Пожелания к доставке"
+                formik={formik}
+              />
+              <Typography>Окончательную стоимость и оплату согласуем лично.</Typography>
               {!alertHidden && <Alert {...alertProps} />}
             </Stack>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setShowCheckoutForm(false)}>Отмена</Button>
-            <Button {...buttonProps}>Заказать</Button>
+            <Button {...buttonProps}>Отправить заявку</Button>
           </DialogActions>
         </form>
       </Dialog>

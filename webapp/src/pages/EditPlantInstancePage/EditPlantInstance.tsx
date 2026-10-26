@@ -113,7 +113,7 @@ export const EditPlantInstancePage = () => {
       id: data.instance.id,
       description: data.instance.description || '',
       imagesUrl: data.instance.imagesUrl,
-      inventoryNumber: data.instance.inventoryNumber,
+      inventoryNumber: data.instance.inventoryNumber || '',
       plantId: data.instance.plant.id,
       price: String(data.instance.price),
     })

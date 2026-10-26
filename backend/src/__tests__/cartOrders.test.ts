@@ -53,48 +53,40 @@ describe('Cart ownership', () => {
   })
 })
 
-describe('Checkout', () => {
-  it('creates exactly one order for concurrent checkout requests', async () => {
+describe('Purchase requests', () => {
+  it('submits one request without creating an order or emptying the cart', async () => {
     const user = await createUser()
     const instance = await createInstance('IN_CART')
     await createCart(user.id, instance.id)
-    const caller = callerFor(user)
     const results = await Promise.allSettled([
-      caller.checkout({ contactInfo }),
-      caller.checkout({ contactInfo }),
+      callerFor(user).checkout({ contactInfo }),
+      callerFor(user).checkout({ contactInfo }),
     ])
     expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1)
-    expect(results.filter((result) => result.status === 'rejected')).toHaveLength(1)
-    expect(await prisma.order.count()).toBe(1)
-    expect(
-      await prisma.orderItem.count({ where: { plantInstanceId: instance.id } }),
-    ).toBe(1)
-    expect(await prisma.cartItem.count()).toBe(0)
+    expect(await prisma.order.count()).toBe(0)
+    expect(await prisma.cartItem.count()).toBe(1)
+    const cart = await callerFor(user).getCart()
+    expect(cart?.purchaseRequestedAt).not.toBeNull()
+    expect(cart?.reservationType).toBe('RESERVED_PREPAID_REQUEST')
+    expect(cart?.reservedUntil).toBeNull()
     expect(
       (await prisma.plantInstance.findUniqueOrThrow({ where: { id: instance.id } }))
         .status,
-    ).toBe('SOLD')
-    await expect(caller.checkout({ contactInfo })).rejects.toMatchObject({
-      code: 'BAD_REQUEST',
-    })
-    expect(await prisma.order.count()).toBe(1)
+    ).toBe('IN_CART')
   })
 
-  it('rolls back the whole checkout if one item is no longer reserved', async () => {
+  it('rejects expired automatic carts without creating an order', async () => {
     const user = await createUser()
-    const reserved = await createInstance('IN_CART')
-    const sold = await createInstance('SOLD')
-    const cart = await createCart(user.id, reserved.id)
-    await prisma.cartItem.create({ data: { cartId: cart.id, plantInstanceId: sold.id } })
+    const instance = await createInstance('IN_CART')
+    const cart = await createCart(user.id, instance.id)
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: { reservedUntil: new Date(Date.now() - 60000) },
+    })
     await expect(callerFor(user).checkout({ contactInfo })).rejects.toMatchObject({
-      code: 'CONFLICT',
+      code: 'BAD_REQUEST',
     })
     expect(await prisma.order.count()).toBe(0)
-    expect(await prisma.cartItem.count()).toBe(2)
-    expect(
-      (await prisma.plantInstance.findUniqueOrThrow({ where: { id: reserved.id } }))
-        .status,
-    ).toBe('IN_CART')
   })
 })
 

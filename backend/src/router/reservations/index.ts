@@ -124,6 +124,7 @@ export const releaseReservationTrpcRoute = adminProcedure
           reservedUntil: null,
           reviewAt: null,
           requestedAt: null,
+          purchaseRequestedAt: null,
         },
       })
       return { success: true }

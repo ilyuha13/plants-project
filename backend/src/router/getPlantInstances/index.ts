@@ -1,3 +1,4 @@
+import { withInventoryVisibility } from '../../lib/inventoryVisibility'
 import { publicProcedure } from '../../lib/trpc'
 
 export const getPlantInstancesTrpcRoute = publicProcedure.query(async ({ ctx }) => {
@@ -17,5 +18,9 @@ export const getPlantInstancesTrpcRoute = publicProcedure.query(async ({ ctx }) 
     },
   })
 
-  return { instances }
+  return {
+    instances: instances.map((instance) =>
+      withInventoryVisibility(instance, ctx.me?.role === 'ADMIN'),
+    ),
+  }
 })

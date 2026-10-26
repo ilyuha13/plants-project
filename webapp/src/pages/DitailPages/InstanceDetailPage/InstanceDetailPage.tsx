@@ -143,7 +143,7 @@ export const InstanceDetailPage = () => {
         imagesUrl={imagesUrl}
         description={description}
         price={stringPrice}
-        inventoryNumber={isAdmin ? inventoryNumber : null}
+        inventoryNumber={isAdmin ? (inventoryNumber ?? null) : null}
         createdAt={createdAt}
         addButtonText={getAddButtonText()}
         onAddToCart={handleAddToCart}

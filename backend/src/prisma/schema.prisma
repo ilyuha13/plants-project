@@ -168,6 +168,12 @@ model Cart {
     customerComment String?
     adminComment String?
     reviewAt DateTime?
+    purchaseRequestedAt DateTime?
+    customerPhone String?
+    deliveryType DeliveryType?
+    deliveryAddress String?
+    pickupPoint String?
+    deliveryNotes String?
 
     @@index([reservationType, reviewAt])
 }
@@ -216,6 +222,14 @@ model Order {
     customerNotes String?
 
     totalAmount Decimal
+    paidAmount Decimal?
+    prepaidAmount Decimal?
+    sourceCartId String?
+    customerContact String?
+    deliveryType DeliveryType?
+    deliveryCost Decimal?
+    pickupPoint String?
+    deliveryNotes String?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -223,6 +237,18 @@ model Order {
     @@index([userId])
     @@index([status])
     @@index([createdAt])
+}
+
+enum DeliveryType {
+    CITY
+    FIVEPOST
+    CDEK
+    POST
+    OZON
+    PICKUP
+    PVZ
+    ADDRESS
+    OTHER
 }
 
 enum OrderStatus {
@@ -242,6 +268,10 @@ model OrderItem {
 
     plantInstanceId String
     plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [id])
+    plantName String?
+    inventoryNumber String?
+    unitPrice Decimal?
+    imagesUrl String[] @default([])
 
     @@index([orderId])
     @@index([plantInstanceId])
