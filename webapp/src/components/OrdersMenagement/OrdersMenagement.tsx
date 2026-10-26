@@ -22,7 +22,7 @@ import { useState } from 'react'
 
 import { trpc } from '../../lib/trpc'
 
-type Filter = 'ACTIVE' | 'ALL' | (typeof orderStatuses)[number]
+type Filter = 'ACTIVE' | 'ALL' | 'REFUNDS' | (typeof orderStatuses)[number]
 export const OrdersMenagement = ({
   navigateToOrder,
 }: {
@@ -44,6 +44,7 @@ export const OrdersMenagement = ({
         sx={{ my: 2, minWidth: 260 }}
       >
         <MenuItem value="ACTIVE">В работе</MenuItem>
+        <MenuItem value="REFUNDS">Отменённые с остатком оплаты</MenuItem>
         {orderStatuses.map((status) => (
           <MenuItem key={status} value={status}>
             {orderStatusLabel[status]}
@@ -87,7 +88,20 @@ export const OrdersMenagement = ({
                   <TableCell>{orderStatusLabel[order.status]}</TableCell>
                   <TableCell>{deliveryLabel(order.deliveryType)}</TableCell>
                   <TableCell>{order.trackingNumber || '—'}</TableCell>
-                  <TableCell>{String(order.totalAmount)} ₽</TableCell>
+                  <TableCell>
+                    {String(order.totalAmount)} ₽
+                    {order.status === 'CANCELLED' && order.paidAmount !== null && (
+                      <Typography variant="caption" display="block">
+                        Возвращено {String(order.refundedAmount)} ₽ · Остаток{' '}
+                        {(
+                          (Math.round(Number(order.paidAmount) * 100) -
+                            Math.round(Number(order.refundedAmount) * 100)) /
+                          100
+                        ).toFixed(2)}{' '}
+                        ₽
+                      </Typography>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Button
                       onClick={(event) => {

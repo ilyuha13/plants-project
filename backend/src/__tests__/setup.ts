@@ -33,6 +33,7 @@ beforeAll(async () => {
 const cleanDatabase = async () => {
   // Delete in dependency order; never truncate unrelated or future tables.
   await prisma.$transaction([
+    prisma.orderRefund.deleteMany(),
     prisma.orderItem.deleteMany(),
     prisma.order.deleteMany(),
     prisma.cartItem.deleteMany(),

@@ -21,6 +21,7 @@ import { orderStatusLabel } from '@plants-project/backend/src/lib/orderProcessin
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { OrderCancellation } from '../../components/OrderCancellation/OrderCancellation'
 import { OrderProcessing } from '../../components/OrderProcessing/OrderProcessing'
 import { getCloudinaryUrl } from '../../lib/cloudinaryUrlGenerator'
 import { useMe } from '../../lib/ctx'
@@ -56,6 +57,13 @@ export const OrderDetailPage = () => {
             {orderStatusLabel[order.status]}
           </Typography>
           {isAdmin && <OrderProcessing order={order} />}
+          {isAdmin && <OrderCancellation order={order} />}
+          {order.cancelledAt && (
+            <Alert severity="warning">
+              Заказ отменён {new Date(order.cancelledAt).toLocaleString('ru-RU')}.
+              Причина: {order.cancellationReason}
+            </Alert>
+          )}
           {order.packedAt && (
             <Typography>
               Упакован: {new Date(order.packedAt).toLocaleString('ru-RU')}
@@ -135,6 +143,12 @@ export const OrderDetailPage = () => {
                   {isAdmin && (
                     <TableCell>
                       {item.inventoryNumber || item.plantInstance.inventoryNumber}
+                      {item.releasedAt && (
+                        <Typography variant="caption" display="block">
+                          Возвращён в продажу{' '}
+                          {new Date(item.releasedAt).toLocaleString('ru-RU')}
+                        </Typography>
+                      )}
                     </TableCell>
                   )}
                   <TableCell>{item.plantName || item.plantInstance.plant.name}</TableCell>
@@ -158,6 +172,27 @@ export const OrderDetailPage = () => {
             <Typography>Комментарий клиента: {order.customerNotes}</Typography>
           )}
           <Typography variant="h6">Итого: {String(order.totalAmount)} ₽</Typography>
+          {order.status === 'CANCELLED' && order.paidAmount !== null && (
+            <>
+              <Typography>Возвращено: {String(order.refundedAmount)} ₽</Typography>
+              <Typography>
+                Остаток полученной суммы:{' '}
+                {(
+                  (Math.round(Number(order.paidAmount) * 100) -
+                    Math.round(Number(order.refundedAmount) * 100)) /
+                  100
+                ).toFixed(2)}{' '}
+                ₽
+              </Typography>
+              {order.refunds.map((refund) => (
+                <Typography key={refund.id}>
+                  {new Date(refund.createdAt).toLocaleString('ru-RU')} · Возврат{' '}
+                  {String(refund.amount)} ₽{isAdmin && refund.note && ` · ${refund.note}`}
+                  {isAdmin && refund.actorNick && ` · ${refund.actorNick}`}
+                </Typography>
+              ))}
+            </>
+          )}
           {order.paidAmount !== null ? (
             <>
               <Typography>Получено всего: {String(order.paidAmount)} ₽</Typography>

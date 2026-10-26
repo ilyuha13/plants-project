@@ -17,6 +17,11 @@ import { getOrdersTrpcRoute } from '../router/getOrders'
 import { getPlantTrpcRoute } from '../router/getPlant'
 import { getPlantInstanceTrpcRoute } from '../router/getPlantInstance'
 import { getPlantInstancesTrpcRoute } from '../router/getPlantInstances'
+import {
+  cancelPaidOrderTrpcRoute,
+  recordOrderRefundTrpcRoute,
+  releaseOrderItemsTrpcRoute,
+} from '../router/orderCancellation'
 import { createPaidOrderTrpcRoute, getMyOrdersTrpcRoute } from '../router/paidOrders'
 import {
   requestReservationTrpcRoute,
@@ -27,6 +32,9 @@ import {
 
 export const prisma = createPrismaClient()
 const router = createTrpcRouter({
+  cancelPaidOrder: cancelPaidOrderTrpcRoute,
+  recordOrderRefund: recordOrderRefundTrpcRoute,
+  releaseOrderItems: releaseOrderItemsTrpcRoute,
   advanceOrder: advanceOrderTrpcRoute,
   getOrders: getOrdersTrpcRoute,
   getPlant: getPlantTrpcRoute,

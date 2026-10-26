@@ -43,6 +43,11 @@ import { getPlantsTrpcRoute } from './getPlants'
 import { getUploadSignatureTrpcRoute } from './getUploadSignature'
 import { getVariegationTrpcRoute } from './getVariegation'
 import { getVariegationByIdTrpcRoute } from './getVariegationById'
+import {
+  cancelPaidOrderTrpcRoute,
+  recordOrderRefundTrpcRoute,
+  releaseOrderItemsTrpcRoute,
+} from './orderCancellation'
 import { createPaidOrderTrpcRoute, getMyOrdersTrpcRoute } from './paidOrders'
 import { requestPasswordResetTrpcRoute } from './requestPasswordReset'
 import {
@@ -58,6 +63,9 @@ import { signUpTrpcRoute } from './signUp'
 import { createTrpcRouter } from '../lib/trpc'
 
 export const trpcRouter = createTrpcRouter({
+  cancelPaidOrder: cancelPaidOrderTrpcRoute,
+  recordOrderRefund: recordOrderRefundTrpcRoute,
+  releaseOrderItems: releaseOrderItemsTrpcRoute,
   advanceOrder: advanceOrderTrpcRoute,
   createPaidOrder: createPaidOrderTrpcRoute,
   getMyOrders: getMyOrdersTrpcRoute,

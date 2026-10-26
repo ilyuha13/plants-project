@@ -225,6 +225,12 @@ model Order {
     paidAmount Decimal?
     prepaidAmount Decimal?
     sourceCartId String?
+    cancelledAt DateTime?
+    cancellationReason String?
+    cancellationRequestId String? @unique
+    cancellationPayloadHash String?
+    refundedAmount Decimal @default(0)
+    refunds OrderRefund[]
     trackingNumber String?
     packedAt DateTime?
     shippedAt DateTime?
@@ -274,9 +280,24 @@ model OrderItem {
     plantInstance PlantInstance @relation(fields: [plantInstanceId], references: [id])
     plantName String?
     inventoryNumber String?
+    releasedAt DateTime?
+    releasedById String?
     unitPrice Decimal?
     imagesUrl String[] @default([])
 
     @@index([orderId])
     @@index([plantInstanceId])
+}
+
+model OrderRefund {
+    id String @id
+    orderId String
+    order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+    amount Decimal
+    note String?
+    actorId String
+    actorNick String
+    createdAt DateTime @default(now())
+
+    @@index([orderId, createdAt])
 }

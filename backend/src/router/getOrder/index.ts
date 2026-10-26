@@ -11,6 +11,16 @@ export const getOrderTrpcRoute = protectedProcedure
         ...(ctx.me.role === 'ADMIN' ? {} : { userId: ctx.me.id }),
       },
       include: {
+        refunds: {
+          select: {
+            id: true,
+            amount: true,
+            createdAt: true,
+            note: ctx.me.role === 'ADMIN',
+            actorNick: ctx.me.role === 'ADMIN',
+          },
+          orderBy: { createdAt: 'asc' },
+        },
         items: {
           include: {
             plantInstance: {
@@ -28,8 +38,11 @@ export const getOrderTrpcRoute = protectedProcedure
       order: order
         ? {
             ...order,
+            cancellationPayloadHash: undefined,
+            cancellationRequestId: undefined,
             items: order.items.map((item) => ({
               ...withInventoryVisibility(item, isAdmin),
+              releasedById: isAdmin ? item.releasedById : undefined,
               plantInstance: withInventoryVisibility(item.plantInstance, isAdmin),
             })),
           }

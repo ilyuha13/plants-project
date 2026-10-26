@@ -6,7 +6,9 @@ import { adminProcedure } from '../../lib/trpc'
 export const getOrdersTrpcRoute = adminProcedure
   .input(
     z
-      .object({ filter: z.enum(['ACTIVE', 'ALL', ...orderStatuses]).default('ACTIVE') })
+      .object({
+        filter: z.enum(['ACTIVE', 'ALL', 'REFUNDS', ...orderStatuses]).default('ACTIVE'),
+      })
       .optional(),
   )
   .query(async ({ ctx, input }) => {
@@ -17,7 +19,13 @@ export const getOrdersTrpcRoute = adminProcedure
           ? {}
           : filter === 'ACTIVE'
             ? { status: { in: ['COLLECTING', 'PACKED', 'SHIPPED'] } }
-            : { status: filter },
+            : filter === 'REFUNDS'
+              ? {
+                  status: 'CANCELLED',
+                  paidAmount: { not: null },
+                  refundedAmount: { lt: ctx.prisma.order.fields.paidAmount },
+                }
+              : { status: filter },
       select: {
         id: true,
         customerName: true,
@@ -25,6 +33,8 @@ export const getOrdersTrpcRoute = adminProcedure
         createdAt: true,
         status: true,
         totalAmount: true,
+        paidAmount: true,
+        refundedAmount: true,
         deliveryType: true,
         trackingNumber: true,
       },
