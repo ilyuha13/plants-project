@@ -22,6 +22,19 @@ model User {
     password String // bcrypt hash (не SHA256!)
     createdAt DateTime @default(now())
     role Role @default(USER)
+    customerName String?
+    customerFirstName String?
+    customerLastName String?
+    customerPatronymic String?
+    customerContact String?
+    customerPhone String?
+    customerTelegram String?
+    customerVk String?
+    reservationComment String?
+    deliveryType DeliveryType?
+    deliveryAddress String?
+    pickupPoint String?
+    deliveryNotes String?
 
     // Связи
     cart Cart?
@@ -164,12 +177,17 @@ model Cart {
     requestedAt DateTime?
     prepaidAmount Decimal?
     customerName String?
+    customerFirstName String?
+    customerLastName String?
+    customerPatronymic String?
     customerContact String?
     customerComment String?
     adminComment String?
     reviewAt DateTime?
     purchaseRequestedAt DateTime?
     customerPhone String?
+    customerTelegram String?
+    customerVk String?
     deliveryType DeliveryType?
     deliveryAddress String?
     pickupPoint String?
@@ -213,6 +231,9 @@ model Order {
     items OrderItem[]
 
     customerName String
+    customerFirstName String?
+    customerLastName String?
+    customerPatronymic String?
     customerPhone String
     customerAddress String?
 

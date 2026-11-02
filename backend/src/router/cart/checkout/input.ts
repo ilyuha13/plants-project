@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
+import { customerContactFields, hasCustomerContact } from '../../../lib/customerContacts'
+import { customerNameFields } from '../../../lib/customerNames'
 import {
   deliveryNeedsAddress,
   deliveryNeedsRecipient,
-  hasRecipientName,
   hasRecipientPhone,
   deliveryNeedsPickupPoint,
 } from '../../../lib/deliveryOptions'
@@ -13,13 +14,12 @@ export const checkoutInput = z
   .object({
     contactInfo: z
       .object({
-        name: z.string().trim().min(1).max(200),
-        phone: z.string().trim().max(100).default(''),
-        telegram: z.string().trim().max(500).default(''),
+        ...customerNameFields,
+        ...customerContactFields,
       })
-      .refine((value) => value.phone || value.telegram, {
+      .refine(hasCustomerContact, {
         path: ['phone'],
-        message: 'Укажите телефон или мессенджер',
+        message: 'Укажите телефон, Telegram или ВКонтакте',
       }),
     deliveryType: deliveryTypeInput.nullable().default(null),
     deliveryAddress: z.string().trim().max(2000).default(''),
@@ -28,11 +28,11 @@ export const checkoutInput = z
   })
   .superRefine((value, ctx) => {
     if (deliveryNeedsRecipient(value.deliveryType)) {
-      if (!hasRecipientName(value.contactInfo.name)) {
+      if (!value.contactInfo.lastName) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['contactInfo', 'name'],
-          message: 'Укажите фамилию, имя и отчество получателя (если есть)',
+          path: ['contactInfo', 'lastName'],
+          message: 'Укажите фамилию получателя',
         })
       }
       if (!hasRecipientPhone(value.contactInfo.phone)) {

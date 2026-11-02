@@ -1,6 +1,8 @@
 import { TRPCError } from '@trpc/server'
 
 import { checkoutInput } from './input'
+import { formatCustomerContacts } from '../../../lib/customerContacts'
+import { formatCustomerName } from '../../../lib/customerNames'
 import {
   deliveryNeedsAddress,
   deliveryNeedsPickupPoint,
@@ -46,9 +48,14 @@ export const checkoutTrpcRoute = protectedProcedure
               ? 'RESERVED_PREPAID_REQUEST'
               : cart.reservationType,
           reservedUntil: cart.reservationType === 'AUTOMATIC' ? null : cart.reservedUntil,
-          customerName: input.contactInfo.name,
-          customerContact: input.contactInfo.telegram || input.contactInfo.phone,
+          customerName: formatCustomerName(input.contactInfo),
+          customerFirstName: input.contactInfo.firstName,
+          customerLastName: input.contactInfo.lastName,
+          customerPatronymic: input.contactInfo.patronymic,
+          customerContact: formatCustomerContacts(input.contactInfo),
           customerPhone: input.contactInfo.phone,
+          customerVk: input.contactInfo.vk,
+          customerTelegram: input.contactInfo.telegram,
           deliveryType: input.deliveryType,
           deliveryAddress: deliveryNeedsAddress(input.deliveryType)
             ? input.deliveryAddress
@@ -56,6 +63,23 @@ export const checkoutTrpcRoute = protectedProcedure
           pickupPoint: deliveryNeedsPickupPoint(input.deliveryType)
             ? input.pickupPoint
             : '',
+          deliveryNotes: input.deliveryNotes,
+        },
+      })
+      await tx.user.update({
+        where: { id: ctx.me.id },
+        data: {
+          customerName: formatCustomerName(input.contactInfo),
+          customerFirstName: input.contactInfo.firstName,
+          customerLastName: input.contactInfo.lastName,
+          customerPatronymic: input.contactInfo.patronymic,
+          customerContact: formatCustomerContacts(input.contactInfo),
+          customerPhone: input.contactInfo.phone,
+          customerVk: input.contactInfo.vk,
+          customerTelegram: input.contactInfo.telegram,
+          deliveryType: input.deliveryType,
+          deliveryAddress: input.deliveryAddress,
+          pickupPoint: input.pickupPoint,
           deliveryNotes: input.deliveryNotes,
         },
       })

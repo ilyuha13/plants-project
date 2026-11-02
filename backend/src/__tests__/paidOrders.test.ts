@@ -10,7 +10,9 @@ import {
 } from './helpers'
 
 const contactInfo = {
-  name: 'Иванов Иван Иванович',
+  firstName: 'Иван',
+  lastName: 'Иванов',
+  patronymic: 'Иванович',
   phone: '+7 (999) 123-45-67',
   telegram: '@customer',
 }
@@ -28,7 +30,9 @@ const prepared = async () => {
   const input = {
     cartId: cart.id,
     expectedUpdatedAt: cart.updatedAt,
-    customerName: 'Иванов Иван Иванович',
+    customerFirstName: 'Иван',
+    customerLastName: 'Иванов',
+    customerPatronymic: 'Иванович',
     customerPhone: '+7 (999) 123-45-67',
     customerContact: '@customer',
     deliveryType: 'FIVEPOST' as const,
@@ -46,6 +50,12 @@ describe('Paid orders', () => {
     const { orderId } = await callerFor(admin).createPaidOrder(input)
     const order = (await callerFor(admin).getOrder({ orderId })).order!
     expect(order.status).toBe('COLLECTING')
+    expect(order).toMatchObject({
+      customerFirstName: 'Иван',
+      customerLastName: 'Иванов',
+      customerPatronymic: 'Иванович',
+      customerName: 'Иванов Иван Иванович',
+    })
     expect(String(order.totalAmount)).toBe('1500.75')
     expect(String(order.paidAmount)).toBe('1500.75')
     expect(String(order.deliveryCost)).toBe('250.25')
@@ -245,7 +255,10 @@ describe('Purchase request for a confirmed reservation', () => {
     const admin = await createUser('ADMIN')
     const instance = await createInstance('IN_CART')
     const cart = await createCart(user.id, instance.id)
-    await callerFor(user).requestReservation({ name: 'Customer', contact: '@customer' })
+    await callerFor(user).requestReservation({
+      firstName: 'Customer',
+      telegram: '@customer',
+    })
     const reviewAt = new Date(Date.now() + 86400000)
     await callerFor(admin).confirmReservation({
       cartId: cart.id,

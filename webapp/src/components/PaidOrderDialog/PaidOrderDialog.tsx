@@ -16,7 +16,6 @@ import {
   deliveryOptions,
   deliveryNeedsAddress,
   deliveryNeedsRecipient,
-  hasRecipientName,
   hasRecipientPhone,
   deliveryNeedsPickupPoint,
 } from '@plants-project/backend/src/lib/deliveryOptions'
@@ -45,7 +44,9 @@ export const PaidOrderDialog = ({
   onCreated: (orderId: string) => Promise<void>
 }) => {
   const createOrder = trpc.createPaidOrder.useMutation()
-  const [name, setName] = useState(cart.customerName || '')
+  const [firstName, setFirstName] = useState(cart.customerFirstName || '')
+  const [lastName, setLastName] = useState(cart.customerLastName || '')
+  const [patronymic, setPatronymic] = useState(cart.customerPatronymic || '')
   const [contact, setContact] = useState(cart.customerContact || '')
   const [phone, setPhone] = useState(cart.customerPhone || '')
   const savedDelivery = deliveryTypeInput.safeParse(cart.deliveryType)
@@ -85,9 +86,9 @@ export const PaidOrderDialog = ({
           ? `До полной оплаты не хватает ${((totalCents - receivedAmount) / 100).toFixed(2)} ₽. Укажите всю полученную сумму, включая предоплату.`
           : receivedAmount < Math.round(Number(cart.prepaidAmount || 0) * 100)
             ? 'Полученная сумма не может быть меньше уже записанной предоплаты.'
-            : !name.trim() || !contact.trim()
+            : !firstName.trim() || !contact.trim()
               ? 'Заполните имя покупателя и контакт.'
-              : deliveryNeedsRecipient(delivery) && !hasRecipientName(name)
+              : deliveryNeedsRecipient(delivery) && !lastName.trim()
                 ? 'Укажите ФИО получателя: фамилию, имя и отчество (если есть).'
                 : deliveryNeedsRecipient(delivery) && !hasRecipientPhone(phone)
                   ? 'Укажите номер телефона получателя — мессенджер не заменяет телефон.'
@@ -110,7 +111,9 @@ export const PaidOrderDialog = ({
       const result = await createOrder.mutateAsync({
         cartId: cart.id,
         expectedUpdatedAt: cart.updatedAt,
-        customerName: name,
+        customerFirstName: firstName,
+        customerLastName: lastName,
+        customerPatronymic: patronymic,
         customerContact: contact,
         customerPhone: phone,
         deliveryType: deliveryTypeInput.parse(delivery),
@@ -141,15 +144,27 @@ export const PaidOrderDialog = ({
               Проверьте окончательный состав, цены и доставку. Сохранится заказ на сборку,
               корзина очистится.
             </Alert>
+            {!cart.customerFirstName && cart.customerName && (
+              <Alert severity="info">
+                Ранее указано: {cart.customerName}. Уточните ФИО в отдельных полях.
+              </Alert>
+            )}
             <TextField
-              label={
-                deliveryNeedsRecipient(delivery)
-                  ? 'ФИО получателя (отчество при наличии)'
-                  : 'Имя покупателя'
-              }
+              label="Имя"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <TextField
+              label="Фамилия"
+              required={deliveryNeedsRecipient(delivery)}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+            <TextField
+              label="Отчество (необязательно)"
+              value={patronymic}
+              onChange={(e) => setPatronymic(e.target.value)}
             />
             <TextField
               label="Контакт: телефон или мессенджер"

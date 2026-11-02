@@ -4,14 +4,18 @@ import { checkoutInput } from '../router/cart/checkout/input'
 import { createPaidOrderInput } from '../router/paidOrders/input'
 
 const contactInfo = {
-  name: 'Иванов Иван Иванович',
+  firstName: 'Иван',
+  lastName: 'Иванов',
+  patronymic: 'Иванович',
   phone: '+7 (999) 123-45-67',
   telegram: '',
 }
 const paid = {
   cartId: 'cart',
   expectedUpdatedAt: new Date(),
-  customerName: 'Иванов Иван Иванович',
+  customerFirstName: 'Иван',
+  customerLastName: 'Иванов',
+  customerPatronymic: 'Иванович',
   customerPhone: '+7 (999) 123-45-67',
   customerContact: '000',
   deliveryCost: '0',
@@ -81,12 +85,16 @@ describe('Delivery fields', () => {
       expect(
         checkoutInput.safeParse({
           ...delivery,
-          contactInfo: { ...contactInfo, name: 'Иван' },
+          contactInfo: { ...contactInfo, firstName: 'Иван', lastName: '' },
         }).success,
       ).toBe(false)
       expect(
-        createPaidOrderInput.safeParse({ ...paid, ...delivery, customerName: 'Иван' })
-          .success,
+        createPaidOrderInput.safeParse({
+          ...paid,
+          ...delivery,
+          customerFirstName: 'Иван',
+          customerLastName: '',
+        }).success,
       ).toBe(false)
       for (const phone of ['', ' ', '@telegram', '123']) {
         expect(
@@ -108,7 +116,26 @@ describe('Delivery fields', () => {
       expect(
         checkoutInput.safeParse({
           ...delivery,
-          contactInfo: { ...contactInfo, name: 'Иванов Иван' },
+          contactInfo: { ...contactInfo, firstName: '' },
+        }).success,
+      ).toBe(false)
+      expect(
+        createPaidOrderInput.safeParse({ ...paid, ...delivery, customerFirstName: '' })
+          .success,
+      ).toBe(false)
+      expect(
+        createPaidOrderInput.safeParse({ ...paid, ...delivery, customerPatronymic: '' })
+          .success,
+      ).toBe(true)
+      expect(
+        checkoutInput.safeParse({
+          ...delivery,
+          contactInfo: {
+            ...contactInfo,
+            firstName: 'Иван',
+            lastName: 'Иванов',
+            patronymic: '',
+          },
         }).success,
       ).toBe(true)
     },
@@ -121,7 +148,12 @@ describe('Delivery fields', () => {
         checkoutInput.safeParse({
           deliveryType,
           deliveryAddress: 'Адрес',
-          contactInfo: { name: 'Иван', phone: '', telegram: '@contact' },
+          contactInfo: {
+            firstName: 'Иван',
+            lastName: '',
+            phone: '',
+            telegram: '@contact',
+          },
         }).success,
       ).toBe(true)
       expect(
@@ -129,7 +161,8 @@ describe('Delivery fields', () => {
           ...paid,
           deliveryType,
           deliveryAddress: 'Адрес',
-          customerName: 'Иван',
+          customerFirstName: 'Иван',
+          customerLastName: '',
           customerPhone: '',
         }).success,
       ).toBe(true)

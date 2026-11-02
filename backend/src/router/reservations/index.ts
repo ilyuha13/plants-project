@@ -6,38 +6,62 @@ import {
   releaseReservationInput,
   requestReservationInput,
 } from './input'
+import { formatCustomerContacts } from '../../lib/customerContacts'
+import { formatCustomerName } from '../../lib/customerNames'
 import { sendTelegramMessage } from '../../lib/telegram'
 import { adminProcedure, protectedProcedure } from '../../lib/trpc'
 
 export const requestReservationTrpcRoute = protectedProcedure
   .input(requestReservationInput)
   .mutation(async ({ ctx, input }) => {
-    await ctx.prisma.cart.upsert({
-      where: { userId: ctx.me.id },
-      create: { userId: ctx.me.id },
-      update: {},
-    })
-    const changed = await ctx.prisma.cart.updateMany({
-      where: {
-        userId: ctx.me.id,
-        reservationType: 'AUTOMATIC',
-        OR: [{ reservedUntil: null }, { reservedUntil: { gt: new Date() } }],
-      },
-      data: {
-        reservationType: 'RESERVED_PREPAID_REQUEST',
-        requestedAt: new Date(),
-        reservedUntil: null,
-        customerName: input.name,
-        customerContact: input.contact,
-        customerComment: input.comment,
-      },
-    })
-    if (changed.count !== 1) {
-      throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Корзина отсутствует, срок автоброни истёк или запрос уже отправлен',
+    await ctx.prisma.$transaction(async (tx) => {
+      await tx.cart.upsert({
+        where: { userId: ctx.me.id },
+        create: { userId: ctx.me.id },
+        update: {},
       })
-    }
+      const changed = await tx.cart.updateMany({
+        where: {
+          userId: ctx.me.id,
+          reservationType: 'AUTOMATIC',
+          OR: [{ reservedUntil: null }, { reservedUntil: { gt: new Date() } }],
+        },
+        data: {
+          reservationType: 'RESERVED_PREPAID_REQUEST',
+          requestedAt: new Date(),
+          reservedUntil: null,
+          customerName: formatCustomerName(input),
+          customerFirstName: input.firstName,
+          customerLastName: input.lastName,
+          customerPatronymic: input.patronymic,
+          customerContact: formatCustomerContacts(input),
+          customerPhone: input.phone,
+          customerTelegram: input.telegram,
+          customerVk: input.vk,
+          customerComment: input.comment,
+        },
+      })
+      if (changed.count !== 1) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Корзина отсутствует, срок автоброни истёк или запрос уже отправлен',
+        })
+      }
+      await tx.user.update({
+        where: { id: ctx.me.id },
+        data: {
+          customerName: formatCustomerName(input),
+          customerFirstName: input.firstName,
+          customerLastName: input.lastName,
+          customerPatronymic: input.patronymic,
+          customerContact: formatCustomerContacts(input),
+          customerPhone: input.phone,
+          customerTelegram: input.telegram,
+          customerVk: input.vk,
+          reservationComment: input.comment,
+        },
+      })
+    })
     await sendTelegramMessage(
       'Новый запрос бронирования. Контакты и состав доступны в разделе «Бронирования» в админке.',
     )

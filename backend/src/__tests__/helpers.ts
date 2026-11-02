@@ -12,6 +12,7 @@ import { getCartTrpcRoute } from '../router/cart/getCart'
 import { removeFromCartTrpcRoute } from '../router/cart/removeFromCart'
 import { deletePlantInstanceTrpcRoute } from '../router/deletePlantInstance'
 import { getAllInstancesTrpcRoute } from '../router/getAllInstances'
+import { getMeTrpcRoute } from '../router/getMe'
 import { getOrderTrpcRoute } from '../router/getOrder'
 import { getOrdersTrpcRoute } from '../router/getOrders'
 import { getPlantTrpcRoute } from '../router/getPlant'
@@ -32,6 +33,7 @@ import {
 
 export const prisma = createPrismaClient()
 const router = createTrpcRouter({
+  getMe: getMeTrpcRoute,
   cancelPaidOrder: cancelPaidOrderTrpcRoute,
   recordOrderRefund: recordOrderRefundTrpcRoute,
   releaseOrderItems: releaseOrderItemsTrpcRoute,

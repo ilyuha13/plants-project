@@ -17,10 +17,16 @@ import {
   Typography,
 } from '@mui/material'
 import {
+  normalizeTelegram,
+  normalizeVk,
+} from '@plants-project/backend/src/lib/customerContacts'
+import {
   deliveryOptions,
   deliveryNeedsAddress,
   deliveryNeedsRecipient,
   deliveryNeedsPickupPoint,
+  deliveryCodes,
+  hasRecipientPhone,
 } from '@plants-project/backend/src/lib/deliveryOptions'
 import { orderStatusLabel } from '@plants-project/backend/src/lib/orderProcessing'
 import { checkoutInput } from '@plants-project/backend/src/router/cart/checkout/input'
@@ -69,9 +75,12 @@ export const Cart = () => {
       pickupPoint: '',
       deliveryNotes: '',
       contactInfo: {
-        name: '',
+        firstName: '',
+        lastName: '',
+        patronymic: '',
         phone: '',
         telegram: '',
+        vk: '',
       },
     },
     validationSchema: checkoutInput,
@@ -84,6 +93,7 @@ export const Cart = () => {
       setShowCheckoutForm(false)
 
       formik.resetForm()
+      await utils.getMe.invalidate()
     },
   })
 
@@ -93,8 +103,12 @@ export const Cart = () => {
     alertOptions: { hidden: reservationAlertHidden, ...reservationAlertProps },
   } = useForm({
     initialValues: {
-      name: '',
-      contact: '',
+      firstName: '',
+      lastName: '',
+      patronymic: '',
+      phone: '',
+      telegram: '',
+      vk: '',
       comment: '',
     },
     validationSchema: requestReservationInput,
@@ -105,8 +119,37 @@ export const Cart = () => {
 
       setShowReservationForm(false)
       reservationFormik.resetForm()
+      await utils.getMe.invalidate()
     },
   })
+
+  const legacyContact = cartData?.customerContact || me?.customerContact || ''
+  const legacyVk =
+    /(?:vk\.com|vk\.ru)\//i.test(legacyContact) && !legacyContact.includes('\n')
+      ? legacyContact.replace(/^ВКонтакте: /, '')
+      : ''
+  const legacyTelegram =
+    !legacyVk &&
+    !legacyContact.includes('\n') &&
+    /^(?:@|https?:\/\/(?:t\.me|telegram\.me)\/|Telegram: )/i.test(legacyContact)
+      ? legacyContact.replace(/^Telegram: /, '')
+      : ''
+  const savedNames = {
+    firstName: cartData?.customerFirstName ?? me?.customerFirstName ?? '',
+    lastName: cartData?.customerLastName ?? me?.customerLastName ?? '',
+    patronymic: cartData?.customerPatronymic ?? me?.customerPatronymic ?? '',
+  }
+  const legacyName = !savedNames.firstName
+    ? cartData?.customerName || me?.customerName
+    : null
+  const savedContacts = {
+    phone:
+      cartData?.customerPhone ??
+      me?.customerPhone ??
+      (hasRecipientPhone(legacyContact) ? legacyContact : ''),
+    telegram: cartData?.customerTelegram ?? me?.customerTelegram ?? legacyTelegram,
+    vk: cartData?.customerVk ?? me?.customerVk ?? legacyVk,
+  }
 
   const total = items.reduce((sum, item) => {
     return sum + Number(item.plantInstance.price || '0')
@@ -149,7 +192,7 @@ export const Cart = () => {
         )}
         {!!myOrders?.orders.length && (
           <Box sx={{ p: 2 }}>
-            <Typography variant="h6">Мои заказы</Typography>
+            <Typography variant="h6">Активные заказы</Typography>
             {myOrders.orders.map((order) => (
               <Button
                 key={order.id}
@@ -250,7 +293,24 @@ export const Cart = () => {
                   fullWidth
                   disabled={items.length === 0 || !!cartData?.purchaseRequestedAt}
                   startIcon={<TelegramIcon />}
-                  onClick={() => setShowCheckoutForm(true)}
+                  onClick={() => {
+                    const deliveryType = cartData?.deliveryType ?? me.deliveryType
+                    formik.resetForm({
+                      values: {
+                        contactInfo: {
+                          ...savedNames,
+                          ...savedContacts,
+                        },
+                        deliveryType:
+                          deliveryCodes.find((code) => code === deliveryType) ?? null,
+                        deliveryAddress:
+                          cartData?.deliveryAddress || me.deliveryAddress || '',
+                        pickupPoint: cartData?.pickupPoint || me.pickupPoint || '',
+                        deliveryNotes: cartData?.deliveryNotes || me.deliveryNotes || '',
+                      },
+                    })
+                    setShowCheckoutForm(true)
+                  }}
                 >
                   Оформить покупку
                 </Button>
@@ -260,7 +320,17 @@ export const Cart = () => {
                       fullWidth
                       variant="outlined"
                       startIcon={<BookmarkIcon />}
-                      onClick={() => setShowReservationForm(true)}
+                      onClick={() => {
+                        reservationFormik.resetForm({
+                          values: {
+                            ...savedNames,
+                            ...savedContacts,
+                            comment:
+                              cartData?.customerComment || me.reservationComment || '',
+                          },
+                        })
+                        setShowReservationForm(true)
+                      }}
                     >
                       Запросить бронирование
                     </Button>
@@ -287,13 +357,25 @@ export const Cart = () => {
                   </Typography>
                 </Alert>
               )}
+              {legacyName && (
+                <Alert severity="info">
+                  Ранее указано: {legacyName}. Уточните имя, фамилию и отчество в
+                  отдельных полях.
+                </Alert>
+              )}
+              <TextInput name="contactInfo.firstName" label="Имя" formik={formik} />
               <TextInput
-                name="contactInfo.name"
+                name="contactInfo.lastName"
                 label={
                   deliveryNeedsRecipient(formik.values.deliveryType)
-                    ? 'ФИО получателя (отчество при наличии)'
-                    : 'Ваше имя'
+                    ? 'Фамилия (обязательно)'
+                    : 'Фамилия'
                 }
+                formik={formik}
+              />
+              <TextInput
+                name="contactInfo.patronymic"
+                label="Отчество (необязательно)"
                 formik={formik}
               />
               <TextInput
@@ -307,9 +389,23 @@ export const Cart = () => {
               />
               <TextInput
                 name="contactInfo.telegram"
-                label="Ссылка на ваш телеграм (необязательно)"
+                label="Telegram"
                 formik={formik}
+                placeholder="@username"
+                helperText="Введите имя пользователя с @ или без него либо ссылку t.me/username. Имя пользователя можно найти в настройках Telegram."
+                normalize={normalizeTelegram}
               />
+              <TextInput
+                name="contactInfo.vk"
+                label="ВКонтакте"
+                formik={formik}
+                placeholder="https://vk.com/username"
+                helperText="Откройте свою страницу ВКонтакте и скопируйте ссылку через «Поделиться». Подойдёт vk.com/username или vk.com/id123456, также можно ввести username или id123456."
+                normalize={normalizeVk}
+              />
+              <Typography variant="body2" color="text.secondary">
+                Укажите хотя бы один контакт: телефон, Telegram или ВКонтакте.
+              </Typography>
               <TextField
                 select
                 label="Способ получения"
@@ -368,12 +464,43 @@ export const Cart = () => {
                 Сутки бесплатно после подтверждения администратора. Для долгой брони
                 согласуем срок и предоплату. До решения растения удерживаются за вами.
               </Typography>
-              <TextInput name="name" label="Ваше имя" formik={reservationFormik} />
+              {legacyName && (
+                <Alert severity="info">
+                  Ранее указано: {legacyName}. Уточните имя, фамилию и отчество в
+                  отдельных полях.
+                </Alert>
+              )}
+              <TextInput name="firstName" label="Имя" formik={reservationFormik} />
+              <TextInput name="lastName" label="Фамилия" formik={reservationFormik} />
               <TextInput
-                name="contact"
-                label="Телефон, Telegram или VK"
+                name="patronymic"
+                label="Отчество (необязательно)"
                 formik={reservationFormik}
               />
+              <TextInput
+                name="phone"
+                label="Ваш номер телефона"
+                formik={reservationFormik}
+              />
+              <TextInput
+                name="telegram"
+                label="Telegram"
+                formik={reservationFormik}
+                placeholder="@username"
+                helperText="Введите имя пользователя с @ или без него либо ссылку t.me/username. Имя пользователя можно найти в настройках Telegram."
+                normalize={normalizeTelegram}
+              />
+              <TextInput
+                name="vk"
+                label="ВКонтакте"
+                formik={reservationFormik}
+                placeholder="https://vk.com/username"
+                helperText="Откройте свою страницу ВКонтакте и скопируйте ссылку через «Поделиться». Подойдёт vk.com/username или vk.com/id123456, также можно ввести username или id123456."
+                normalize={normalizeVk}
+              />
+              <Typography variant="body2" color="text.secondary">
+                Укажите хотя бы один контакт: телефон, Telegram или ВКонтакте.
+              </Typography>
               <TextInput
                 name="comment"
                 label="Пожелания к бронированию"

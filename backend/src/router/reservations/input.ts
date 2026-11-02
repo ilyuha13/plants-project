@@ -1,10 +1,18 @@
 import { z } from 'zod'
 
-export const requestReservationInput = z.object({
-  name: z.string().trim().min(1).max(200),
-  contact: z.string().trim().min(1, 'Укажите телефон или мессенджер').max(500),
-  comment: z.string().trim().max(2000).default(''),
-})
+import { customerContactFields, hasCustomerContact } from '../../lib/customerContacts'
+import { customerNameFields } from '../../lib/customerNames'
+
+export const requestReservationInput = z
+  .object({
+    ...customerNameFields,
+    ...customerContactFields,
+    comment: z.string().trim().max(2000).default(''),
+  })
+  .refine(hasCustomerContact, {
+    path: ['phone'],
+    message: 'Укажите телефон, Telegram или ВКонтакте',
+  })
 
 export const confirmReservationInput = z
   .object({

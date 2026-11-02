@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 
 import { createPaidOrderInput } from './input'
+import { formatCustomerName } from '../../lib/customerNames'
 import { deliveryNeedsAddress, deliveryNeedsPickupPoint } from '../../lib/deliveryOptions'
 import { adminProcedure, protectedProcedure } from '../../lib/trpc'
 
@@ -75,7 +76,14 @@ export const createPaidOrderTrpcRoute = adminProcedure
           userId: cart.userId,
           sourceCartId: cart.id,
           status: 'COLLECTING',
-          customerName: input.customerName,
+          customerName: formatCustomerName({
+            firstName: input.customerFirstName,
+            lastName: input.customerLastName,
+            patronymic: input.customerPatronymic,
+          }),
+          customerFirstName: input.customerFirstName,
+          customerLastName: input.customerLastName,
+          customerPatronymic: input.customerPatronymic,
           customerContact: input.customerContact,
           customerPhone: input.customerPhone,
           customerAddress: deliveryNeedsAddress(input.deliveryType)
@@ -113,7 +121,12 @@ export const createPaidOrderTrpcRoute = adminProcedure
           purchaseRequestedAt: null,
           prepaidAmount: null,
           customerName: null,
+          customerFirstName: null,
+          customerLastName: null,
+          customerPatronymic: null,
           customerContact: null,
+          customerTelegram: null,
+          customerVk: null,
           customerComment: null,
           adminComment: null,
           customerPhone: null,
@@ -129,7 +142,7 @@ export const createPaidOrderTrpcRoute = adminProcedure
 
 export const getMyOrdersTrpcRoute = protectedProcedure.query(async ({ ctx }) => ({
   orders: await ctx.prisma.order.findMany({
-    where: { userId: ctx.me.id },
+    where: { userId: ctx.me.id, status: { notIn: ['CANCELLED', 'DELIVERED'] } },
     orderBy: { createdAt: 'desc' },
     take: 10,
     select: { id: true, createdAt: true, totalAmount: true, status: true },

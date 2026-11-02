@@ -10,7 +10,7 @@ import {
 } from './helpers'
 import { clearExpiredAutomaticCarts } from '../lib/cron'
 
-const request = { name: 'Клиент', contact: '@customer', comment: 'До весны' }
+const request = { firstName: 'Клиент', telegram: '@customer', comment: 'До весны' }
 const future = () => new Date(Date.now() + 86400000)
 const past = () => new Date(Date.now() - 60000)
 
@@ -24,8 +24,8 @@ describe('Reservation requests', () => {
     expect(held).toMatchObject({
       reservationType: 'RESERVED_PREPAID_REQUEST',
       reservedUntil: null,
-      customerName: request.name,
-      customerContact: request.contact,
+      customerName: request.firstName,
+      customerContact: `Telegram: ${request.telegram}`,
       customerComment: request.comment,
     })
     expect(held.requestedAt).not.toBeNull()
@@ -49,7 +49,7 @@ describe('Reservation requests', () => {
     })
     const user = await createUser()
     await expect(
-      callerFor(user).requestReservation({ ...request, contact: ' ' }),
+      callerFor(user).requestReservation({ ...request, telegram: ' ' }),
     ).rejects.toMatchObject({ code: 'BAD_REQUEST' })
   })
 
@@ -196,7 +196,7 @@ describe('Confirming and releasing reservations', () => {
     ).toBe('IN_CART')
     expect(await callerFor(user).getCart()).toMatchObject({
       reservationType: 'AUTOMATIC',
-      customerContact: request.contact,
+      customerContact: `Telegram: ${request.telegram}`,
     })
   })
 

@@ -4,7 +4,6 @@ import {
   deliveryCodes,
   deliveryNeedsAddress,
   deliveryNeedsRecipient,
-  hasRecipientName,
   hasRecipientPhone,
   deliveryNeedsPickupPoint,
 } from '../../lib/deliveryOptions'
@@ -17,8 +16,10 @@ export const createPaidOrderInput = z
   .object({
     cartId: z.string().min(1),
     expectedUpdatedAt: z.date(),
-    customerName: z.string().trim().min(1).max(200),
-    customerContact: z.string().trim().min(1).max(500),
+    customerFirstName: z.string().trim().min(1, 'Укажите имя').max(100),
+    customerLastName: z.string().trim().max(100).default(''),
+    customerPatronymic: z.string().trim().max(100).default(''),
+    customerContact: z.string().trim().min(1).max(1200),
     customerPhone: z.string().trim().max(100).default(''),
     deliveryType: deliveryTypeInput,
     deliveryAddress: z.string().trim().max(2000).default(''),
@@ -32,11 +33,11 @@ export const createPaidOrderInput = z
   })
   .superRefine((value, ctx) => {
     if (deliveryNeedsRecipient(value.deliveryType)) {
-      if (!hasRecipientName(value.customerName)) {
+      if (!value.customerLastName) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['customerName'],
-          message: 'Укажите фамилию, имя и отчество получателя (если есть)',
+          path: ['customerLastName'],
+          message: 'Укажите фамилию получателя',
         })
       }
       if (!hasRecipientPhone(value.customerPhone)) {

@@ -9,7 +9,12 @@ import {
   prisma,
 } from './helpers'
 
-const contactInfo = { name: 'Test customer', phone: '000', telegram: 'test' }
+const contactInfo = {
+  firstName: 'Test',
+  lastName: 'customer',
+  phone: '000',
+  telegram: 'test',
+}
 
 describe('Cart ownership', () => {
   it('requires authentication', async () => {
